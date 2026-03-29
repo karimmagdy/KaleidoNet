@@ -1,0 +1,20 @@
+\section{Discussion and Conclusion}
+\label{sec:discussion}
+
+\paragraph{Summary.}
+We identified the gradient-scale mismatch that causes Lagrangian FLOPs penalties to fail at per-neuron granularity in MoE architectures, and proposed KaleidoNet as a principled alternative. By replacing the learned penalty with a deterministic cubic sparsity schedule, gradient masking, and dual-rate optimization, KaleidoNet achieves stable selective pruning within expert sub-networks. Across four benchmarks, KaleidoNet delivers $1.8{\times}$ FLOPs reduction with 85--93\% accuracy retention on CIFAR-10/100 and Tiny-ImageNet, and a Pareto improvement on STL-10 ($+3.9$ pp over the dense baseline at 57.5\% of the FLOPs). Model surgery produces physically compact networks with $1.63{\times}$ parameter compression.
+
+\paragraph{Limitations.}
+Several limitations should be noted:
+\begin{itemize}
+    \item \textbf{Training budget.} Our experiments use 5{,}000 steps (${\sim}$30 epochs on CIFAR-100), which is substantially shorter than typical ViT training schedules (300+ epochs). The accuracy gap between KaleidoNet and the dense baseline (4.86 pp on CIFAR-100) would likely narrow with longer training, as the pruning trajectory analysis shows the model has not converged.
+    \item \textbf{Scale.} All experiments use small-scale datasets (32$\times$32 to 96$\times$96 pixels). Validation on ImageNet-1K would strengthen the generality claims but requires GPU cluster resources beyond our current setup.
+    \item \textbf{Simple task parity.} On CIFAR-10 (10 classes), all pruning strategies---including random masking---achieve similar retention (${\sim}93$--$95\%$), suggesting that the structured pruning advantage of KaleidoNet is less pronounced when the classification task is simple. We expect differentiation to grow with task complexity and model scale.
+    \item \textbf{Attention head pruning.} The cubic schedule currently targets only ElasticLinear neuron widths. All 6 attention heads survive pruning, leaving potential compression on the table.
+\end{itemize}
+
+\paragraph{Future work.}
+Extending the cubic schedule to jointly prune attention heads and expert widths, scaling to ImageNet-1K with longer training, and investigating the interplay between expert count and pruning depth are promising research directions. The framework is also applicable to language models, where MoE layers are widely used.
+
+\paragraph{Broader impact.}
+Efficient model compression reduces the computational and energy requirements of deploying neural networks, potentially democratizing access to performant models. We do not foresee negative societal impacts specific to our pruning methodology.

@@ -1,0 +1,17 @@
+{
+  "model": "LinearSchedule",
+  "dataset": "stl10",
+  "seed": 2,
+  "steps": 5000,
+  "target_sparsity": 0.7,
+  "params": {
+    "total_params": 5516390,
+    "active_params": 2209398,
+    "dormant_params": 3306992,
+    "active_fraction": 0.40051519200056557
+  },
+  "dense_flops": 1530556416,
+  "active_flops": 308133120,
+  "val_loss": 1.0814587163925171,
+  "val_accuracy": 0.61325
+}

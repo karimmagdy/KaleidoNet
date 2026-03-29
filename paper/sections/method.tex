@@ -1,0 +1,120 @@
+\section{Method}
+\label{sec:method}
+
+We describe the KaleidoNet architecture (Section~\ref{sec:arch}), the gradient-scale analysis motivating our approach (Section~\ref{sec:gradient_analysis}), the cubic sparsity schedule with gradient masking (Section~\ref{sec:schedule}), and the full training algorithm (Section~\ref{sec:algorithm}).
+
+% ------------------------------------------------------------------
+\subsection{Architecture}
+\label{sec:arch}
+
+KaleidoNet is a pre-norm Vision Transformer with four elastic transformer blocks. Each block consists of:
+
+\paragraph{Elastic Attention.} A multi-head self-attention layer with $H{=}6$ heads and embedding dimension $d{=}192$. Each attention head has a learnable mask logit; during training the mask is sampled via Gumbel-sigmoid (Section~\ref{sec:gumbel}), and at inference the mask is a deterministic hard threshold.
+
+\paragraph{MoE Feed-Forward.} A Mixture-of-Experts layer with $E{=}4$ experts and top-1 routing. The router is a linear gate $\bw_g \in \R^{d \times E}$ that selects the highest-scoring expert per token~\citep{fedus2022switch}. Each expert is a two-layer FFN:
+\begin{equation}
+\text{FFN}_e(\bx) = \text{ElasticLinear}_2\bigl(\text{GELU}\bigl(\text{ElasticLinear}_1(\bx)\bigr)\bigr),
+\end{equation}
+where $\text{ElasticLinear}_1: \R^d \to \R^{4d}$ and $\text{ElasticLinear}_2: \R^{4d} \to \R^d$ are learnable linear layers with per-neuron masks.
+
+\paragraph{ElasticLinear.} The core building block. Given input $\bx \in \R^{d_{\text{in}}}$, an ElasticLinear layer with mask logits $\bm \in \R^{d_{\text{out}}}$ computes:
+\begin{equation}
+\label{eq:elastic}
+\text{ElasticLinear}(\bx) = (W\bx + b) \odot \text{GumbelSigmoid}(\bm, \tau),
+\end{equation}
+where $W \in \R^{d_{\text{out}} \times d_{\text{in}}}$, $b \in \R^{d_{\text{out}}}$, $\odot$ denotes element-wise multiplication, and $\tau$ is the temperature. A minimum-active constraint ensures at least one neuron remains active.
+
+\paragraph{Confidence head.} Each block produces a scalar confidence score via a linear layer followed by sigmoid. This enables optional early exit during inference, and the associated ponder cost acts as a regularizer during training.
+
+% ------------------------------------------------------------------
+\subsection{Why Lagrangian FLOPs Control Fails at Per-Neuron Granularity}
+\label{sec:gradient_analysis}
+
+Consider the standard approach of adding a Lagrangian penalty $\lambda(\text{FLOPs} - B)$ to the loss (Equation~\ref{eq:lagrangian}). The FLOPs contributed by neuron $i$ in an ElasticLinear layer with input dimension $d_{\text{in}}$, batch size $N$, and sequence length $L$ are:
+\begin{equation}
+\text{flops}_i = 2 \cdot d_{\text{in}} \cdot N \cdot L \cdot \sigma(m_i / \tau),
+\end{equation}
+where $\sigma$ is the sigmoid function. The gradient of the Lagrangian penalty with respect to $m_i$ is:
+\begin{equation}
+\frac{\partial \mathcal{L}_{\text{FLOPs}}}{\partial m_i} = \lambda \cdot \frac{2 \, d_{\text{in}} \, N \, L}{B} \cdot \frac{\sigma'(m_i / \tau)}{\tau}.
+\end{equation}
+
+For typical values ($d_{\text{in}} {=} 192$, $N {=} 64$, $L {=} 64$, $B {=} 200\text{M}$, $\lambda {=} 0.01$, $\tau {=} 1.0$), this evaluates to approximately $10^{-4}$, while the task-loss gradient $\partial \mathcal{L}_{\text{task}} / \partial m_i$ is of order $10^{-2}$. The 100$\times$ gap means the Lagrangian signal cannot differentiate between important and unimportant neurons: all logits receive a roughly equal, weak push toward $-\infty$.
+
+\begin{remark}
+This failure mode is specific to \emph{per-neuron} granularity. At per-layer or per-expert granularity, the FLOPs contribution per decision is much larger ($\sim$10\% of total rather than $\sim$0.01\%), and Lagrangian methods work well~\citep{gordon2018morphnet}.
+\end{remark}
+
+% ------------------------------------------------------------------
+\subsection{Cubic Sparsity Schedule with Gradient Masking}
+\label{sec:schedule}
+
+Instead of relying on gradient-based budget control, we use a deterministic \emph{cubic sparsity schedule}~\citep{zhu2017prune} that externally dictates the target sparsity at each training step.
+
+\paragraph{Schedule.} Given start step $t_0$, end step $t_1$, and final sparsity $s_f$, the target sparsity at step $t$ is:
+\begin{equation}
+\label{eq:cubic}
+s(t) = \begin{cases}
+0 & \text{if } t < t_0, \\[4pt]
+s_f \cdot \Bigl(1 - \bigl(1 - \tfrac{t - t_0}{t_1 - t_0}\bigr)^3\Bigr) & \text{if } t_0 \leq t \leq t_1, \\[4pt]
+s_f & \text{if } t > t_1.
+\end{cases}
+\end{equation}
+We use $t_0 {=} 500$, $t_1 {=} 4000$, $s_f {=} 0.70$. The cubic shape starts slowly (allowing the network to learn feature representations) and accelerates (committing to pruning decisions once importance has been established).
+
+\paragraph{Gradient masking.} Every 100 steps, the schedule determines how many neurons should be pruned. For each ElasticLinear layer, the $\lfloor s(t) \cdot d_{\text{out}} \rfloor$ neurons with the lowest mask logits are \emph{permanently} deactivated:
+\begin{equation}
+m_i \leftarrow -100 \quad \text{for pruned neurons}, \qquad \frac{\partial \mathcal{L}}{\partial m_i} \leftarrow 0.
+\end{equation}
+Setting $m_i = -100$ ensures $\sigma(m_i / \tau) \approx 0$ regardless of $\tau$, while zeroing the gradient prevents recovery. This hard masking is the key mechanism: rather than hoping the optimizer will find the right pruning pattern through weak penalty gradients, we \emph{force} the pruning pattern using the mask logits as an importance score.
+
+\paragraph{Gumbel-sigmoid with straight-through.}
+\label{sec:gumbel}
+For the non-masked (active) neurons, the forward pass samples a binary mask via:
+\begin{equation}
+\hat{m}_i = \mathbb{1}\bigl[\sigma\bigl((m_i + g_1 - g_2) / \tau\bigr) > 0.5\bigr],
+\end{equation}
+where $g_1, g_2 \sim \text{Gumbel}(0,1)$ and the indicator uses the straight-through estimator~\citep{bengio2013estimating} (hard forward, soft backward). The temperature $\tau$ anneals linearly from 5.0 to 0.1 over training, transitioning from stochastic exploration to near-deterministic masks.
+
+\paragraph{Dual-rate optimization.} We maintain two optimizer groups:
+\begin{itemize}
+    \item \textbf{Task parameters} (weights, biases, routing): AdamW~\citep{loshchilov2019decoupled} with lr $= 3{\times}10^{-4}$ and weight decay $0.01$.
+    \item \textbf{Mask logits}: Adam with lr $= 9{\times}10^{-4}$ ($3{\times}$ higher) and no weight decay.
+\end{itemize}
+The higher mask learning rate allows structural decisions to adapt quickly while task weights train at a stable rate.
+
+% ------------------------------------------------------------------
+\subsection{Training Algorithm}
+\label{sec:algorithm}
+
+\begin{algorithm}[t]
+\caption{KaleidoNet Training with Cubic Sparsity Schedule}
+\label{alg:training}
+\begin{algorithmic}[1]
+\REQUIRE Model $f_\btheta$ with ElasticLinear layers, dataset $\mathcal{D}$, target sparsity $s_f$, schedule steps $[t_0, t_1]$
+\STATE Initialize mask logits $\bm \leftarrow \mathbf{0.5}$ \hfill \textit{// All neurons start active}
+\STATE Initialize dual optimizer: $\text{opt}_w$ (lr=$3{\times}10^{-4}$), $\text{opt}_m$ (lr=$9{\times}10^{-4}$)
+\FOR{step $t = 1, \ldots, T$}
+    \STATE Sample mini-batch $(\bx, y) \sim \mathcal{D}$
+    \STATE $\tau \leftarrow 5.0 + (0.1 - 5.0) \cdot \min(t/T, 1)$ \hfill \textit{// Anneal temperature}
+    \STATE $\hat{y} \leftarrow f_\btheta(\bx; \bm, \tau)$ \hfill \textit{// Forward with Gumbel-sigmoid masks}
+    \STATE $\mathcal{L} \leftarrow \mathcal{L}_{\text{CE}}(\hat{y}, y) + 0.01 \cdot \mathcal{L}_{\text{balance}} + 0.01 \cdot \mathcal{L}_{\text{ponder}}$
+    \STATE Backprop and clip gradients to norm 1.0
+    \STATE Update $\btheta$ with $\text{opt}_w$; update $\bm$ with $\text{opt}_m$
+    \IF{$t \geq t_0$ \AND $t \bmod 100 = 0$}
+        \STATE Compute $s(t)$ via Equation~\ref{eq:cubic}
+        \FOR{each ElasticLinear layer}
+            \STATE $k \leftarrow \lfloor s(t) \cdot d_{\text{out}} \rfloor$ \hfill \textit{// Number of neurons to prune}
+            \STATE Identify $k$ neurons with lowest mask logits
+            \STATE Set $m_i \leftarrow -100$, zero $\nabla m_i$ for pruned neurons
+        \ENDFOR
+    \ENDIF
+\ENDFOR
+\STATE \textbf{Model surgery:} Remove rows/columns of pruned neurons from weight matrices
+\RETURN Compact model $f_{\btheta'}$
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{Loss components.} The total loss combines cross-entropy for classification, a load-balancing loss for MoE routing~\citep{fedus2022switch} (weight 0.01), and a ponder cost for early-exit regularization (weight 0.01). Note that the Lagrangian FLOPs penalty is \emph{not} included; the cubic schedule replaces it entirely.
+
+\paragraph{Model surgery.} After training, we convert soft masks to hard decisions ($m_i \geq 0 \Rightarrow$ active) and physically remove the weight rows and columns corresponding to pruned neurons. This eliminates all mask-related overhead, producing a standard dense network with reduced dimensions. If fewer than 50\% of neurons are active, inference uses an \texttt{index\_select} sparse path; otherwise it uses the dense path with masking.

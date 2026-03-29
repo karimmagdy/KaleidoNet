@@ -1,0 +1,12 @@
+{
+  "model": "DenseViT",
+  "dataset": "tiny_imagenet",
+  "seed": 1,
+  "steps": 5000,
+  "image_size": 64,
+  "patch_size": 8,
+  "total_params": 1867976,
+  "best_val_acc": 0.197,
+  "flops_per_sample": 242836880,
+  "total_time_s": 829.031415939331
+}

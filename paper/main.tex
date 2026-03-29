@@ -1,0 +1,68 @@
+% KaleidoNet: Stable Hard Pruning in Elastic MoE Vision Transformers
+% via Cubic Sparsity Scheduling
+% NeurIPS 2026 Submission
+%
+% Options: [final] for camera-ready, [preprint] for arXiv, default = submission
+\documentclass[10pt]{article}
+\usepackage{neurips_2026}
+
+% ---- Extra packages ----
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{nicefrac}
+
+% ---- Math shortcuts ----
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\bm}{\mathbf{m}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\DeclareMathOperator{\softmax}{softmax}
+\DeclareMathOperator{\sigmoid}{sigmoid}
+
+% ---- Theorem environments ----
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+
+% ====================================================================
+\title{KaleidoNet: Stable Hard Pruning in Elastic MoE Vision Transformers\\via Cubic Sparsity Scheduling}
+
+\author{
+  Anonymous Author(s)
+}
+
+\begin{document}
+\maketitle
+
+% ====================================================================
+\input{sections/abstract}
+
+\input{sections/introduction}
+
+\input{sections/related_work}
+
+\input{sections/method}
+
+\input{sections/experiments}
+
+\input{sections/discussion}
+
+% ====================================================================
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+% ====================================================================
+% Appendix (optional, unlimited pages for NeurIPS)
+\newpage
+\appendix
+\input{sections/appendix}
+
+\end{document}

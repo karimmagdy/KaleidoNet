@@ -1,0 +1,20 @@
+{
+  "model": "MagnitudePruning",
+  "dataset": "cifar10",
+  "seed": 2,
+  "steps": 5000,
+  "finetune_steps": 1000,
+  "target_sparsity": 0.7,
+  "params": {
+    "total_params": 5473382,
+    "active_params": 2150998,
+    "dormant_params": 3322384,
+    "active_fraction": 0.39299248618130433
+  },
+  "dense_flops": 680232960,
+  "active_flops": 129642240,
+  "pre_prune_acc": 0.6276,
+  "post_prune_acc": 0.5697,
+  "val_loss": 1.0609022392272949,
+  "val_accuracy": 0.6204
+}

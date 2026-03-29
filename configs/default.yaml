@@ -1,0 +1,67 @@
+"""
+Default configuration for KaleidoNet experiments.
+"""
+
+# ── Model ──────────────────────────────────────────────────────────
+model:
+  embed_dim: 256
+  num_blocks: 6
+  num_heads: 8
+  num_experts: 8
+  expert_hidden_dim: null  # defaults to 4 * embed_dim
+  top_k: 1
+  elastic: true
+  drop_path_rate: 0.1
+  dropout: 0.0
+  confidence_threshold: 0.95
+
+# ── Tokenizer ──────────────────────────────────────────────────────
+tokenizer:
+  image_size: 32
+  patch_size: 4
+  vocab_size: 32000
+  max_seq_len: 512
+
+# ── Training ───────────────────────────────────────────────────────
+training:
+  lr: 3.0e-4
+  weight_decay: 0.01
+  max_steps: 10000
+  warmup_steps: 500
+  grad_clip: 1.0
+  batch_size: 64
+
+  # Compute budget
+  flops_budget: 1_000_000_000
+  lambda_init: 0.01
+  lambda_lr: 0.001
+
+  # Loss weights
+  lambda_balance: 0.01
+  lambda_ponder: 0.01
+  lambda_distill: 0.5
+
+  # Growth
+  growth_patience: 500
+  growth_factor: 1.5
+  max_growth_events: 5
+
+  # Temperature annealing
+  tau_start: 5.0
+  tau_end: 0.1
+  tau_anneal_steps: 5000
+
+  # Logging
+  log_interval: 50
+  eval_interval: 200
+  use_wandb: false
+  wandb_project: kaleidonet
+
+  # Mixed precision
+  use_amp: true
+
+# ── Data ───────────────────────────────────────────────────────────
+data:
+  dataset: cifar100
+  num_workers: 4
+  pin_memory: true

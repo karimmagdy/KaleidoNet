@@ -1,0 +1,19 @@
+================================================================================
+Cross-Dataset Summary
+================================================================================
+Dataset         Model                Seeds     Val Acc (%)    FLOPs (M)  Speedup
+--------------------------------------------------------------------------------
+CIFAR-10        DenseViT                 3    66.62 ± 0.53        234.5         
+CIFAR-10        KaleidoNet               3    62.12 ± 0.45        130.1    1.80x
+CIFAR-10        MagnitudePruning         2    62.50 ± 0.65        129.6    1.81x
+CIFAR-10        RandomPruning            2    62.70 ± 0.53        129.6    1.81x
+CIFAR-10        LinearSchedule           2    62.32 ± 0.71        130.1    1.80x
+
+CIFAR-100       DenseViT                 3    36.07 ± 0.59        236.7         
+CIFAR-100       KaleidoNet               3    31.21 ± 0.37        132.4    1.79x
+
+Tiny-ImageNet   DenseViT                 3    19.79 ± 0.30        242.8         
+Tiny-ImageNet   KaleidoNet               3    16.85 ± 0.23        134.9    1.80x
+
+STL-10          DenseViT                 3    57.70 ± 0.11        535.5         
+STL-10          KaleidoNet               3    61.63 ± 0.25        308.1    1.74x

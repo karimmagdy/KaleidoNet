@@ -1,0 +1,154 @@
+[
+  {
+    "name": "dense_baseline",
+    "config": {
+      "elastic": false,
+      "moe": false,
+      "early_exit": false,
+      "num_experts": 1,
+      "top_k": 1
+    },
+    "wall_time_seconds": 967.0594351291656,
+    "total_params": 1922600,
+    "active_params": 1922600,
+    "active_fraction": 1.0,
+    "active_flops": 172523520,
+    "dense_flops": 172541952,
+    "val_loss": 3.073261252593994,
+    "val_accuracy": 0.2423,
+    "val_avg_blocks": 4.0
+  },
+  {
+    "name": "moe_only",
+    "config": {
+      "elastic": false,
+      "moe": true,
+      "early_exit": false,
+      "num_experts": 4,
+      "top_k": 1
+    },
+    "wall_time_seconds": 3050.7374470233917,
+    "total_params": 5475368,
+    "active_params": 5475368,
+    "active_fraction": 1.0,
+    "active_flops": 172818432,
+    "dense_flops": 625821696,
+    "val_loss": 3.019316331481934,
+    "val_accuracy": 0.2463,
+    "val_avg_blocks": 4.0
+  },
+  {
+    "name": "elastic_only",
+    "config": {
+      "elastic": true,
+      "moe": false,
+      "early_exit": false,
+      "num_experts": 1,
+      "top_k": 1
+    },
+    "wall_time_seconds": 1170.8542649745941,
+    "total_params": 1926464,
+    "active_params": 1278472,
+    "active_fraction": 0.6636365901465068,
+    "active_flops": 152764416,
+    "dense_flops": 229165056,
+    "val_loss": 3.2707597522735594,
+    "val_accuracy": 0.2066,
+    "val_avg_blocks": 4.0
+  },
+  {
+    "name": "early_exit_only",
+    "config": {
+      "elastic": false,
+      "moe": false,
+      "early_exit": true,
+      "num_experts": 1,
+      "top_k": 1
+    },
+    "wall_time_seconds": 874.927304983139,
+    "total_params": 1922600,
+    "active_params": 1922600,
+    "active_fraction": 1.0,
+    "active_flops": 172523520,
+    "dense_flops": 172541952,
+    "val_loss": 3.0580259384155273,
+    "val_accuracy": 0.2495,
+    "val_avg_blocks": 4.0
+  },
+  {
+    "name": "moe+elastic",
+    "config": {
+      "elastic": true,
+      "moe": true,
+      "early_exit": false,
+      "num_experts": 4,
+      "top_k": 1
+    },
+    "wall_time_seconds": 3357.5890576839447,
+    "total_params": 5490752,
+    "active_params": 2898784,
+    "active_fraction": 0.5279393423705897,
+    "active_flops": 153059328,
+    "dense_flops": 682444800,
+    "val_loss": 3.2726548828125,
+    "val_accuracy": 0.2057,
+    "val_avg_blocks": 4.0
+  },
+  {
+    "name": "moe+early_exit",
+    "config": {
+      "elastic": false,
+      "moe": true,
+      "early_exit": true,
+      "num_experts": 4,
+      "top_k": 1
+    },
+    "wall_time_seconds": 2191.2839460372925,
+    "total_params": 5475368,
+    "active_params": 5475368,
+    "active_fraction": 1.0,
+    "active_flops": 172818432,
+    "dense_flops": 625821696,
+    "val_loss": 3.0053045543670653,
+    "val_accuracy": 0.2582,
+    "val_avg_blocks": 4.0
+  },
+  {
+    "name": "elastic+early_exit",
+    "config": {
+      "elastic": true,
+      "moe": false,
+      "early_exit": true,
+      "num_experts": 1,
+      "top_k": 1
+    },
+    "wall_time_seconds": 1111.3607947826385,
+    "total_params": 1926464,
+    "active_params": 1278472,
+    "active_fraction": 0.6636365901465068,
+    "active_flops": 152764416,
+    "dense_flops": 229165056,
+    "val_loss": 3.2775308254241944,
+    "val_accuracy": 0.2034,
+    "val_avg_blocks": 4.0
+  },
+  {
+    "name": "all_pillars",
+    "config": {
+      "elastic": true,
+      "moe": true,
+      "early_exit": true,
+      "num_experts": 4,
+      "top_k": 1
+    },
+    "wall_time_seconds": 7652.616896152496,
+    "total_params": 5490752,
+    "active_params": 2898784,
+    "active_fraction": 0.5279393423705897,
+    "active_flops": 153059328,
+    "dense_flops": 682444800,
+    "val_loss": 3.2458229232788085,
+    "val_accuracy": 0.2085,
+    "val_avg_blocks": 4.0
+  }
+]

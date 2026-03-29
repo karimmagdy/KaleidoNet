@@ -1,0 +1,41 @@
+\section{Introduction}
+\label{sec:intro}
+
+Mixture-of-Experts (MoE) architectures~\citep{shazeer2017outrageously,fedus2022switch} have emerged as a scalable approach to conditional computation, routing each input token to a subset of expert sub-networks while keeping total FLOPs manageable. When combined with Vision Transformers (ViTs)~\citep{dosovitskiy2021image,riquelme2021scaling}, MoE layers can increase model capacity without proportionally increasing inference cost. A natural next step is to \emph{prune within} each expert, removing inactive neurons to compress the model further. However, as we show in this work, standard approaches to per-neuron pruning fail when applied inside MoE ViTs.
+
+\paragraph{The gradient-scale problem.}
+The dominant strategy for compute-constrained pruning introduces a Lagrangian penalty on FLOPs:
+\begin{equation}
+\label{eq:lagrangian}
+\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{task}} + \lambda\bigl(\text{FLOPs}(\btheta) - B\bigr),
+\end{equation}
+where $B$ is the target budget and $\lambda$ is a Lagrange multiplier~\citep{gordon2018morphnet,lemaire2019structured}. When each neuron $i$ carries a learnable mask logit $m_i$ passed through a Gumbel-sigmoid gate~\citep{jang2017categorical,maddison2017concrete}, the gradient of the penalty with respect to $m_i$ scales as
+\begin{equation}
+\label{eq:grad_scale}
+\frac{\partial \mathcal{L}_{\text{FLOPs}}}{\partial m_i} \;\approx\; \lambda \cdot \underbrace{\frac{\text{flops}_i}{B}}_{\sim\,10^{-6}} \cdot \underbrace{\frac{\sigma'(m_i/\tau)}{\tau}}_{\sim\,10^{2}} \;\sim\; 10^{-4},
+\end{equation}
+while task-loss gradients through the same logit are of order $10^{-2}$. The two-order-of-magnitude gap means the Lagrangian signal is too weak to distinguish important neurons from unimportant ones, causing all mask logits to drift uniformly toward $-\infty$ (\emph{uniform collapse}) rather than selectively pruning the least useful neurons (Figure~\ref{fig:motivation}b). This problem is inherent to per-neuron granularity: each individual neuron contributes a negligible fraction of total FLOPs, so the Lagrangian gradient per neuron is vanishingly small.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{../figures/fig_motivation.pdf}
+\caption{\textbf{Motivation.} (a)~Gradient magnitudes for different parameter groups: mask logits receive $100{\times}$ weaker gradients than task weights. (b)~Under a Lagrangian penalty with shared LR, all mask logits converge to similar values (uniform collapse). (c)~KaleidoNet's cubic schedule with dual-rate optimization produces clear separation between kept and pruned neurons.}
+\label{fig:motivation}
+\end{figure}
+
+\paragraph{Our approach.}
+We propose \textbf{KaleidoNet}, an elastic MoE ViT that sidesteps the Lagrangian gradient-scale problem entirely by replacing the learned penalty with a \emph{deterministic cubic sparsity schedule}~\citep{zhu2017prune}. Instead of relying on gradient-based budget signals, the schedule externally dictates what fraction of neurons should be active at each training step, ramping from 0\% to 70\% sparsity along a cubic curve. Three complementary mechanisms make this schedule effective:
+
+\begin{enumerate}
+    \item \textbf{Gradient masking}: Once a neuron is pruned by the schedule, its mask logit is clamped to $-100$ and its gradient is zeroed, preventing accidental recovery and ensuring the pruning decision is irreversible.
+    \item \textbf{Dual-rate optimization}: Mask logits are optimized with a $3{\times}$ higher learning rate than task weights (9e-4 vs.\ 3e-4), allowing structural decisions to adapt faster than feature representations.
+    \item \textbf{Gumbel-sigmoid straight-through}: During training, mask activations use the Gumbel-sigmoid reparameterization with straight-through gradients~\citep{bengio2013estimating}, bridging the gap between discrete pruning decisions and continuous optimization.
+\end{enumerate}
+
+\paragraph{Contributions.}
+\begin{itemize}
+    \item We identify and analyze the \emph{gradient-scale mismatch} problem that causes Lagrangian FLOPs penalties to fail at per-neuron granularity inside MoE architectures (Section~\ref{sec:method}).
+    \item We propose KaleidoNet, combining a cubic sparsity schedule with gradient masking and dual-rate optimization to achieve stable, selective hard pruning in elastic MoE ViTs (Section~\ref{sec:method}).
+    \item We evaluate KaleidoNet on four benchmarks (CIFAR-10, CIFAR-100, Tiny-ImageNet, STL-10), demonstrating a consistent $1.8{\times}$ FLOPs reduction with 85--87\% accuracy retention, and provide ablations over eight architectural configurations (Section~\ref{sec:experiments}).
+    \item We show that trained masks can be converted to physically compact networks via model surgery, achieving $1.63{\times}$ parameter compression with no additional accuracy loss (Section~\ref{sec:experiments}).
+\end{itemize}

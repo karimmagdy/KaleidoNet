@@ -1,0 +1,89 @@
+/Users/kmagdy-ma-eg/Library/Python/3.9/lib/python/site-packages/torch/amp/autocast_mode.py:346: UserWarning: In MPS autocast, but the target dtype is not supported. Disabling autocast.
+MPS Autocast only supports dtype of torch.bfloat16 and torch.float16 currently.
+  warnings.warn(error_message)
+============================================================
+KaleidoNet CIFAR-100 Training
+============================================================
+Total params:  5,490,752
+Active params: 5,490,752
+Active fraction: 100.0%
+
+Dense FLOPs (per sample):   682,444,800
+Active FLOPs at init:       239,516,160
+FLOPs budget (50% active):  119,758,080
+Target: 50% of init active = 18% of dense
+
+Starting KaleidoNet training on mps
+  Model params: 5,490,752
+  FLOPs budget: 119,758,080
+  Max steps: 5000
+
+Step      0 | loss=4.8134 | task=4.7260 | active=50% | blocks=4 | λ=0.0150 | τ=5.000 | lr=1.20e-05 | 0.1 steps/s
+Step     50 | loss=4.7304 | task=4.5847 | active=50% | blocks=4 | λ=0.0387 | τ=4.951 | lr=4.08e-05 | 0.2 steps/s
+Step    100 | loss=4.6992 | task=4.5852 | active=50% | blocks=4 | λ=0.0277 | τ=4.902 | lr=1.14e-04 | 0.1 steps/s
+Step    150 | loss=4.5747 | task=4.4854 | active=50% | blocks=4 | λ=0.0173 | τ=4.853 | lr=2.03e-04 | 0.0 steps/s
+Step    200 | loss=4.4431 | task=4.3210 | active=50% | blocks=4 | λ=0.0322 | τ=4.804 | lr=2.74e-04 | 0.0 steps/s
+Step    250 | loss=4.3849 | task=4.2260 | active=50% | blocks=4 | λ=0.0482 | τ=4.755 | lr=3.00e-04 | 0.0 steps/s
+Step    300 | loss=4.1331 | task=3.9581 | active=50% | blocks=4 | λ=0.0554 | τ=4.706 | lr=3.00e-04 | 0.0 steps/s
+Step    350 | loss=4.2885 | task=4.1125 | active=50% | blocks=4 | λ=0.0557 | τ=4.657 | lr=3.00e-04 | 0.0 steps/s
+Step    400 | loss=4.2322 | task=4.0755 | active=50% | blocks=4 | λ=0.0470 | τ=4.608 | lr=2.99e-04 | 0.0 steps/s
+Step    450 | loss=3.9973 | task=3.8621 | active=50% | blocks=4 | λ=0.0374 | τ=4.559 | lr=2.99e-04 | 0.0 steps/s
+Step    500 | loss=4.1749 | task=4.0661 | active=50% | blocks=4 | λ=0.0258 | τ=4.510 | lr=2.98e-04 | 0.0 steps/s
+  [EVAL] val_loss=3.9619 | val_acc=0.0814 | avg_blocks=4.0
+Step    550 | loss=3.8132 | task=3.7318 | active=50% | blocks=4 | λ=0.0136 | τ=4.461 | lr=2.97e-04 | 0.0 steps/s
+Step    600 | loss=3.6027 | task=3.5521 | active=50% | blocks=4 | λ=0.0000 | τ=4.412 | lr=2.96e-04 | 0.0 steps/s
+Step    650 | loss=3.9410 | task=3.8904 | active=50% | blocks=4 | λ=0.0000 | τ=4.363 | lr=2.95e-04 | 0.0 steps/s
+Step    700 | loss=3.8722 | task=3.8220 | active=50% | blocks=4 | λ=0.0000 | τ=4.314 | lr=2.93e-04 | 0.0 steps/s
+Step    750 | loss=3.5242 | task=3.4739 | active=50% | blocks=4 | λ=0.0000 | τ=4.265 | lr=2.92e-04 | 0.0 steps/s
+Step    800 | loss=3.6527 | task=3.6026 | active=50% | blocks=4 | λ=0.0000 | τ=4.216 | lr=2.90e-04 | 0.0 steps/s
+Step    850 | loss=3.6547 | task=3.6045 | active=50% | blocks=4 | λ=0.0000 | τ=4.167 | lr=2.88e-04 | 0.0 steps/s
+Step    900 | loss=3.6878 | task=3.6372 | active=50% | blocks=4 | λ=0.0002 | τ=4.118 | lr=2.86e-04 | 0.0 steps/s
+Step    950 | loss=3.4647 | task=3.4084 | active=50% | blocks=4 | λ=0.0027 | τ=4.069 | lr=2.84e-04 | 0.0 steps/s
+Step   1000 | loss=3.5928 | task=3.5329 | active=50% | blocks=4 | λ=0.0044 | τ=4.020 | lr=2.82e-04 | 0.0 steps/s
+  [EVAL] val_loss=3.6813 | val_acc=0.1296 | avg_blocks=4.0
+Step   1050 | loss=3.3390 | task=3.2704 | active=50% | blocks=4 | λ=0.0083 | τ=3.971 | lr=2.79e-04 | 0.0 steps/s
+Step   1100 | loss=3.3152 | task=3.2372 | active=50% | blocks=4 | λ=0.0125 | τ=3.922 | lr=2.77e-04 | 0.0 steps/s
+Step   1150 | loss=3.3832 | task=3.2968 | active=50% | blocks=4 | λ=0.0162 | τ=3.873 | lr=2.74e-04 | 0.0 steps/s
+Step   1200 | loss=3.4857 | task=3.3941 | active=50% | blocks=4 | λ=0.0185 | τ=3.824 | lr=2.71e-04 | 0.0 steps/s
+Step   1250 | loss=3.7180 | task=3.6213 | active=50% | blocks=4 | λ=0.0207 | τ=3.775 | lr=2.68e-04 | 0.0 steps/s
+Step   1300 | loss=3.5573 | task=3.4560 | active=50% | blocks=4 | λ=0.0228 | τ=3.726 | lr=2.65e-04 | 0.0 steps/s
+Step   1350 | loss=3.6988 | task=3.5951 | active=50% | blocks=4 | λ=0.0238 | τ=3.677 | lr=2.62e-04 | 0.0 steps/s
+Step   1400 | loss=3.4921 | task=3.3839 | active=50% | blocks=4 | λ=0.0258 | τ=3.628 | lr=2.59e-04 | 0.0 steps/s
+Step   1450 | loss=3.5672 | task=3.4575 | active=50% | blocks=4 | λ=0.0264 | τ=3.579 | lr=2.55e-04 | 0.0 steps/s
+Step   1500 | loss=3.1694 | task=3.0586 | active=50% | blocks=4 | λ=0.0270 | τ=3.530 | lr=2.51e-04 | 0.0 steps/s
+  [EVAL] val_loss=3.5299 | val_acc=0.1492 | avg_blocks=4.0
+Step   1550 | loss=3.2391 | task=3.1295 | active=50% | blocks=4 | λ=0.0265 | τ=3.481 | lr=2.48e-04 | 0.0 steps/s
+Step   1600 | loss=3.1235 | task=3.0171 | active=50% | blocks=4 | λ=0.0250 | τ=3.432 | lr=2.44e-04 | 0.0 steps/s
+Step   1650 | loss=3.1739 | task=3.0721 | active=50% | blocks=4 | λ=0.0229 | τ=3.383 | lr=2.40e-04 | 0.0 steps/s
+Step   1700 | loss=3.1393 | task=3.0424 | active=50% | blocks=4 | λ=0.0207 | τ=3.334 | lr=2.36e-04 | 0.0 steps/s
+Step   1750 | loss=3.4895 | task=3.3969 | active=50% | blocks=4 | λ=0.0189 | τ=3.285 | lr=2.32e-04 | 0.0 steps/s
+Step   1800 | loss=3.1213 | task=3.0337 | active=50% | blocks=4 | λ=0.0167 | τ=3.236 | lr=2.28e-04 | 0.0 steps/s
+Step   1850 | loss=3.4732 | task=3.3903 | active=50% | blocks=4 | λ=0.0146 | τ=3.187 | lr=2.23e-04 | 0.0 steps/s
+Step   1900 | loss=3.1777 | task=3.1003 | active=50% | blocks=4 | λ=0.0120 | τ=3.138 | lr=2.19e-04 | 0.0 steps/s
+Step   1950 | loss=3.1484 | task=3.0741 | active=50% | blocks=4 | λ=0.0107 | τ=3.089 | lr=2.15e-04 | 0.0 steps/s
+Step   2000 | loss=3.1688 | task=3.0968 | active=50% | blocks=4 | λ=0.0097 | τ=3.040 | lr=2.10e-04 | 0.0 steps/s
+  [EVAL] val_loss=3.3908 | val_acc=0.1816 | avg_blocks=4.0
+Step   2050 | loss=3.3458 | task=3.2738 | active=50% | blocks=4 | λ=0.0097 | τ=2.991 | lr=2.05e-04 | 0.0 steps/s
+Step   2100 | loss=3.1062 | task=3.0348 | active=50% | blocks=4 | λ=0.0095 | τ=2.942 | lr=2.01e-04 | 0.0 steps/s
+Step   2150 | loss=3.0072 | task=2.9354 | active=50% | blocks=4 | λ=0.0097 | τ=2.893 | lr=1.96e-04 | 0.0 steps/s
+Step   2200 | loss=3.2125 | task=3.1402 | active=50% | blocks=4 | λ=0.0099 | τ=2.844 | lr=1.91e-04 | 0.0 steps/s
+Step   2250 | loss=2.8777 | task=2.7998 | active=50% | blocks=4 | λ=0.0125 | τ=2.795 | lr=1.87e-04 | 0.0 steps/s
+Step   2300 | loss=3.0998 | task=3.0131 | active=50% | blocks=4 | λ=0.0164 | τ=2.746 | lr=1.82e-04 | 0.0 steps/s
+Step   2350 | loss=2.9208 | task=2.8253 | active=50% | blocks=4 | λ=0.0203 | τ=2.697 | lr=1.77e-04 | 0.0 steps/s
+Step   2400 | loss=2.9986 | task=2.8945 | active=50% | blocks=4 | λ=0.0240 | τ=2.648 | lr=1.72e-04 | 0.0 steps/s
+Step   2450 | loss=3.0695 | task=2.9553 | active=50% | blocks=4 | λ=0.0286 | τ=2.599 | lr=1.67e-04 | 0.0 steps/s
+Step   2500 | loss=2.9801 | task=2.8548 | active=50% | blocks=4 | λ=0.0336 | τ=2.550 | lr=1.62e-04 | 0.0 steps/s
+  [EVAL] val_loss=3.3495 | val_acc=0.1884 | avg_blocks=4.0
+Step   2550 | loss=2.8725 | task=2.7362 | active=50% | blocks=4 | λ=0.0386 | τ=2.501 | lr=1.57e-04 | 0.0 steps/s
+Step   2600 | loss=3.2134 | task=3.0650 | active=50% | blocks=4 | λ=0.0439 | τ=2.452 | lr=1.52e-04 | 0.0 steps/s
+Step   2650 | loss=3.1894 | task=3.0302 | active=50% | blocks=4 | λ=0.0487 | τ=2.403 | lr=1.47e-04 | 0.0 steps/s
+Step   2700 | loss=3.2811 | task=3.1112 | active=50% | blocks=4 | λ=0.0535 | τ=2.354 | lr=1.42e-04 | 0.0 steps/s
+Step   2750 | loss=3.4632 | task=3.2851 | active=49% | blocks=4 | λ=0.0571 | τ=2.305 | lr=1.37e-04 | 0.0 steps/s
+Step   2800 | loss=2.9143 | task=2.7302 | active=49% | blocks=4 | λ=0.0597 | τ=2.256 | lr=1.32e-04 | 0.0 steps/s
+Step   2850 | loss=3.1746 | task=2.9861 | active=49% | blocks=4 | λ=0.0618 | τ=2.207 | lr=1.28e-04 | 0.0 steps/s
+Step   2900 | loss=2.8210 | task=2.6308 | active=49% | blocks=4 | λ=0.0625 | τ=2.158 | lr=1.23e-04 | 0.0 steps/s
+Step   2950 | loss=3.0624 | task=2.8719 | active=49% | blocks=4 | λ=0.0627 | τ=2.109 | lr=1.18e-04 | 0.0 steps/s
+Step   3000 | loss=3.0605 | task=2.8708 | active=49% | blocks=4 | λ=0.0623 | τ=2.060 | lr=1.13e-04 | 0.0 steps/s
+  [EVAL] val_loss=3.1974 | val_acc=0.2136 | avg_blocks=4.0
+Step   3050 | loss=3.1646 | task=2.9787 | active=49% | blocks=4 | λ=0.0605 | τ=2.011 | lr=1.08e-04 | 0.0 steps/s
+Step   3100 | loss=2.7968 | task=2.6182 | active=49% | blocks=4 | λ=0.0573 | τ=1.962 | lr=1.03e-04 | 0.0 steps/s

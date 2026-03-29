@@ -1,0 +1,99 @@
+% neurips_2026.sty — Simplified NeurIPS 2026 style
+% Replace with the official style file from https://neurips.cc when available.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{neurips_2026}[2026/01/01 NeurIPS 2026 Style (simplified)]
+
+% ---- Options ----
+\newif\if@preprint\@preprintfalse
+\newif\if@final\@finalfalse
+\DeclareOption{preprint}{\@preprinttrue}
+\DeclareOption{final}{\@finaltrue}
+\ProcessOptions\relax
+
+% ---- Page geometry (NeurIPS standard) ----
+\RequirePackage[
+  letterpaper,
+  textwidth=5.5in,
+  textheight=9in,
+  top=1in,
+  left=1.5in,
+]{geometry}
+
+% ---- Typography ----
+\RequirePackage{times}
+\RequirePackage{microtype}
+
+% ---- Spacing ----
+\RequirePackage{setspace}
+\setstretch{1.0}
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{1em}
+
+% ---- Sections: small caps ----
+\RequirePackage{titlesec}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\itshape}{\thesubsubsection}{1em}{}
+
+% ---- Title ----
+\renewcommand{\maketitle}{%
+  \begin{center}%
+    {\LARGE\bfseries\@title\par}%
+    \vskip 0.5em%
+    \if@final
+      {\normalsize\@author\par}%
+    \else
+      {\normalsize Anonymous Author(s)\par}%
+    \fi
+    \vskip 1em%
+  \end{center}%
+}
+
+% ---- Abstract ----
+\renewenvironment{abstract}{%
+  \centerline{\large\bfseries Abstract}%
+  \vskip 0.5em%
+  \begin{quote}\small
+}{%
+  \end{quote}\vskip 1em%
+}
+
+% ---- Headers / footers ----
+\RequirePackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\if@preprint
+  \rhead{\small Preprint. Under review.}
+\fi
+\if@final\else
+  \if@preprint\else
+    \rhead{\small Submitted to NeurIPS 2026 Workshop}
+  \fi
+\fi
+
+% ---- No page numbers for submission ----
+\if@final
+  \cfoot{\thepage}
+\else
+  \cfoot{}
+\fi
+
+% ---- Useful packages ----
+\RequirePackage{amsmath,amssymb}
+\RequirePackage{graphicx}
+\RequirePackage{booktabs}
+\RequirePackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  citecolor=blue!60!black,
+  urlcolor=blue!60!black,
+}
+\RequirePackage{url}
+\RequirePackage{natbib}
+\bibliographystyle{abbrvnat}
+\setcitestyle{authoryear,round}
+
+\endinput

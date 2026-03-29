@@ -1,0 +1,287 @@
+{
+  "device": "mps",
+  "batch_size": 64,
+  "warmup": 10,
+  "steps": 50,
+  "dense_vit": {
+    "params": 1821028,
+    "mean_ms": 7.154578379999972,
+    "median_ms": 7.104625000000198,
+    "min_ms": 7.009166000000011,
+    "max_ms": 7.604416000000391,
+    "throughput_samples_per_s": 8945.320968026106
+  },
+  "kaleidonet": {
+    "total_params": 5490752,
+    "active_params": 3391904,
+    "dormant_params": 2098848,
+    "active_fraction": 0.617748534262702,
+    "active_flops": 171525120,
+    "mean_ms": 131.38725333999994,
+    "median_ms": 130.8450410000006,
+    "min_ms": 128.45520800000008,
+    "max_ms": 140.0956659999988,
+    "throughput_samples_per_s": 487.10965769550523
+  },
+  "surgery": {
+    "original_params": 5490752,
+    "pruned_params": 3376520,
+    "compression_ratio": 1.6261571085022448,
+    "per_layer": [
+      {
+        "layer": "backbone.blocks.0.attn",
+        "type": "ElasticAttention",
+        "original_heads": 6,
+        "pruned_heads": 6,
+        "kept_fraction": 1.0
+      },
+      {
+        "layer": "backbone.blocks.0.moe.experts.0.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.0.moe.experts.0.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.0.moe.experts.1.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.0.moe.experts.1.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.0.moe.experts.2.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.0.moe.experts.2.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.0.moe.experts.3.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.0.moe.experts.3.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.1.attn",
+        "type": "ElasticAttention",
+        "original_heads": 6,
+        "pruned_heads": 6,
+        "kept_fraction": 1.0
+      },
+      {
+        "layer": "backbone.blocks.1.moe.experts.0.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.1.moe.experts.0.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.1.moe.experts.1.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.1.moe.experts.1.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.1.moe.experts.2.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.1.moe.experts.2.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.1.moe.experts.3.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.1.moe.experts.3.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.2.attn",
+        "type": "ElasticAttention",
+        "original_heads": 6,
+        "pruned_heads": 6,
+        "kept_fraction": 1.0
+      },
+      {
+        "layer": "backbone.blocks.2.moe.experts.0.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.2.moe.experts.0.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.2.moe.experts.1.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.2.moe.experts.1.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.2.moe.experts.2.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.2.moe.experts.2.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.2.moe.experts.3.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.2.moe.experts.3.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.3.attn",
+        "type": "ElasticAttention",
+        "original_heads": 6,
+        "pruned_heads": 6,
+        "kept_fraction": 1.0
+      },
+      {
+        "layer": "backbone.blocks.3.moe.experts.0.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.3.moe.experts.0.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.3.moe.experts.1.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.3.moe.experts.1.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.3.moe.experts.2.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.3.moe.experts.2.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      },
+      {
+        "layer": "backbone.blocks.3.moe.experts.3.fc1",
+        "type": "ElasticLinear",
+        "original_out": 768,
+        "pruned_out": 427,
+        "kept_fraction": 0.5559895833333334
+      },
+      {
+        "layer": "backbone.blocks.3.moe.experts.3.fc2",
+        "type": "ElasticLinear",
+        "original_out": 192,
+        "pruned_out": 107,
+        "kept_fraction": 0.5572916666666666
+      }
+    ]
+  },
+  "latency_speedup_vs_dense": 0.054454128525585135,
+  "throughput_speedup_vs_dense": 0.054454128525585135
+}

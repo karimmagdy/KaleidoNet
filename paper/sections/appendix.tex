@@ -1,0 +1,95 @@
+\appendix
+\section{Per-Seed Detailed Results}
+\label{sec:appendix_seeds}
+
+Table~\ref{tab:per_seed} reports individual seed results for all datasets and methods. Mean and standard deviation are computed over 3 seeds; the main paper reports these aggregated statistics.
+
+\begin{table}[h]
+\centering
+\caption{Per-seed results for all (dataset, method) combinations.}
+\label{tab:per_seed}
+\small
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Dataset} & \textbf{Method} & \textbf{Seed} & \textbf{Val Acc (\%)} & \textbf{Active FLOPs (M)} & \textbf{Params (M)} \\
+\midrule
+\multirow{6}{*}{CIFAR-100}
+& \multirow{3}{*}{Dense ViT} & 1 & 35.41 & 236.7 & 1.82 \\
+& & 2 & 36.76 & 236.7 & 1.82 \\
+& & 3 & 36.03 & 236.7 & 1.82 \\
+\cmidrule{2-6}
+& \multirow{3}{*}{KaleidoNet} & 1 & 31.40 & 132.4 & 2.18 \\
+& & 2 & 31.42 & 132.4 & 2.17 \\
+& & 3 & 30.82 & 132.4 & 2.15 \\
+\midrule
+\multirow{6}{*}{Tiny-ImageNet}
+& \multirow{3}{*}{Dense ViT} & 1 & 20.06 & 242.8 & 1.83 \\
+& & 2 & 19.83 & 242.8 & 1.83 \\
+& & 3 & 19.49 & 242.8 & 1.83 \\
+\cmidrule{2-6}
+& \multirow{3}{*}{KaleidoNet} & 1 & 17.04 & 134.9 & 2.18 \\
+& & 2 & 16.90 & 134.9 & 2.17 \\
+& & 3 & 16.60 & 134.9 & 2.16 \\
+\midrule
+\multirow{6}{*}{CIFAR-10}
+& \multirow{3}{*}{Dense ViT} & 1 & 66.08 & 234.5 & 1.80 \\
+& & 2 & 67.13 & 234.5 & 1.80 \\
+& & 3 & 66.66 & 234.5 & 1.80 \\
+\cmidrule{2-6}
+& \multirow{3}{*}{KaleidoNet} & 1 & 62.58 & 130.1 & 2.17 \\
+& & 2 & 61.68 & 130.1 & 2.17 \\
+& & 3 & 62.11 & 130.1 & 2.17 \\
+\midrule
+\multirow{6}{*}{STL-10}
+& \multirow{3}{*}{Dense ViT} & 1 & 57.78 & 535.5 & 1.85 \\
+& & 2 & 57.57 & 535.5 & 1.85 \\
+& & 3 & 57.74 & 535.5 & 1.85 \\
+\cmidrule{2-6}
+& \multirow{3}{*}{KaleidoNet} & 1 & 61.58 & 308.1 & 2.21 \\
+& & 2 & 61.41 & 308.1 & 2.21 \\
+& & 3 & 61.90 & 308.1 & 2.21 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Hyperparameter Details}
+\label{sec:appendix_hyperparams}
+
+Table~\ref{tab:hyperparams} summarizes all hyperparameters used across experiments.
+
+\begin{table}[h]
+\centering
+\caption{Full hyperparameter configuration.}
+\label{tab:hyperparams}
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Hyperparameter} & \textbf{Value} \\
+\midrule
+Embedding dimension $d$ & 192 \\
+Transformer blocks & 4 \\
+Attention heads & 6 \\
+MoE experts & 4 (top-1) \\
+Patch size (CIFAR) & 4 \\
+Patch size (TinyIN/STL) & 8 \\
+\midrule
+Training steps & 5{,}000 \\
+Batch size & 64 \\
+Task LR (AdamW) & $3 \times 10^{-4}$ \\
+Mask LR (Adam) & $9 \times 10^{-4}$ \\
+Weight decay (task only) & 0.01 \\
+LR schedule & OneCycleLR \\
+Warmup steps & 500 \\
+Gradient clip & 1.0 \\
+\midrule
+Target sparsity $s_f$ & 0.70 \\
+Schedule start $t_0$ & 500 \\
+Schedule end $t_1$ & 4{,}000 \\
+Schedule frequency & every 100 steps \\
+Gumbel $\tau$ (start $\to$ end) & $5.0 \to 0.1$ (linear) \\
+Balance loss weight & 0.01 \\
+Ponder loss weight & 0.01 \\
+Drop path rate & 0.1 \\
+\bottomrule
+\end{tabular}
+\end{table}

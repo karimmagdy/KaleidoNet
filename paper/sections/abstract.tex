@@ -1,0 +1,25 @@
+\begin{abstract}
+Mixture-of-Experts (MoE) Vision Transformers offer a promising path to
+conditional computation, yet pruning individual neurons within expert
+sub-networks remains unstable: standard Lagrangian FLOPs penalties
+produce per-neuron gradients that are orders of magnitude weaker than
+task gradients (${\sim}10^{-4}$ vs.\ ${\sim}10^{-2}$), causing
+\emph{uniform mask collapse} rather than selective pruning. We present
+\textbf{KaleidoNet}, an elastic MoE Vision Transformer that replaces
+Lagrangian budget control with a \emph{cubic sparsity schedule} paired
+with gradient masking and a dual-rate optimizer. A deterministic
+schedule ramps target sparsity from 0\% to 70\% following a cubic
+curve, while hard gradient masking freezes pruned neurons permanently
+and a $3{\times}$ higher learning rate on mask logits accelerates
+structural adaptation. Through systematic experiments on four image
+classification benchmarks (CIFAR-10, CIFAR-100, Tiny-ImageNet,
+STL-10), we demonstrate that KaleidoNet achieves a consistent
+$\mathbf{1.8{\times}}$ FLOPs reduction while retaining
+$\mathbf{85\text{--}93\%}$ of dense-model accuracy. Ablations over
+eight architectural configurations reveal that elastic pruning and MoE
+routing provide complementary benefits, with the cubic schedule being
+the critical enabler of stable convergence. Model surgery converts the
+soft masks into physically compact networks, yielding a
+$\mathbf{1.63{\times}}$ parameter compression with no additional
+accuracy loss.
+\end{abstract}

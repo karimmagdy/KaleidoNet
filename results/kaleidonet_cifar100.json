@@ -1,0 +1,15 @@
+{
+  "model": "KaleidoNet",
+  "steps": 5000,
+  "params": {
+    "total_params": 5490752,
+    "active_params": 5490752,
+    "dormant_params": 0,
+    "active_fraction": 1.0
+  },
+  "flops_budget": 200000000,
+  "dense_flops": 78465024,
+  "val_loss": 2.520586553955078,
+  "val_accuracy": 0.3426,
+  "val_avg_blocks": 4.0
+}

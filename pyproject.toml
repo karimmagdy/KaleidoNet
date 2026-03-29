@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "kaleidonet"
+version = "0.1.0"
+description = "Compound Dynamic Architecture for Orders-of-Magnitude Training Speedup"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.1",
+    "torchvision>=0.16",
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+full = [
+    "transformers>=4.35",
+    "datasets>=2.15",
+    "wandb>=0.16",
+    "bitsandbytes>=0.41",
+    "pyyaml>=6.0",
+]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "ruff>=0.1",
+]
+
+[tool.setuptools.packages.find]
+include = ["kaleidonet*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
