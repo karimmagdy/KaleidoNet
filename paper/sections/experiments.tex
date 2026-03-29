@@ -108,7 +108,7 @@ At 2{,}000 steps, elastic pruning reduces accuracy by ${\sim}3.5$ pp because the
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.85\linewidth]{../figures/fig_ablation.pdf}
+\includegraphics[width=0.85\linewidth]{figures/fig_ablation.pdf}
 \caption{Ablation study on CIFAR-100 (2{,}000 steps). \textbf{Top}: Val accuracy. Elastic pruning reduces accuracy at short budgets (red bars), while MoE and early exit provide complementary gains (green bars). \textbf{Bottom}: Active FLOPs. Only elastic configurations achieve FLOPs reduction.}
 \label{fig:ablation}
 \end{figure}
@@ -147,7 +147,7 @@ Figure~\ref{fig:trajectory} shows the evolution of active neuron fraction over t
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.7\linewidth]{../figures/fig2_pruning_evolution.pdf}
+\includegraphics[width=0.7\linewidth]{figures/fig2_pruning_evolution.pdf}
 \caption{Pruning trajectory on CIFAR-100. \textbf{Top}: Hard active neuron fraction (100\% $\to$ 30\%) following the cubic schedule. \textbf{Bottom}: Validation accuracy continues improving after the schedule completes at step 4{,}000.}
 \label{fig:trajectory}
 \end{figure}

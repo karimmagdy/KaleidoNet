@@ -18,7 +18,7 @@ while task-loss gradients through the same logit are of order $10^{-2}$. The two
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{../figures/fig_motivation.pdf}
+\includegraphics[width=\linewidth]{figures/fig_motivation.pdf}
 \caption{\textbf{Motivation.} (a)~Gradient magnitudes for different parameter groups: mask logits receive $100{\times}$ weaker gradients than task weights. (b)~Under a Lagrangian penalty with shared LR, all mask logits converge to similar values (uniform collapse). (c)~KaleidoNet's cubic schedule with dual-rate optimization produces clear separation between kept and pruned neurons.}
 \label{fig:motivation}
 \end{figure}
