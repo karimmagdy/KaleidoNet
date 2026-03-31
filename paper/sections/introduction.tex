@@ -36,6 +36,6 @@ We propose \textbf{KaleidoNet}, an elastic MoE ViT that sidesteps the Lagrangian
 \begin{itemize}
     \item We identify and analyze the \emph{gradient-scale mismatch} problem that causes Lagrangian FLOPs penalties to fail at per-neuron granularity inside MoE architectures (Section~\ref{sec:method}).
     \item We propose KaleidoNet, combining a cubic sparsity schedule with gradient masking and dual-rate optimization to achieve stable, selective hard pruning in elastic MoE ViTs (Section~\ref{sec:method}).
-    \item We evaluate KaleidoNet on four benchmarks (CIFAR-10, CIFAR-100, Tiny-ImageNet, STL-10), demonstrating a consistent $1.8{\times}$ FLOPs reduction with 85--87\% accuracy retention, and provide ablations over eight architectural configurations (Section~\ref{sec:experiments}).
+    \item We evaluate KaleidoNet on four benchmarks (CIFAR-10, CIFAR-100, Tiny-ImageNet, STL-10) under a preliminary 5{,}000-step training budget. KaleidoNet achieves a consistent $1.8{\times}$ FLOPs reduction with 85--87\% accuracy retention relative to the dense baseline, though it does not yet surpass simpler pruning baselines under this limited schedule. Ablations over eight architectural configurations isolate the contribution of each component (Section~\ref{sec:experiments}).
     \item We show that trained masks can be converted to physically compact networks via model surgery, achieving $1.63{\times}$ parameter compression with no additional accuracy loss (Section~\ref{sec:experiments}).
 \end{itemize}

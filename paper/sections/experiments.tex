@@ -33,7 +33,7 @@ We compare against three structured pruning baselines applied to the same elasti
 \subsection{Main Results}
 \label{sec:main_results}
 
-Table~\ref{tab:main} summarizes results across all four datasets. KaleidoNet achieves ${\sim}1.8{\times}$ FLOPs reduction on CIFAR-10/100 and Tiny-ImageNet while retaining 85--93\% of accuracy. On STL-10 (96$\times$96), KaleidoNet \emph{exceeds} the dense baseline by 3.9~pp while using only 57.5\% of the FLOPs, demonstrating that MoE expert specialization can more than compensate for the pruned capacity at higher image resolutions. On CIFAR-10, all pruning strategies perform similarly (within 1\%), consistent with the low task complexity (10 classes).
+Table~\ref{tab:main} summarizes results across all four datasets. All pruned methods, including KaleidoNet, achieve ${\sim}1.8{\times}$ FLOPs reduction. On CIFAR-100 and Tiny-ImageNet, KaleidoNet retains 85--87\% of dense-model accuracy but trails the best pruned baselines (random structured pruning and magnitude pruning, respectively) by small margins. On STL-10 (96$\times$96), all pruned methods \emph{exceed} the dense baseline, suggesting that MoE expert specialization can more than compensate for pruned capacity at higher image resolutions; however, KaleidoNet (61.63\%) is not the best-performing pruned method (random pruning achieves 62.16\%). On CIFAR-10, all pruning strategies perform similarly (within 1\%), consistent with the low task complexity (10 classes). We attribute KaleidoNet's lack of advantage over simpler baselines to the severely limited 5{,}000-step training budget: the cubic schedule completes pruning at step 4{,}000, leaving only 1{,}000 steps for recovery, whereas magnitude and random pruning apply their masks before or at initialization and train with full capacity throughout.
 
 \begin{table}[t]
 \centering
@@ -74,6 +74,19 @@ Table~\ref{tab:main} summarizes results across all four datasets. KaleidoNet ach
 \bottomrule
 \end{tabular}
 \end{table}
+
+% ------------------------------------------------------------------
+\subsection{Accuracy--FLOPs Tradeoff}
+\label{sec:pareto}
+
+Figure~\ref{fig:pareto} visualizes the accuracy vs.\ active FLOPs tradeoff across all methods and datasets. All pruned methods cluster in a similar region of the Pareto frontier, achieving ${\sim}1.8{\times}$ FLOPs reduction with comparable accuracy retention. Notably, KaleidoNet does not currently dominate simpler baselines on the Pareto front under the limited 5{,}000-step training budget, motivating future experiments with longer training schedules where the cubic schedule's gradual pruning is expected to provide a greater advantage.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.75\linewidth]{figures/fig1_pareto.pdf}
+\caption{Accuracy vs.\ active FLOPs across all methods and datasets. The dense ViT (rightmost points) achieves the highest accuracy at full FLOPs. All pruned methods reduce FLOPs by ${\sim}1.8{\times}$ with similar accuracy--FLOPs tradeoffs under the current training budget.}
+\label{fig:pareto}
+\end{figure}
 
 % ------------------------------------------------------------------
 \subsection{Ablation Study}
@@ -138,6 +151,29 @@ Attention heads               & 6/6   & 6/6 (100\%)  \\
 \end{table}
 
 The cubic schedule prunes MoE expert neurons to ${\sim}30\%$ of their original width, closely matching the 70\% target sparsity. Attention heads are not targeted by the current schedule (all 6 heads survive), representing an avenue for future work. The surgically compressed model produces identical outputs to the masked model, with no additional accuracy loss.
+
+% ------------------------------------------------------------------
+\subsection{Computational Overhead}
+\label{sec:overhead}
+
+While KaleidoNet achieves $1.8{\times}$ FLOPs reduction in terms of active multiply-accumulate operations, it is important to disclose that these theoretical savings do not currently translate to wall-clock speedups. Table~\ref{tab:latency} reports inference latency benchmarks on Apple MPS (batch size 64).
+
+\begin{table}[t]
+\centering
+\caption{Inference latency comparison (Apple MPS, batch size 64, 100 iterations).}
+\label{tab:latency}
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Model} & \textbf{Mean Latency (ms)} & \textbf{Throughput (samples/s)} \\
+\midrule
+Dense ViT       & 7.15  & 8{,}945 \\
+KaleidoNet      & 131.4 & 487 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+KaleidoNet is approximately $18{\times}$ \emph{slower} than the dense ViT at inference on MPS. This overhead arises because MoE routing (gating network, scatter/gather dispatching) dominates latency at this small model scale, far outweighing the savings from reduced per-expert compute. We expect this gap to narrow substantially at larger model scales where per-expert computation becomes the bottleneck, and on CUDA hardware with optimized MoE kernels (e.g., Megablocks~\citep{gale2023megablocks}). Training wall-clock time is similarly affected: the full KaleidoNet configuration (all pillars) takes $7{,}653$\,s for 2{,}000 steps compared to $967$\,s for the dense baseline (${\sim}8{\times}$ overhead), as shown in Table~\ref{tab:ablation}. Reducing MoE routing overhead at small scale is an important direction for future work.
 
 % ------------------------------------------------------------------
 \subsection{Pruning Trajectory}
