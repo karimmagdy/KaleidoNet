@@ -4,7 +4,7 @@ Convergence training: run ALL methods on ALL datasets with extended training.
 Runs 50,000 steps (10x smoke-test budget) with cosine annealing LR and logs
 full training curves (loss + accuracy per eval step) for publication plots.
 
-Methods: dense, magnitude, random, linear, kaleidonet
+Methods: dense, magnitude, random, linear, lagrangian, kaleidonet
 Datasets: cifar10, cifar100, stl10, tiny_imagenet
 
 Usage:
@@ -40,12 +40,22 @@ from kaleidonet.model import KaleidoNet
 from kaleidonet.core.elastic import ElasticLinear
 from kaleidonet.metrics.flops import FLOPsCounter
 from kaleidonet.training.trainer import KaleidoNetTrainer, TrainerConfig, set_seed
+from experiments.baselines.lagrangian_pruning import (
+    compute_soft_flops_fraction,
+    LagrangianPruningTrainer,
+)
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 
-ALL_METHODS = ["dense", "magnitude", "random", "linear", "kaleidonet"]
+ALL_METHODS = [
+    "dense", "magnitude", "random", "linear", "lagrangian", "kaleidonet",
+    # Ablation variants of KaleidoNet (cubic schedule, with each add-on toggled)
+    "cubic_only",     # cubic schedule only (no gradient masking, no dual-rate)
+    "masking_only",   # cubic + gradient masking (no dual-rate)
+    "dual_only",      # cubic + dual-rate (no gradient masking)
+]
 ALL_DATASETS = ["cifar10", "cifar100", "stl10", "tiny_imagenet"]
 DEFAULT_STEPS = 50_000
 DEFAULT_SEEDS = [1, 2, 3]
@@ -278,6 +288,87 @@ def run_kaleidonet(dataset, seed, steps, data_dir=None):
     return results
 
 
+def _run_kaleidonet_variant(
+    dataset, seed, steps, label_prefix,
+    gradient_masking_enabled, dual_rate_enabled,
+    data_dir=None,
+):
+    """Shared runner for KaleidoNet schedule add-on ablations.
+
+    Reuses the full KaleidoNet pipeline (cubic schedule, MoE routing, early exit)
+    but toggles the two schedule add-ons under test:
+      - gradient_masking_enabled: when False, removed neurons can drift back
+      - dual_rate_enabled: when False, mask logits use the main AdamW LR
+    """
+    label = f"{label_prefix}_{dataset}_seed{seed}"
+    print(f"\n{'='*60}\n  {label_prefix} | {dataset} | seed={seed} | {steps} steps\n  "
+          f"gradient_masking={gradient_masking_enabled}, dual_rate={dual_rate_enabled}\n{'='*60}")
+
+    set_seed(seed)
+    (train_loader, val_loader), num_classes, img_size, patch_size = get_loaders(dataset, data_dir=data_dir)
+    model = build_model(num_classes, img_size, patch_size, elastic=True)
+    dense_flops, init_active = calibrate_flops_budget(model, img_size, patch_size)
+
+    config = _make_config(
+        steps, seed,
+        flops_budget=int(init_active * 0.50),
+        gradient_masking_enabled=gradient_masking_enabled,
+        dual_rate_enabled=dual_rate_enabled,
+    )
+    curve_path = os.path.join(RESULTS_DIR, "curves", f"{label}.csv")
+    logger = CurveLogger(curve_path)
+
+    _train_with_curves(model, config, train_loader, val_loader, logger)
+    logger.close()
+
+    final_metrics = eval_model(model, val_loader, config.device)
+    final_flops = measure_final_flops(model, img_size)
+    param_info = model.count_active_params()
+
+    results = {
+        "model": label_prefix,
+        "dataset": dataset,
+        "seed": seed,
+        "steps": steps,
+        "params": param_info,
+        "dense_flops": dense_flops,
+        "active_flops": final_flops,
+        "curve_file": curve_path,
+        "gradient_masking_enabled": gradient_masking_enabled,
+        "dual_rate_enabled": dual_rate_enabled,
+        **final_metrics,
+    }
+    _save(results, f"{label}.json")
+    return results
+
+
+def run_cubic_only(dataset, seed, steps, data_dir=None):
+    """Variant (a): cubic schedule only - no gradient masking, no dual-rate."""
+    return _run_kaleidonet_variant(
+        dataset, seed, steps, label_prefix="cubic_only",
+        gradient_masking_enabled=False, dual_rate_enabled=False,
+        data_dir=data_dir,
+    )
+
+
+def run_masking_only(dataset, seed, steps, data_dir=None):
+    """Variant (b): cubic + gradient masking (no dual-rate)."""
+    return _run_kaleidonet_variant(
+        dataset, seed, steps, label_prefix="masking_only",
+        gradient_masking_enabled=True, dual_rate_enabled=False,
+        data_dir=data_dir,
+    )
+
+
+def run_dual_only(dataset, seed, steps, data_dir=None):
+    """Variant (c): cubic + dual-rate (no gradient masking)."""
+    return _run_kaleidonet_variant(
+        dataset, seed, steps, label_prefix="dual_only",
+        gradient_masking_enabled=False, dual_rate_enabled=True,
+        data_dir=data_dir,
+    )
+
+
 def run_dense(dataset, seed, steps, data_dir=None):
     """Dense KaleidoNet (no pruning, no elasticity)."""
     label = f"dense_{dataset}_seed{seed}"
@@ -292,9 +383,9 @@ def run_dense(dataset, seed, steps, data_dir=None):
     config = _make_config(
         steps, seed,
         flops_budget=int(init_active * 0.50),
-        sparsity_start_step=steps + 1000,
-        sparsity_end_step=steps + 2000,
     )
+    config.sparsity_start_step = steps + 1000
+    config.sparsity_end_step = steps + 2000
     curve_path = os.path.join(RESULTS_DIR, "curves", f"{label}.csv")
     logger = CurveLogger(curve_path)
 
@@ -334,9 +425,9 @@ def run_magnitude(dataset, seed, steps, data_dir=None):
     config = _make_config(
         train_steps, seed,
         flops_budget=int(init_active * 0.50),
-        sparsity_start_step=train_steps + 1000,
-        sparsity_end_step=train_steps + 2000,
     )
+    config.sparsity_start_step = train_steps + 1000
+    config.sparsity_end_step = train_steps + 2000
     curve_path = os.path.join(RESULTS_DIR, "curves", f"{label}.csv")
     logger = CurveLogger(curve_path)
 
@@ -366,10 +457,10 @@ def run_magnitude(dataset, seed, steps, data_dir=None):
     ft_config = _make_config(
         finetune_steps, seed,
         flops_budget=int(init_active * 0.50),
-        lr=1e-4,
-        sparsity_start_step=finetune_steps + 1000,
-        sparsity_end_step=finetune_steps + 2000,
     )
+    ft_config.lr = 1e-4
+    ft_config.sparsity_start_step = finetune_steps + 1000
+    ft_config.sparsity_end_step = finetune_steps + 2000
     _train_with_curves(model, ft_config, train_loader, val_loader, logger)
     logger.close()
 
@@ -424,9 +515,9 @@ def run_random(dataset, seed, steps, data_dir=None):
     config = _make_config(
         steps, seed,
         flops_budget=int(init_active * 0.50),
-        sparsity_start_step=steps + 1000,
-        sparsity_end_step=steps + 2000,
     )
+    config.sparsity_start_step = steps + 1000
+    config.sparsity_end_step = steps + 2000
     curve_path = os.path.join(RESULTS_DIR, "curves", f"{label}.csv")
     logger = CurveLogger(curve_path)
 
@@ -514,6 +605,173 @@ def run_linear(dataset, seed, steps, data_dir=None):
     return results
 
 
+def run_lagrangian(dataset, seed, steps, data_dir=None):
+    """Lagrangian FLOPs-constrained pruning baseline.
+
+    Uses dual ascent on a Lagrange multiplier to enforce a FLOPs budget.
+    The key finding: with per-neuron masks, the Lagrangian penalty produces
+    uniform shrinkage across all neurons rather than discrete selection,
+    leading to mask collapse.
+
+    Logs mask logit distributions at eval steps to demonstrate uniform collapse.
+    """
+    label = f"lagrangian_{dataset}_seed{seed}"
+    print(f"\n{'='*60}\n  Lagrangian Pruning | {dataset} | seed={seed} | {steps} steps\n{'='*60}")
+
+    set_seed(seed)
+    (train_loader, val_loader), num_classes, img_size, patch_size = get_loaders(dataset, data_dir=data_dir)
+    model = build_model(num_classes, img_size, patch_size, elastic=True)
+    dense_flops, init_active = calibrate_flops_budget(model, img_size, patch_size)
+
+    target_flops_ratio = 0.5
+    print(f"  Dense FLOPs:   {dense_flops:,}")
+    print(f"  Target ratio:  {target_flops_ratio:.0%}")
+
+    curve_path = os.path.join(RESULTS_DIR, "curves", f"{label}.csv")
+    logger = CurveLogger(curve_path)
+
+    # Mask logit distribution log (shows uniform collapse)
+    mask_dist_path = os.path.join(RESULTS_DIR, "curves", f"{label}_mask_dist.csv")
+    os.makedirs(os.path.dirname(mask_dist_path) or ".", exist_ok=True)
+    mask_dist_fp = open(mask_dist_path, "w", newline="")
+    mask_dist_writer = csv.writer(mask_dist_fp)
+    mask_dist_writer.writerow([
+        "step", "layer_idx", "layer_name",
+        "mean", "std", "min", "max",
+        "frac_active", "num_neurons",
+    ])
+    mask_dist_fp.flush()
+
+    eval_interval = max(steps // 100, 500)
+
+    trainer = LagrangianPruningTrainer(
+        model=model,
+        train_loader=train_loader,
+        val_loader=val_loader,
+        target_flops_ratio=target_flops_ratio,
+        lr=3e-4,
+        lambda_init=0.01,
+        lambda_lr=0.01,
+        max_steps=steps,
+        warmup_steps=int(steps * 0.05),
+        seed=seed,
+        log_interval=100,
+        eval_interval=eval_interval,
+    )
+
+    # Run training with curve + mask distribution logging
+    train_iter = iter(train_loader)
+    import time as _time
+    start_time = _time.time()
+
+    for step in range(steps):
+        try:
+            batch = next(train_iter)
+        except StopIteration:
+            train_iter = iter(train_loader)
+            batch = next(train_iter)
+
+        metrics = trainer.train_step(batch)
+
+        # Standard logging
+        if step % 100 == 0:
+            elapsed = _time.time() - start_time
+            sps = (step + 1) / elapsed if elapsed > 0 else 0
+            print(
+                f"Step {step:6d} | "
+                f"loss={metrics['total_loss']:.4f} | "
+                f"task={metrics['task_loss']:.4f} | "
+                f"flops_frac={metrics['flops_fraction']:.2%} | "
+                f"lambda={metrics['lambda']:.4f} | "
+                f"{sps:.1f} steps/s"
+            )
+
+        # Eval + curve logging + mask distribution logging
+        if step % eval_interval == 0 and step > 0:
+            val_m = eval_model(model, val_loader, trainer.device)
+            print(
+                f"  [EVAL] val_loss={val_m['val_loss']:.4f} | "
+                f"val_acc={val_m['val_accuracy']:.4f}"
+            )
+            logger.log(
+                step=step,
+                train_loss=metrics["total_loss"],
+                task_loss=metrics["task_loss"],
+                val_loss=val_m["val_loss"],
+                val_accuracy=val_m["val_accuracy"],
+                lr=metrics["lr"],
+            )
+
+            # Log mask logit distributions per layer
+            with torch.no_grad():
+                for idx, m in enumerate(model.modules()):
+                    if isinstance(m, ElasticLinear):
+                        logits = m.mask_logits
+                        soft_mask = torch.sigmoid(logits)
+                        mask_dist_writer.writerow([
+                            step, idx, type(m).__name__,
+                            f"{logits.mean().item():.4f}",
+                            f"{logits.std().item():.4f}",
+                            f"{logits.min().item():.4f}",
+                            f"{logits.max().item():.4f}",
+                            f"{(soft_mask > 0.5).float().mean().item():.4f}",
+                            logits.numel(),
+                        ])
+                mask_dist_fp.flush()
+
+    logger.close()
+    mask_dist_fp.close()
+
+    total_time = _time.time() - start_time
+    print(f"\nTraining complete in {total_time:.1f}s")
+
+    # Final evaluation
+    final_metrics = eval_model(model, val_loader, trainer.device)
+    final_flops = measure_final_flops(model, img_size)
+    param_info = model.count_active_params()
+
+    # Final mask logit summary (key evidence of uniform collapse)
+    mask_summary = []
+    with torch.no_grad():
+        for m in model.modules():
+            if isinstance(m, ElasticLinear):
+                logits = m.mask_logits
+                mask_summary.append({
+                    "mean": round(logits.mean().item(), 4),
+                    "std": round(logits.std().item(), 4),
+                    "min": round(logits.min().item(), 4),
+                    "max": round(logits.max().item(), 4),
+                    "frac_active": round((torch.sigmoid(logits) > 0.5).float().mean().item(), 4),
+                })
+
+    print(f"\nFinal accuracy: {final_metrics['val_accuracy']:.4f}")
+    print(f"Final lambda:   {trainer.lambda_val.item():.4f}")
+    if final_flops:
+        print(f"Final FLOPs:    {final_flops:,} ({final_flops/dense_flops:.0%} of dense)")
+    print(f"Mask logit distributions (evidence of uniform collapse):")
+    for i, ms in enumerate(mask_summary):
+        print(f"  Layer {i}: mean={ms['mean']:.2f} std={ms['std']:.2f} "
+              f"range=[{ms['min']:.2f}, {ms['max']:.2f}] active={ms['frac_active']:.0%}")
+
+    results = {
+        "model": "LagrangianPruning",
+        "dataset": dataset,
+        "seed": seed,
+        "steps": steps,
+        "target_flops_ratio": target_flops_ratio,
+        "final_lambda": trainer.lambda_val.item(),
+        "params": param_info,
+        "dense_flops": dense_flops,
+        "active_flops": final_flops,
+        "mask_logit_summary": mask_summary,
+        "curve_file": curve_path,
+        "mask_dist_file": mask_dist_path,
+        **final_metrics,
+    }
+    _save(results, f"{label}.json")
+    return results
+
+
 # ---------------------------------------------------------------------------
 # Utilities
 # ---------------------------------------------------------------------------
@@ -523,7 +781,12 @@ METHOD_RUNNERS = {
     "magnitude": run_magnitude,
     "random": run_random,
     "linear": run_linear,
+    "lagrangian": run_lagrangian,
     "kaleidonet": run_kaleidonet,
+    # Schedule add-on ablation variants
+    "cubic_only": run_cubic_only,
+    "masking_only": run_masking_only,
+    "dual_only": run_dual_only,
 }
 
 

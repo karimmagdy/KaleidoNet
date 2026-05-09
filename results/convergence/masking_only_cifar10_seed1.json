@@ -1,0 +1,19 @@
+{
+  "model": "masking_only",
+  "dataset": "cifar10",
+  "seed": 1,
+  "steps": 50000,
+  "params": {
+    "total_params": 5473382,
+    "active_params": 2166390,
+    "dormant_params": 3306992,
+    "active_fraction": 0.3958046414447228
+  },
+  "dense_flops": 680232960,
+  "active_flops": 130141440,
+  "curve_file": "/home/sweilam/Research/KaleidoNet/results/convergence/curves/masking_only_cifar10_seed1.csv",
+  "gradient_masking_enabled": true,
+  "dual_rate_enabled": false,
+  "val_loss": 0.5775584879398346,
+  "val_accuracy": 0.8082
+}

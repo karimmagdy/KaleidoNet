@@ -108,6 +108,12 @@ class TrainerConfig:
     # Device
     device: str = field(default_factory=_detect_device)
 
+    # Schedule add-on toggles (for ablations)
+    # Default = True reproduces full KaleidoNet behaviour.
+    gradient_masking_enabled: bool = True   # If False, do not zero out gradients for pruned mask logits (lets logits drift back)
+    dual_rate_enabled: bool = True           # If False, mask params share the main AdamW optimizer (single LR)
+    mask_lr_multiplier: float = 3.0          # When dual_rate_enabled, mask LR = lr * multiplier
+
 
 class KaleidoNetTrainer:
     """
@@ -172,18 +178,25 @@ class KaleidoNetTrainer:
             else:
                 other_params.append(param)
 
-        # Main optimizer (for weights) with cosine schedule
-        self.optimizer = torch.optim.AdamW(
-            other_params,
-            lr=config.lr,
-            weight_decay=config.weight_decay,
-        )
-
-        # Mask optimizer with 3x higher LR and no weight decay
-        self.mask_optimizer = torch.optim.Adam(
-            mask_params,
-            lr=config.lr * 3,
-        ) if mask_params else None
+        if config.dual_rate_enabled and mask_params:
+            # Dual-rate optimisation: separate Adam optimiser for mask logits at higher LR
+            self.optimizer = torch.optim.AdamW(
+                other_params,
+                lr=config.lr,
+                weight_decay=config.weight_decay,
+            )
+            self.mask_optimizer = torch.optim.Adam(
+                mask_params,
+                lr=config.lr * config.mask_lr_multiplier,
+            )
+        else:
+            # Single-rate: combine all params (including mask logits) into one AdamW group
+            self.optimizer = torch.optim.AdamW(
+                other_params + mask_params,
+                lr=config.lr,
+                weight_decay=config.weight_decay,
+            )
+            self.mask_optimizer = None
 
         # LR scheduler (cosine with warmup)
         self.scheduler = torch.optim.lr_scheduler.OneCycleLR(
@@ -281,11 +294,12 @@ class KaleidoNetTrainer:
         if _is_xla:
             # XLA/TPU: no scaler, direct backward + xm.optimizer_step
             total_loss.backward()
-            for m in self.model.modules():
-                if hasattr(m, 'mask_logits') and m.mask_logits.grad is not None:
-                    m.mask_logits.grad[m.mask_logits.data <= -50] = 0.0
-                if hasattr(m, 'head_mask_logits') and m.head_mask_logits.grad is not None:
-                    m.head_mask_logits.grad[m.head_mask_logits.data <= -50] = 0.0
+            if self.config.gradient_masking_enabled:
+                for m in self.model.modules():
+                    if hasattr(m, 'mask_logits') and m.mask_logits.grad is not None:
+                        m.mask_logits.grad[m.mask_logits.data <= -50] = 0.0
+                    if hasattr(m, 'head_mask_logits') and m.head_mask_logits.grad is not None:
+                        m.head_mask_logits.grad[m.head_mask_logits.data <= -50] = 0.0
             nn.utils.clip_grad_norm_(self.model.parameters(), self.config.grad_clip)
             import torch_xla.core.xla_model as xm
             xm.optimizer_step(self.optimizer)
@@ -296,11 +310,12 @@ class KaleidoNetTrainer:
             self.scaler.unscale_(self.optimizer)
             if self.mask_optimizer:
                 self.scaler.unscale_(self.mask_optimizer)
-            for m in self.model.modules():
-                if hasattr(m, 'mask_logits') and m.mask_logits.grad is not None:
-                    m.mask_logits.grad[m.mask_logits.data <= -50] = 0.0
-                if hasattr(m, 'head_mask_logits') and m.head_mask_logits.grad is not None:
-                    m.head_mask_logits.grad[m.head_mask_logits.data <= -50] = 0.0
+            if self.config.gradient_masking_enabled:
+                for m in self.model.modules():
+                    if hasattr(m, 'mask_logits') and m.mask_logits.grad is not None:
+                        m.mask_logits.grad[m.mask_logits.data <= -50] = 0.0
+                    if hasattr(m, 'head_mask_logits') and m.head_mask_logits.grad is not None:
+                        m.head_mask_logits.grad[m.head_mask_logits.data <= -50] = 0.0
             nn.utils.clip_grad_norm_(self.model.parameters(), self.config.grad_clip)
             self.scaler.step(self.optimizer)
             if self.mask_optimizer:

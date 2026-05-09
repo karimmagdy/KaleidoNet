@@ -1,0 +1,23 @@
+% --- Table main ---
+\begin{table}[t]
+\centering
+\caption{Main comparison with statistical significance (50{,}000 steps, 3 seeds, mean $\pm$ std). $p$ values are paired $t$-tests vs.\ KaleidoNet across the matched seeds. With 3 seeds the test is underpowered; we report $p<0.05$ as indicative rather than confirmatory.}
+\label{tab:main_stats}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Method} & \multicolumn{2}{c}{\textbf{CIFAR-10}} & \multicolumn{2}{c}{\textbf{CIFAR-100}} & \multicolumn{2}{c}{\textbf{Tiny-ImageNet}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+  & Acc.\ (\%) & $p$ vs. ref. & Acc.\ (\%) & $p$ vs. ref. & Acc.\ (\%) & $p$ vs. ref. \\
+\midrule
+Dense ViT (reference) & $83.14\pm0.29$ & $0.042$ & $59.64\pm0.56$ & $0.201$ & $40.81\pm0.38$ & $0.068$ \\
+Magnitude + fine-tune & $80.97\pm0.15$ & $0.032$ & $57.24\pm0.23$ & $0.008$ & $38.51\pm0.10$ & $0.023$ \\
+Random mask & $81.49\pm0.30$ & $0.038$ & $57.95\pm0.48$ & $0.029$ & $38.92\pm0.13$ & $0.021$ \\
+Linear schedule & $81.82\pm0.35$ & $0.106$ & $58.44\pm0.16$ & $0.084$ & $39.44\pm0.03$ & $0.068$ \\
+Lagrangian (per-neuron) & $36.38\pm1.45$ & $<\!0.001$ & $10.45\pm0.33$ & $<\!0.001$ & $4.68\pm0.34$ & $<\!0.001$ \\
+KaleidoNet (cubic + masking + dual-rate) & $82.02\pm0.47$ & --- & $59.09\pm0.20$ & --- & $40.09\pm0.32$ & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+

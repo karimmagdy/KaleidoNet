@@ -1,0 +1,19 @@
+{
+  "model": "MagnitudePruning",
+  "dataset": "cifar100",
+  "seed": 2,
+  "steps": 50000,
+  "target_sparsity": 0.7,
+  "params": {
+    "total_params": 5490752,
+    "active_params": 2168368,
+    "dormant_params": 3322384,
+    "active_fraction": 0.39491275511988155
+  },
+  "dense_flops": 682444800,
+  "active_flops": 131888640,
+  "pre_prune_acc": 0.5874,
+  "curve_file": "/home/sweilam/Research/KaleidoNet/results/convergence/curves/magnitude_cifar100_seed2.csv",
+  "val_loss": 1.5886934860229491,
+  "val_accuracy": 0.5699
+}

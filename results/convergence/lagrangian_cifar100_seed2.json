@@ -1,0 +1,246 @@
+{
+  "model": "LagrangianPruning",
+  "dataset": "cifar100",
+  "seed": 2,
+  "steps": 50000,
+  "target_flops_ratio": 0.5,
+  "final_lambda": 0.26722025871276855,
+  "params": {
+    "total_params": 5490752,
+    "active_params": 3368396,
+    "dormant_params": 2122356,
+    "active_fraction": 0.6134671534973716
+  },
+  "dense_flops": 682444800,
+  "active_flops": 159269760,
+  "mask_logit_summary": [
+    {
+      "mean": 2.1783,
+      "std": 4.4321,
+      "min": -7.8501,
+      "max": 14.2317,
+      "frac_active": 0.5651
+    },
+    {
+      "mean": 3.8416,
+      "std": 3.0127,
+      "min": -2.6069,
+      "max": 10.4985,
+      "frac_active": 0.8698
+    },
+    {
+      "mean": 1.4436,
+      "std": 5.2148,
+      "min": -6.3356,
+      "max": 15.6354,
+      "frac_active": 0.4154
+    },
+    {
+      "mean": 3.438,
+      "std": 3.6191,
+      "min": -6.2814,
+      "max": 11.2407,
+      "frac_active": 0.8125
+    },
+    {
+      "mean": 0.8932,
+      "std": 3.8451,
+      "min": -7.6072,
+      "max": 13.1359,
+      "frac_active": 0.4375
+    },
+    {
+      "mean": 2.192,
+      "std": 3.0493,
+      "min": -6.6377,
+      "max": 9.1922,
+      "frac_active": 0.7292
+    },
+    {
+      "mean": 2.5849,
+      "std": 4.9438,
+      "min": -8.5199,
+      "max": 14.7562,
+      "frac_active": 0.5664
+    },
+    {
+      "mean": 4.4751,
+      "std": 3.3501,
+      "min": -3.0594,
+      "max": 11.5523,
+      "frac_active": 0.8802
+    },
+    {
+      "mean": 2.1187,
+      "std": 4.7491,
+      "min": -9.3834,
+      "max": 13.7499,
+      "frac_active": 0.5234
+    },
+    {
+      "mean": 4.0694,
+      "std": 2.962,
+      "min": -4.0365,
+      "max": 10.3895,
+      "frac_active": 0.9167
+    },
+    {
+      "mean": -1.1503,
+      "std": 2.9684,
+      "min": -5.3504,
+      "max": 10.7593,
+      "frac_active": 0.181
+    },
+    {
+      "mean": 1.5788,
+      "std": 2.7562,
+      "min": -2.6593,
+      "max": 8.5577,
+      "frac_active": 0.6042
+    },
+    {
+      "mean": 2.7761,
+      "std": 4.4669,
+      "min": -7.4222,
+      "max": 12.9395,
+      "frac_active": 0.6419
+    },
+    {
+      "mean": 4.0675,
+      "std": 3.2957,
+      "min": -5.1566,
+      "max": 10.1843,
+      "frac_active": 0.8594
+    },
+    {
+      "mean": -2.5679,
+      "std": 0.9863,
+      "min": -5.7673,
+      "max": 0.021,
+      "frac_active": 0.0039
+    },
+    {
+      "mean": -1.2223,
+      "std": 0.8564,
+      "min": -3.5184,
+      "max": 1.1156,
+      "frac_active": 0.0938
+    },
+    {
+      "mean": -1.3045,
+      "std": 2.6615,
+      "min": -5.0873,
+      "max": 9.3398,
+      "frac_active": 0.151
+    },
+    {
+      "mean": 1.4351,
+      "std": 2.7043,
+      "min": -3.1328,
+      "max": 7.3607,
+      "frac_active": 0.599
+    },
+    {
+      "mean": -0.4322,
+      "std": 3.5236,
+      "min": -6.4898,
+      "max": 10.8031,
+      "frac_active": 0.2266
+    },
+    {
+      "mean": 2.5641,
+      "std": 3.0643,
+      "min": -3.6391,
+      "max": 8.9007,
+      "frac_active": 0.7031
+    },
+    {
+      "mean": 2.282,
+      "std": 4.4119,
+      "min": -7.8321,
+      "max": 13.9476,
+      "frac_active": 0.5742
+    },
+    {
+      "mean": 3.9587,
+      "std": 3.3065,
+      "min": -3.7779,
+      "max": 10.2638,
+      "frac_active": 0.8698
+    },
+    {
+      "mean": 1.0572,
+      "std": 4.5613,
+      "min": -7.9345,
+      "max": 13.1512,
+      "frac_active": 0.4284
+    },
+    {
+      "mean": 3.1516,
+      "std": 2.9902,
+      "min": -2.5259,
+      "max": 9.1257,
+      "frac_active": 0.8177
+    },
+    {
+      "mean": -2.5673,
+      "std": 0.9165,
+      "min": -4.9685,
+      "max": 0.7862,
+      "frac_active": 0.0117
+    },
+    {
+      "mean": -1.0098,
+      "std": 1.0285,
+      "min": -3.2306,
+      "max": 1.6227,
+      "frac_active": 0.1771
+    },
+    {
+      "mean": 0.3259,
+      "std": 3.0858,
+      "min": -5.4414,
+      "max": 9.5173,
+      "frac_active": 0.3919
+    },
+    {
+      "mean": 2.5031,
+      "std": 2.2664,
+      "min": -2.5615,
+      "max": 7.4989,
+      "frac_active": 0.8646
+    },
+    {
+      "mean": 1.4031,
+      "std": 4.4254,
+      "min": -7.5148,
+      "max": 11.9687,
+      "frac_active": 0.4583
+    },
+    {
+      "mean": 3.7527,
+      "std": 3.1119,
+      "min": -3.9635,
+      "max": 10.0992,
+      "frac_active": 0.8698
+    },
+    {
+      "mean": 2.2697,
+      "std": 4.4433,
+      "min": -8.0473,
+      "max": 13.1806,
+      "frac_active": 0.556
+    },
+    {
+      "mean": 4.3331,
+      "std": 3.3979,
+      "min": -3.5192,
+      "max": 11.7883,
+      "frac_active": 0.8646
+    }
+  ],
+  "curve_file": "/home/sweilam/Research/KaleidoNet/results/convergence/curves/lagrangian_cifar100_seed2.csv",
+  "mask_dist_file": "/home/sweilam/Research/KaleidoNet/results/convergence/curves/lagrangian_cifar100_seed2_mask_dist.csv",
+  "val_loss": 3.921885633468628,
+  "val_accuracy": 0.1008
+}

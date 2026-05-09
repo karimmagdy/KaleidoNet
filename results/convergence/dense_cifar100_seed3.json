@@ -1,0 +1,17 @@
+{
+  "model": "Dense",
+  "dataset": "cifar100",
+  "seed": 3,
+  "steps": 50000,
+  "params": {
+    "total_params": 5490752,
+    "active_params": 5489787,
+    "dormant_params": 965,
+    "active_fraction": 0.9998242499388061
+  },
+  "dense_flops": 682444800,
+  "active_flops": 682444800,
+  "curve_file": "/home/sweilam/Research/KaleidoNet/results/convergence/curves/dense_cifar100_seed3.csv",
+  "val_loss": 1.6182139704704284,
+  "val_accuracy": 0.594
+}

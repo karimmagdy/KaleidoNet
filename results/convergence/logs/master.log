@@ -1,0 +1,13 @@
+============================================================
+KaleidoNet Schedule Add-on Ablation Sweep (2-GPU)
+Started: dom 26 apr 2026, 21:08:01, CEST
+============================================================
+[Phase 1] GPU 0 (cubic_only): PID 3610501
+[Phase 1] GPU 1 (masking_only): PID 3610502
+[Phase 1] complete at lun 27 apr 2026, 18:55:38, CEST
+[Phase 2] GPU 0 (dual_only/cifar10): PID 3653223
+[Phase 2] GPU 1 (dual_only/tiny_imagenet): PID 3653224
+[Phase 3] complete at mar 28 apr 2026, 05:23:37, CEST
+============================================================
+All 27 ablation runs complete at mar 28 apr 2026, 05:23:37, CEST
+============================================================

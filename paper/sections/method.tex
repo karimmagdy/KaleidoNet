@@ -45,6 +45,8 @@ For typical values ($d_{\text{in}} {=} 192$, $N {=} 64$, $L {=} 64$, $B {=} 200\
 This failure mode is specific to \emph{per-neuron} granularity. At per-layer or per-expert granularity, the FLOPs contribution per decision is much larger ($\sim$10\% of total rather than $\sim$0.01\%), and Lagrangian methods work well~\citep{gordon2018morphnet}.
 \end{remark}
 
+\paragraph{Scope of this analysis.} This analysis concerns FLOPs and parameter granularity; wall-clock latency on production hardware is a separate question, addressed below as a documented limitation rather than a claim of this work.
+
 % ------------------------------------------------------------------
 \subsection{Cubic Sparsity Schedule with Gradient Masking}
 \label{sec:schedule}

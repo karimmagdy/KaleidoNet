@@ -1,0 +1,12 @@
+{
+  "model": "DenseViT",
+  "dataset": "stl10",
+  "seed": 3,
+  "steps": 5000,
+  "image_size": 96,
+  "patch_size": 8,
+  "total_params": 1846666,
+  "best_val_acc": 0.577375,
+  "flops_per_sample": 535533140,
+  "total_time_s": 396.5038101673126
+}

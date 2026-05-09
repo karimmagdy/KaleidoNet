@@ -1,0 +1,19 @@
+{
+  "model": "masking_only",
+  "dataset": "stl10",
+  "seed": 1,
+  "steps": 50000,
+  "params": {
+    "total_params": 5516390,
+    "active_params": 2209398,
+    "dormant_params": 3306992,
+    "active_fraction": 0.40051519200056557
+  },
+  "dense_flops": 1530556416,
+  "active_flops": 308133120,
+  "curve_file": "/home/sweilam/Research/KaleidoNet/results/convergence/curves/masking_only_stl10_seed1.csv",
+  "gradient_masking_enabled": true,
+  "dual_rate_enabled": false,
+  "val_loss": 2.4174136905670167,
+  "val_accuracy": 0.6645
+}

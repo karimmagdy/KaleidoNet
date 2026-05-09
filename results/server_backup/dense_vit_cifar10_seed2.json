@@ -1,0 +1,10 @@
+{
+  "model": "DenseViT",
+  "dataset": "cifar10",
+  "seed": 2,
+  "steps": 5000,
+  "total_params": 1803658,
+  "best_val_acc": 0.6713,
+  "flops_per_sample": 234475540,
+  "total_time_s": 213.21136689186096
+}

@@ -1,0 +1,30 @@
+{
+  "model": "LagrangianStrengthened",
+  "variant": "augmented",
+  "dataset": "cifar10",
+  "seed": 3,
+  "steps": 50000,
+  "target_flops_ratio": 0.5,
+  "target_flops": 340116480,
+  "lambda_init": 0.01,
+  "lambda_lr": 0.01,
+  "augmented_mu": 0.1,
+  "flops_grad_scale": 3.0,
+  "final_lambda_max": 0.18428704142570496,
+  "final_lambda_mean": 0.06697212159633636,
+  "final_lambda_shape": [
+    4,
+    4
+  ],
+  "params": {
+    "total_params": 5473382,
+    "active_params": 3509411,
+    "dormant_params": 1963971,
+    "active_fraction": 0.6411777946432389
+  },
+  "dense_flops": 680232960,
+  "init_active_flops": 237269760,
+  "active_flops": 171674880,
+  "val_loss": 1.7223180210113525,
+  "val_accuracy": 0.3722
+}

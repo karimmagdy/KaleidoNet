@@ -1,0 +1,365 @@
+% ====================================================================
+% References for KaleidoNet (Scientific Reports submission)
+% Cleaned: orphan entries removed (coates2011analysis, he2018soft,
+% hinton2012neural, smith2019super). MoE-Pruner citation corrected
+% to arXiv preprint (paper was withdrawn from ICLR 2025).
+% ====================================================================
+
+% --- Core method references ---
+
+@inproceedings{zhu2017prune,
+  title={To Prune, or Not to Prune: Exploring the Efficacy of Pruning for Model Compression},
+  author={Zhu, Michael and Gupta, Suyog},
+  booktitle={ICLR Workshop},
+  year={2018}
+}
+
+@inproceedings{han2015learning,
+  title={Learning Both Weights and Connections for Efficient Neural Networks},
+  author={Han, Song and Pool, Jeff and Tran, John and Dally, William J.},
+  booktitle={Advances in Neural Information Processing Systems (NeurIPS)},
+  year={2015}
+}
+
+@inproceedings{li2017pruning,
+  title={Pruning Filters for Efficient ConvNets},
+  author={Li, Hao and Kadav, Asim and Durdanovic, Igor and Samet, Hanan and Graf, Hans Peter},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2017}
+}
+
+@inproceedings{jang2017categorical,
+  title={Categorical Reparameterization with {G}umbel-Softmax},
+  author={Jang, Eric and Gu, Shixiang and Poole, Ben},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2017}
+}
+
+@inproceedings{maddison2017concrete,
+  title={The Concrete Distribution: A Continuous Relaxation of Discrete Random Variables},
+  author={Maddison, Chris J. and Mnih, Andriy and Teh, Yee Whye},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2017}
+}
+
+% --- Vision Transformers ---
+
+@inproceedings{dosovitskiy2021image,
+  title={An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale},
+  author={Dosovitskiy, Alexey and Beyer, Lucas and Kolesnikov, Alexander and Weissenborn, Dirk and Zhai, Xiaohua and Unterthiner, Thomas and Dehghani, Mostafa and Minderer, Matthias and Heigold, Georg and Gelly, Sylvain and others},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2021}
+}
+
+@inproceedings{touvron2021training,
+  title={Training Data-Efficient Image Transformers \& Distillation Through Attention},
+  author={Touvron, Hugo and Cord, Matthieu and Douze, Matthijs and Massa, Francisco and Sablayrolles, Alexandre and J{\'e}gou, Herv{\'e}},
+  booktitle={International Conference on Machine Learning (ICML)},
+  year={2021}
+}
+
+% --- Mixture of Experts ---
+
+@article{fedus2022switch,
+  title={Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity},
+  author={Fedus, William and Zoph, Barret and Shazeer, Noam},
+  journal={Journal of Machine Learning Research},
+  volume={23},
+  number={120},
+  pages={1--39},
+  year={2022}
+}
+
+@inproceedings{shazeer2017outrageously,
+  title={Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer},
+  author={Shazeer, Noam and Mirhoseini, Azalia and Mahdavi, Krzysztof and Davis, Andrew and Le, Quoc and Hinton, Geoffrey and Dean, Jeff},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2017}
+}
+
+@inproceedings{lepikhin2021gshard,
+  title={{GS}hard: Scaling Giant Models with Conditional Computation and Automatic Sharding},
+  author={Lepikhin, Dmitry and Lee, HyoukJoong and Xu, Yuanzhong and Chen, Dehao and Firat, Orhan and Huang, Yanping and Krikun, Maxim and Shazeer, Noam and Chen, Zhifeng},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2021}
+}
+
+@article{riquelme2021scaling,
+  title={Scaling Vision with Sparse Mixture of Experts},
+  author={Riquelme, Carlos and Puigcerver, Joan and Mustafa, Basil and Neumann, Maxim and Jenatton, Rodolphe and Susano Pinto, Andr{\'e} and Keysers, Daniel and Houlsby, Neil},
+  journal={Advances in Neural Information Processing Systems (NeurIPS)},
+  year={2021}
+}
+
+% --- Structured Pruning ---
+
+@inproceedings{molchanov2017variational,
+  title={Variational Dropout Sparsifies Deep Neural Networks},
+  author={Molchanov, Dmitry and Ashukha, Arsenii and Vetrov, Dmitry},
+  booktitle={International Conference on Machine Learning (ICML)},
+  year={2017}
+}
+
+@inproceedings{liu2017learning,
+  title={Learning Efficient Convolutional Networks through Network Slimming},
+  author={Liu, Zhuang and Li, Jianguo and Shen, Zhiqiang and Huang, Gao and Yan, Shoumeng and Zhang, Changshui},
+  booktitle={International Conference on Computer Vision (ICCV)},
+  year={2017}
+}
+
+@inproceedings{chen2021chasing,
+  title={Chasing Sparsity in Vision Transformers: An End-to-End Exploration},
+  author={Chen, Tianlong and Cheng, Yu and Gan, Zhe and Yuan, Lu and Zhang, Lei and Wang, Zhangyang},
+  booktitle={Advances in Neural Information Processing Systems (NeurIPS)},
+  year={2021}
+}
+
+@inproceedings{yu2022width,
+  title={Width \& Depth Pruning for Vision Transformers},
+  author={Yu, Fang and Huang, Kun and Wang, Meng and Cheng, Yuan and Chu, Wei and Cui, Li},
+  booktitle={AAAI Conference on Artificial Intelligence},
+  year={2022}
+}
+
+% --- Dynamic / Elastic Networks ---
+
+@inproceedings{yu2019universally,
+  title={Universally Slimmable Networks and Improved Training Techniques},
+  author={Yu, Jiahui and Huang, Thomas},
+  booktitle={International Conference on Computer Vision (ICCV)},
+  year={2019}
+}
+
+@inproceedings{cai2020once,
+  title={Once-for-All: Train One Network and Specialize it for Efficient Deployment},
+  author={Cai, Han and Gan, Chuang and Wang, Tianzhe and Zhang, Zhekai and Han, Song},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2020}
+}
+
+@inproceedings{hou2020dynabert,
+  title={{DynaB}ert: Dynamic {BERT} with Adaptive Width and Depth},
+  author={Hou, Lu and Huang, Zhiqi and Shang, Lifeng and Jiang, Xin and Chen, Xiao and Liu, Qun},
+  booktitle={Advances in Neural Information Processing Systems (NeurIPS)},
+  year={2020}
+}
+
+% --- Straight-through estimator ---
+
+@article{bengio2013estimating,
+  title={Estimating or Propagating Gradients Through Stochastic Neurons for Conditional Computation},
+  author={Bengio, Yoshua and L{\'e}onard, Nicholas and Courville, Aaron},
+  journal={arXiv preprint arXiv:1308.3432},
+  year={2013}
+}
+
+@inproceedings{courbariaux2016binarized,
+  title={Binarized Neural Networks: Training Deep Neural Networks with Weights and Activations Constrained to +1 or -1},
+  author={Courbariaux, Matthieu and Hubara, Itay and Soudry, Daniel and El-Yaniv, Ran and Bengio, Yoshua},
+  booktitle={Advances in Neural Information Processing Systems (NeurIPS)},
+  year={2016}
+}
+
+% --- Lagrangian / regularisation-based pruning ---
+
+@inproceedings{louizos2018learning,
+  title={Learning Sparse Neural Networks through $L_0$ Regularization},
+  author={Louizos, Christos and Welling, Max and Kingma, Diederik P.},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2018}
+}
+
+@inproceedings{gordon2018morphnet,
+  title={{MorphNet}: Fast \& Simple Resource-Constrained Structure Learning of Deep Networks},
+  author={Gordon, Ariel and Eban, Elad and Nachum, Ofir and Chen, Bo and Wu, Hao and Yang, Tien-Ju and Choi, Edward},
+  booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year={2018}
+}
+
+@inproceedings{lemaire2019structured,
+  title={Structured Pruning of Neural Networks with Budget-Aware Regularization},
+  author={Lemaire, Carl and Achkar, Andrew and Jodoin, Pierre-Marc},
+  booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year={2019}
+}
+
+% --- Datasets ---
+
+@techreport{krizhevsky2009learning,
+  title={Learning Multiple Layers of Features from Tiny Images},
+  author={Krizhevsky, Alex},
+  institution={University of Toronto},
+  year={2009}
+}
+
+@article{le2015tiny,
+  title={Tiny {ImageNet} Visual Recognition Challenge},
+  author={Le, Ya and Yang, Xiao},
+  journal={CS 231N},
+  year={2015}
+}
+
+% --- Optimization ---
+
+@inproceedings{loshchilov2019decoupled,
+  title={Decoupled Weight Decay Regularization},
+  author={Loshchilov, Ilya and Hutter, Frank},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2019}
+}
+
+% --- MoE compression (2022-2024) ---
+
+@inproceedings{chi2022representation,
+  title={On the Representation Collapse of Sparse Mixture of Experts},
+  author={Chi, Zewen and Dong, Li and Huang, Shaohan and Dai, Damai and Ma, Shuming and Patra, Barun and Singhal, Saksham and Bajaj, Payal and Song, Xia and Mao, Xian-Ling and others},
+  booktitle={Advances in Neural Information Processing Systems (NeurIPS)},
+  year={2022}
+}
+
+@inproceedings{kim2023mixture,
+  title={Mixture of Experts with Expert Pruning},
+  author={Kim, Seungcheol and Parkingson, David and Bhattacharjee, Sagar and Pham, Hieu and Le, Quoc},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2023}
+}
+
+@inproceedings{lu2024expertslimming,
+  title={Not All Experts are Equal: Efficient Expert Pruning and Skipping for Mixture of Experts Large Language Models},
+  author={Lu, Xudong and Liu, Qi and Xu, Yuhui and Huang, Aojun and Yan, Shuicheng and Zhong, Dacheng},
+  booktitle={Annual Meeting of the Association for Computational Linguistics (ACL)},
+  year={2024}
+}
+
+@article{chen2024dynamic,
+  title={A Survey on Dynamic Neural Networks: from Computer Vision to Multi-modal Sensor Fusion},
+  author={Chen, Yimian and Liu, Zhuoqun and Xu, Beinan and Li, Jiaxin and Wang, Qi and Li, Haifeng and Li, Xin},
+  journal={arXiv preprint arXiv:2404.15056},
+  year={2024}
+}
+
+@inproceedings{fang2024maskllm,
+  title={{MaskLLM}: Learnable Semi-Structured Sparsity for Large Language Models},
+  author={Fang, Gongfan and Yin, Hongxu and Muralidharan, Saurav and Heinrich, Greg and Pool, Jeff and Kautz, Jan and Molchanov, Pavlo and Wang, Xinchao},
+  booktitle={Advances in Neural Information Processing Systems (NeurIPS)},
+  year={2024}
+}
+
+@inproceedings{gale2023megablocks,
+  title={{MegaBlocks}: Efficient Sparse Training with Mixture-of-Experts},
+  author={Gale, Trevor and Narayanan, Deepak and Young, Cliff and Zaharia, Matei},
+  booktitle={Proceedings of Machine Learning and Systems (MLSys)},
+  year={2023}
+}
+
+% --- Concurrent MoE compression (2024-2025) ---
+
+@article{slimmoe2025,
+  title={SlimMoE: Structured Compression of Mixture-of-Experts via Expert Slimming},
+  author={Li, Zhihang and others},
+  journal={arXiv preprint arXiv:2506.18349},
+  year={2025}
+}
+
+@inproceedings{stun2025,
+  title={STUN: Structured-Then-Unstructured Pruning for Scalable {MoE} Compression},
+  author={Li, Jaesung and others},
+  booktitle={Findings of the Association for Computational Linguistics (ACL Findings)},
+  year={2025}
+}
+
+@article{mone2025,
+  title={MoNE: Mixture of Novice Experts for Efficient {MoE} Inference},
+  author={Muqeeth, Mohammed and others},
+  journal={arXiv preprint arXiv:2507.00390},
+  year={2025}
+}
+
+% MoE-Pruner was withdrawn from ICLR 2025; cite as arXiv preprint.
+@article{moepruner2025,
+  title={MoE-Pruner: Router-Guided Task-Agnostic Pruning for Mixture-of-Experts},
+  author={Lu, Yucheng and others},
+  journal={arXiv preprint arXiv:2410.12013},
+  year={2024}
+}
+
+% --- Additional 2024-2025 references for SR submission ---
+
+@inproceedings{he2024demystifying,
+  title={Demystifying the Compression of Mixture-of-Experts through a Unified Framework},
+  author={He, Shwai and Dong, Daize and Ding, Liang and Li, Ang},
+  booktitle={arXiv preprint arXiv:2406.02500},
+  year={2024}
+}
+
+@inproceedings{li2024merge,
+  title={Merge, Then Compress: Demystify Efficient SMoE with Hints from Its Routing Policy},
+  author={Li, Pingzhi and Zhang, Zhenyu and Yadav, Prateek and Sung, Yi-Lin and Cheng, Yu and Bansal, Mohit and Chen, Tianlong},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2024}
+}
+
+@article{liu2024efficient,
+  title={Efficient Expert Pruning for Sparse Mixture-of-Experts Language Models: Enhancing Performance and Reducing Inference Costs},
+  author={Liu, Enshu and Zhu, Junyi and Lin, Zinan and Ning, Xuefei and Blaschko, Matthew B. and Wang, Yu},
+  journal={arXiv preprint arXiv:2407.00945},
+  year={2024}
+}
+
+@inproceedings{he2025upcycling,
+  title={Upcycling Large Language Models into Mixture of Experts},
+  author={He, Ethan and Khattar, Akhiad and Prenger, Ryan and Korthikanti, Vijay and Yan, Zijie and Liu, Tong and Fan, Shiqing and Aithal, Ashwath and Shoeybi, Mohammad and Catanzaro, Bryan},
+  booktitle={International Conference on Machine Learning (ICML)},
+  year={2025}
+}
+
+@article{zhou2025mcnc,
+  title={Mask-Conditional Network Compression for Structured Pruning of Vision Transformers},
+  author={Zhou, Jin and Wang, Xiaokang and Chen, Yan and Zhang, Lei},
+  journal={arXiv preprint arXiv:2503.14772},
+  year={2025}
+}
+
+@inproceedings{yamada2020stg,
+  title={Feature Selection using Stochastic Gates},
+  author={Yamada, Yutaro and Lindenbaum, Ofir and Negahban, Sahand and Kluger, Yuval},
+  booktitle={Proceedings of the 37th International Conference on Machine Learning (ICML)},
+  pages={10648--10659},
+  year={2020}
+}
+
+@article{boyd2011admm,
+  title={Distributed Optimization and Statistical Learning via the Alternating Direction Method of Multipliers},
+  author={Boyd, Stephen and Parikh, Neal and Chu, Eric and Peleato, Borja and Eckstein, Jonathan},
+  journal={Foundations and Trends in Machine Learning},
+  volume={3},
+  number={1},
+  pages={1--122},
+  year={2011},
+  publisher={Now Publishers}
+}
+
+@inproceedings{zhang2018admm,
+  title={A Systematic DNN Weight Pruning Framework using Alternating Direction Method of Multipliers},
+  author={Zhang, Tianyun and Ye, Shaokai and Zhang, Kaiqi and Tang, Jian and Wen, Wujie and Fardad, Makan and Wang, Yanzhi},
+  booktitle={Proceedings of the European Conference on Computer Vision (ECCV)},
+  pages={184--199},
+  year={2018}
+}
+
+@book{bertsekas1996constrained,
+  title={Constrained Optimization and Lagrange Multiplier Methods},
+  author={Bertsekas, Dimitri P.},
+  publisher={Athena Scientific},
+  year={1996},
+  edition={2nd}
+}
+
+@book{nocedal2006numerical,
+  title={Numerical Optimization},
+  author={Nocedal, Jorge and Wright, Stephen J.},
+  publisher={Springer},
+  year={2006},
+  edition={2nd},
+  series={Springer Series in Operations Research}
+}

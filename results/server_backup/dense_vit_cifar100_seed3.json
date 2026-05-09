@@ -1,0 +1,9 @@
+{
+  "model": "DenseViT",
+  "seed": 3,
+  "steps": 5000,
+  "total_params": 1821028,
+  "best_val_acc": 0.3625,
+  "flops_per_sample": 236733640,
+  "total_time_s": 350.7157201766968
+}

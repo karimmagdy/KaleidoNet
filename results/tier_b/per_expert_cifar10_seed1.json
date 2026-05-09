@@ -1,0 +1,30 @@
+{
+  "model": "LagrangianStrengthened",
+  "variant": "per_expert",
+  "dataset": "cifar10",
+  "seed": 1,
+  "steps": 50000,
+  "target_flops_ratio": 0.5,
+  "target_flops": 340116480,
+  "lambda_init": 0.01,
+  "lambda_lr": 0.01,
+  "augmented_mu": 0.1,
+  "flops_grad_scale": 3.0,
+  "final_lambda_max": 0.16843289136886597,
+  "final_lambda_mean": 0.053216688334941864,
+  "final_lambda_shape": [
+    4,
+    4
+  ],
+  "params": {
+    "total_params": 5473382,
+    "active_params": 3504411,
+    "dormant_params": 1968971,
+    "active_fraction": 0.6402642826683758
+  },
+  "dense_flops": 680232960,
+  "init_active_flops": 237269760,
+  "active_flops": 176167680,
+  "val_loss": 1.7791798030853272,
+  "val_accuracy": 0.3328
+}

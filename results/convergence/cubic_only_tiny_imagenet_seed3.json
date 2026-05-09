@@ -1,0 +1,19 @@
+{
+  "model": "cubic_only",
+  "dataset": "tiny_imagenet",
+  "seed": 3,
+  "steps": 50000,
+  "params": {
+    "total_params": 5537700,
+    "active_params": 2230708,
+    "dormant_params": 3306992,
+    "active_fraction": 0.4028221102623833
+  },
+  "dense_flops": 684957696,
+  "active_flops": 134883840,
+  "curve_file": "/home/sweilam/Research/KaleidoNet/results/convergence/curves/cubic_only_tiny_imagenet_seed3.csv",
+  "gradient_masking_enabled": false,
+  "dual_rate_enabled": false,
+  "val_loss": 2.7291594053268433,
+  "val_accuracy": 0.3654
+}

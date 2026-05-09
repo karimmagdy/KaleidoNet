@@ -1,0 +1,19 @@
+{
+  "model": "cubic_only",
+  "dataset": "stl10",
+  "seed": 3,
+  "steps": 50000,
+  "params": {
+    "total_params": 5516390,
+    "active_params": 2209398,
+    "dormant_params": 3306992,
+    "active_fraction": 0.40051519200056557
+  },
+  "dense_flops": 1530556416,
+  "active_flops": 308133120,
+  "curve_file": "/home/sweilam/Research/KaleidoNet/results/convergence/curves/cubic_only_stl10_seed3.csv",
+  "gradient_masking_enabled": false,
+  "dual_rate_enabled": false,
+  "val_loss": 2.525639090538025,
+  "val_accuracy": 0.659375
+}

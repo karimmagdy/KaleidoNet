@@ -1,0 +1,18 @@
+{
+  "model": "HardConcretePruning",
+  "dataset": "cifar100",
+  "seed": 1,
+  "steps": 50000,
+  "l0_weight": 0.0001,
+  "params": {
+    "total_params": 5490752,
+    "active_params": 756800,
+    "dormant_params": 4733952,
+    "active_fraction": 0.13783175783572085
+  },
+  "dense_flops": 682444800,
+  "init_active_flops": 239516160,
+  "active_flops": 86161920,
+  "val_loss": 3.9429740600585936,
+  "val_accuracy": 0.0974
+}

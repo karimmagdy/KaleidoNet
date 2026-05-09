@@ -1,28 +1,32 @@
 \begin{abstract}
-Mixture-of-Experts (MoE) Vision Transformers offer a promising path to
-conditional computation, yet pruning individual neurons within expert
-sub-networks remains unstable: standard Lagrangian FLOPs penalties
-produce per-neuron gradients that are orders of magnitude weaker than
-task gradients (${\sim}10^{-4}$ vs.\ ${\sim}10^{-2}$), causing
-\emph{uniform mask collapse} rather than selective pruning. We propose
-and analyze \textbf{KaleidoNet}, an elastic MoE Vision Transformer
-that replaces Lagrangian budget control with a \emph{cubic sparsity
-schedule} paired with gradient masking and a dual-rate optimizer. A
-deterministic schedule ramps target sparsity from 0\% to 70\%
-following a cubic curve, while hard gradient masking freezes pruned
-neurons permanently and a $3{\times}$ higher learning rate on mask
-logits accelerates structural adaptation. In preliminary experiments
-with a limited training budget (5{,}000 steps) on CIFAR-10/100,
-Tiny-ImageNet, and STL-10, KaleidoNet achieves a consistent
-$\mathbf{1.8{\times}}$ FLOPs reduction while retaining
-$\mathbf{85\text{--}87\%}$ of dense-model accuracy; however, under
-this short schedule, KaleidoNet does not yet outperform simpler
-baselines such as magnitude or random structured pruning, indicating
-that longer training is needed for the cubic schedule's advantages to
-materialize. Full convergence experiments are ongoing. Ablations over
-eight architectural configurations reveal that elastic pruning and MoE
-routing provide complementary benefits, and model surgery converts the
-soft masks into physically compact networks, yielding a
-$\mathbf{1.63{\times}}$ parameter compression with no additional
-accuracy loss.
+We identify a gradient-scale failure mode of per-neuron Lagrangian
+FLOPs pruning in Mixture-of-Experts (MoE) vision transformers: the
+per-neuron penalty gradients are orders of magnitude weaker than task
+gradients (${\sim}10^{-4}$ vs.\ ${\sim}10^{-2}$), causing the
+optimizer to satisfy the budget constraint through \emph{uniform mask
+collapse} rather than selective pruning. We validate this prediction
+empirically: a properly tuned Lagrangian baseline achieves only
+$10.4\%$ accuracy on CIFAR-100 (barely above the $1\%$ random
+baseline), $36.4\%$ on CIFAR-10, and $4.7\%$ on Tiny-ImageNet---despite
+reaching the target FLOPs ratio on every dataset. We further show that
+\emph{any} schedule-based pruning method (Linear, Random, Magnitude,
+or our cubic variant) bypasses this failure mode and recovers
+near-dense accuracy, indicating that the diagnosis---not a particular
+schedule---is the primary contribution. As a practical remedy we
+propose \textbf{KaleidoNet}, which replaces the learned Lagrangian
+penalty with a deterministic \emph{cubic sparsity schedule}, gradient
+masking, and dual-rate optimization. Across all three datasets trained
+to convergence (50{,}000 steps, 3 seeds), KaleidoNet retains
+98.3--99.2\% of dense-model accuracy with $1.8{\times}$ FLOPs
+reduction and $1.63{\times}$ parameter compression, the strongest
+schedule-based instantiation we tested. Ablations over eight
+configurations isolate the contribution of each component, and model
+surgery converts soft masks into physically compact networks. We
+report a current implementation limitation: at this scale MoE routing
+overhead dominates wall-clock latency on Apple MPS, so the FLOPs and
+parameter savings do not yet translate into a deployment speedup; we
+discuss this as a platform-specific limitation rather than a property
+of the algorithm. Validation is limited to small-to-medium scale
+(CIFAR-10/100, Tiny-ImageNet; 5.49M-parameter MoE ViT); ImageNet-1K
+validation with larger backbones remains future work.
 \end{abstract}

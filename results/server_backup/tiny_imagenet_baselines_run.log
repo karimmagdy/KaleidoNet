@@ -1,0 +1,780 @@
+============================================================
+Running ALL baselines: dataset=tiny_imagenet, seed=1
+============================================================
+/Users/kmagdy-ma-eg/Library/Python/3.9/lib/python/site-packages/torch/amp/autocast_mode.py:346: UserWarning: In MPS autocast, but the target dtype is not supported. Disabling autocast.
+MPS Autocast only supports dtype of torch.bfloat16 and torch.float16 currently.
+  warnings.warn(error_message)
+============================================================
+Baseline: Magnitude Pruning | tiny_imagenet | seed=1
+============================================================
+
+Phase 1: Training full model for 5000 steps (no pruning)...
+Seed set to 1
+Starting KaleidoNet training on mps
+  Model params: 5,537,700
+  FLOPs budget: 121,006,080
+  Max steps: 5000
+
+Step      0 | loss=5.3943 | task=5.3325 | soft=62% hard=100% | logits=[0.50,0.50,0.50] | λ=0.0100 | τ=1.000 | lr=1.20e-05 | 0.7 steps/s
+Step    100 | loss=5.3074 | task=5.2569 | soft=62% hard=100% | logits=[0.45,0.50,0.55] | λ=0.0100 | τ=0.964 | lr=1.14e-04 | 1.6 steps/s
+Step    200 | loss=5.2902 | task=5.2396 | soft=62% hard=100% | logits=[0.43,0.51,0.59] | λ=0.0100 | τ=0.928 | lr=2.74e-04 | 1.7 steps/s
+Step    300 | loss=4.9364 | task=4.8859 | soft=62% hard=100% | logits=[0.43,0.51,0.63] | λ=0.0100 | τ=0.892 | lr=3.00e-04 | 2.0 steps/s
+Step    400 | loss=4.9673 | task=4.9172 | soft=62% hard=100% | logits=[0.41,0.51,0.67] | λ=0.0100 | τ=0.856 | lr=2.99e-04 | 2.3 steps/s
+Step    500 | loss=5.0341 | task=4.9830 | soft=63% hard=100% | logits=[0.41,0.51,0.67] | λ=0.0100 | τ=0.820 | lr=2.98e-04 | 2.5 steps/s
+  [EVAL] val_loss=4.8394 | val_acc=0.0410 | avg_blocks=4.0
+Step    600 | loss=4.8202 | task=4.7693 | soft=63% hard=100% | logits=[0.40,0.51,0.68] | λ=0.0100 | τ=0.784 | lr=2.96e-04 | 2.4 steps/s
+Step    700 | loss=4.8702 | task=4.8199 | soft=63% hard=100% | logits=[0.39,0.51,0.69] | λ=0.0100 | τ=0.748 | lr=2.93e-04 | 2.6 steps/s
+Step    800 | loss=4.5422 | task=4.4918 | soft=63% hard=100% | logits=[0.39,0.52,0.70] | λ=0.0100 | τ=0.712 | lr=2.90e-04 | 2.7 steps/s
+Step    900 | loss=4.7565 | task=4.7063 | soft=63% hard=100% | logits=[0.37,0.52,0.72] | λ=0.0100 | τ=0.676 | lr=2.86e-04 | 2.9 steps/s
+Step   1000 | loss=4.3734 | task=4.3231 | soft=63% hard=100% | logits=[0.37,0.52,0.72] | λ=0.0100 | τ=0.640 | lr=2.82e-04 | 3.0 steps/s
+  [EVAL] val_loss=4.5489 | val_acc=0.0692 | avg_blocks=4.0
+Step   1100 | loss=4.5499 | task=4.4995 | soft=63% hard=100% | logits=[0.36,0.52,0.72] | λ=0.0100 | τ=0.604 | lr=2.77e-04 | 2.9 steps/s
+Step   1200 | loss=4.4540 | task=4.4037 | soft=63% hard=100% | logits=[0.34,0.52,0.74] | λ=0.0100 | τ=0.568 | lr=2.71e-04 | 3.0 steps/s
+Step   1300 | loss=4.3839 | task=4.3338 | soft=63% hard=100% | logits=[0.34,0.52,0.76] | λ=0.0100 | τ=0.532 | lr=2.65e-04 | 3.0 steps/s
+Step   1400 | loss=4.5089 | task=4.4584 | soft=63% hard=100% | logits=[0.33,0.52,0.80] | λ=0.0100 | τ=0.496 | lr=2.59e-04 | 3.1 steps/s
+Step   1500 | loss=4.2105 | task=4.1602 | soft=63% hard=100% | logits=[0.34,0.52,0.79] | λ=0.0100 | τ=0.460 | lr=2.51e-04 | 3.2 steps/s
+  [EVAL] val_loss=4.2521 | val_acc=0.1029 | avg_blocks=4.0
+Step   1600 | loss=4.3102 | task=4.2599 | soft=63% hard=100% | logits=[0.32,0.52,0.80] | λ=0.0100 | τ=0.424 | lr=2.44e-04 | 3.1 steps/s
+Step   1700 | loss=4.3209 | task=4.2708 | soft=63% hard=100% | logits=[0.31,0.52,0.80] | λ=0.0100 | τ=0.388 | lr=2.36e-04 | 3.2 steps/s
+Step   1800 | loss=4.0633 | task=4.0132 | soft=63% hard=100% | logits=[0.32,0.52,0.81] | λ=0.0100 | τ=0.352 | lr=2.28e-04 | 3.2 steps/s
+Step   1900 | loss=4.0685 | task=4.0183 | soft=63% hard=100% | logits=[0.30,0.52,0.82] | λ=0.0100 | τ=0.316 | lr=2.19e-04 | 3.3 steps/s
+Step   2000 | loss=3.9777 | task=3.9275 | soft=63% hard=100% | logits=[0.32,0.52,0.83] | λ=0.0100 | τ=0.280 | lr=2.10e-04 | 3.4 steps/s
+  [EVAL] val_loss=4.1383 | val_acc=0.1208 | avg_blocks=4.0
+Step   2100 | loss=3.8892 | task=3.8390 | soft=63% hard=100% | logits=[0.30,0.52,0.82] | λ=0.0100 | τ=0.244 | lr=2.01e-04 | 3.3 steps/s
+Step   2200 | loss=4.2238 | task=4.1736 | soft=63% hard=100% | logits=[0.30,0.52,0.85] | λ=0.0100 | τ=0.208 | lr=1.91e-04 | 3.3 steps/s
+Step   2300 | loss=3.8877 | task=3.8373 | soft=63% hard=100% | logits=[0.31,0.52,0.85] | λ=0.0100 | τ=0.172 | lr=1.82e-04 | 3.4 steps/s
+Step   2400 | loss=4.2175 | task=4.1674 | soft=63% hard=100% | logits=[0.30,0.52,0.84] | λ=0.0100 | τ=0.136 | lr=1.72e-04 | 3.4 steps/s
+Step   2500 | loss=4.1385 | task=4.0884 | soft=63% hard=100% | logits=[0.28,0.52,0.86] | λ=0.0100 | τ=0.100 | lr=1.62e-04 | 3.5 steps/s
+  [EVAL] val_loss=4.0252 | val_acc=0.1387 | avg_blocks=4.0
+Step   2600 | loss=3.8875 | task=3.8373 | soft=63% hard=100% | logits=[0.29,0.52,0.88] | λ=0.0100 | τ=0.100 | lr=1.52e-04 | 3.4 steps/s
+Step   2700 | loss=4.0962 | task=4.0461 | soft=63% hard=100% | logits=[0.29,0.53,0.89] | λ=0.0100 | τ=0.100 | lr=1.42e-04 | 3.5 steps/s
+Step   2800 | loss=3.9506 | task=3.9005 | soft=63% hard=100% | logits=[0.28,0.53,0.90] | λ=0.0100 | τ=0.100 | lr=1.32e-04 | 3.5 steps/s
+Step   2900 | loss=4.0752 | task=4.0251 | soft=63% hard=100% | logits=[0.29,0.53,0.90] | λ=0.0100 | τ=0.100 | lr=1.23e-04 | 3.5 steps/s
+Step   3000 | loss=4.0201 | task=3.9700 | soft=63% hard=100% | logits=[0.28,0.53,0.90] | λ=0.0100 | τ=0.100 | lr=1.13e-04 | 3.6 steps/s
+  [EVAL] val_loss=3.8984 | val_acc=0.1549 | avg_blocks=4.0
+Step   3100 | loss=3.7908 | task=3.7405 | soft=63% hard=100% | logits=[0.29,0.53,0.90] | λ=0.0100 | τ=0.100 | lr=1.03e-04 | 3.5 steps/s
+Step   3200 | loss=3.9358 | task=3.8858 | soft=63% hard=100% | logits=[0.29,0.53,0.90] | λ=0.0100 | τ=0.100 | lr=9.41e-05 | 3.5 steps/s
+Step   3300 | loss=4.0335 | task=3.9834 | soft=63% hard=100% | logits=[0.27,0.53,0.90] | λ=0.0100 | τ=0.100 | lr=8.51e-05 | 3.6 steps/s
+Step   3400 | loss=3.9506 | task=3.9004 | soft=63% hard=100% | logits=[0.28,0.53,0.90] | λ=0.0100 | τ=0.100 | lr=7.63e-05 | 3.6 steps/s
+Step   3500 | loss=3.9175 | task=3.8674 | soft=63% hard=100% | logits=[0.27,0.53,0.91] | λ=0.0100 | τ=0.100 | lr=6.78e-05 | 3.6 steps/s
+  [EVAL] val_loss=3.8210 | val_acc=0.1667 | avg_blocks=4.0
+Step   3600 | loss=3.6463 | task=3.5962 | soft=63% hard=100% | logits=[0.26,0.53,0.90] | λ=0.0100 | τ=0.100 | lr=5.97e-05 | 3.6 steps/s
+Step   3700 | loss=3.6782 | task=3.6281 | soft=63% hard=100% | logits=[0.25,0.53,0.90] | λ=0.0100 | τ=0.100 | lr=5.20e-05 | 3.6 steps/s
+Step   3800 | loss=4.0486 | task=3.9985 | soft=63% hard=100% | logits=[0.23,0.53,0.91] | λ=0.0100 | τ=0.100 | lr=4.47e-05 | 3.6 steps/s
+Step   3900 | loss=3.9710 | task=3.9209 | soft=63% hard=100% | logits=[0.24,0.53,0.90] | λ=0.0100 | τ=0.100 | lr=3.78e-05 | 3.7 steps/s
+Step   4000 | loss=3.4375 | task=3.3874 | soft=63% hard=100% | logits=[0.24,0.53,0.89] | λ=0.0100 | τ=0.100 | lr=3.15e-05 | 3.7 steps/s
+  [EVAL] val_loss=3.7733 | val_acc=0.1763 | avg_blocks=4.0
+Step   4100 | loss=3.6866 | task=3.6365 | soft=63% hard=100% | logits=[0.24,0.53,0.91] | λ=0.0100 | τ=0.100 | lr=2.57e-05 | 3.6 steps/s
+Step   4200 | loss=3.6384 | task=3.5883 | soft=63% hard=100% | logits=[0.24,0.54,0.92] | λ=0.0100 | τ=0.100 | lr=2.04e-05 | 3.7 steps/s
+Step   4300 | loss=3.9534 | task=3.9033 | soft=63% hard=100% | logits=[0.25,0.54,0.91] | λ=0.0100 | τ=0.100 | lr=1.57e-05 | 3.7 steps/s
+Step   4400 | loss=4.3657 | task=4.3157 | soft=63% hard=100% | logits=[0.26,0.54,0.90] | λ=0.0100 | τ=0.100 | lr=1.16e-05 | 3.7 steps/s
+Step   4500 | loss=3.9082 | task=3.8582 | soft=63% hard=100% | logits=[0.25,0.54,0.90] | λ=0.0100 | τ=0.100 | lr=8.06e-06 | 3.7 steps/s
+  [EVAL] val_loss=3.7496 | val_acc=0.1809 | avg_blocks=4.0
+Step   4600 | loss=4.0510 | task=4.0010 | soft=63% hard=100% | logits=[0.24,0.54,0.90] | λ=0.0100 | τ=0.100 | lr=5.17e-06 | 3.7 steps/s
+Step   4700 | loss=3.9005 | task=3.8505 | soft=63% hard=100% | logits=[0.24,0.54,0.91] | λ=0.0100 | τ=0.100 | lr=2.91e-06 | 3.7 steps/s
+Step   4800 | loss=4.3539 | task=4.3038 | soft=63% hard=100% | logits=[0.23,0.54,0.91] | λ=0.0100 | τ=0.100 | lr=1.29e-06 | 3.7 steps/s
+Step   4900 | loss=3.8823 | task=3.8322 | soft=63% hard=100% | logits=[0.21,0.54,0.90] | λ=0.0100 | τ=0.100 | lr=3.16e-07 | 3.7 steps/s
+
+Training complete in 1327.2s
+Best val loss: 3.7496
+Pre-prune accuracy: 0.1782
+
+Phase 2: Magnitude pruning (target sparsity=70%)...
+Post-prune accuracy: 0.1536
+
+Phase 3: Fine-tuning for 1000 steps...
+Seed set to 1
+Starting KaleidoNet training on mps
+  Model params: 5,537,700
+  FLOPs budget: 121,006,080
+  Max steps: 1000
+
+Step      0 | loss=4.0415 | task=3.9913 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=1.000 | lr=4.10e-06 | 4.7 steps/s
+Step    100 | loss=3.6552 | task=3.6052 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.964 | lr=9.93e-05 | 4.8 steps/s
+Step    200 | loss=4.1943 | task=4.1442 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.928 | lr=9.38e-05 | 4.9 steps/s
+Step    300 | loss=3.7415 | task=3.6914 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.892 | lr=8.36e-05 | 4.9 steps/s
+Step    400 | loss=3.9912 | task=3.9411 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.856 | lr=6.98e-05 | 4.9 steps/s
+Step    500 | loss=3.8538 | task=3.8037 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.820 | lr=5.38e-05 | 4.9 steps/s
+  [EVAL] val_loss=3.8172 | val_acc=0.1666 | avg_blocks=4.0
+Step    600 | loss=3.9902 | task=3.9402 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.784 | lr=3.74e-05 | 4.1 steps/s
+Step    700 | loss=3.7852 | task=3.7352 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.748 | lr=2.24e-05 | 4.2 steps/s
+Step    800 | loss=3.6486 | task=3.5986 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.712 | lr=1.03e-05 | 4.3 steps/s
+Step    900 | loss=4.0879 | task=4.0379 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.676 | lr=2.60e-06 | 4.3 steps/s
+
+Training complete in 229.1s
+Best val loss: 3.8172
+
+Final accuracy: 0.1722
+Final active FLOPs: 134,384,640
+Results saved to results/magnitude_pruning_tiny_imagenet_seed1.json
+============================================================
+Baseline: Random Structured Pruning | tiny_imagenet | seed=1
+============================================================
+Applying random structured mask (target sparsity=70%)...
+Seed set to 1
+Starting KaleidoNet training on mps
+  Model params: 5,537,700
+  FLOPs budget: 121,006,080
+  Max steps: 5000
+
+Step      0 | loss=5.3897 | task=5.3285 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=1.000 | lr=1.20e-05 | 1.3 steps/s
+Step    100 | loss=5.3439 | task=5.2936 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.964 | lr=1.14e-04 | 2.7 steps/s
+Step    200 | loss=5.2905 | task=5.2400 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.928 | lr=2.74e-04 | 3.5 steps/s
+Step    300 | loss=4.9718 | task=4.9216 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.892 | lr=3.00e-04 | 3.9 steps/s
+Step    400 | loss=5.0192 | task=4.9689 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.856 | lr=2.99e-04 | 4.2 steps/s
+Step    500 | loss=5.0771 | task=5.0261 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.820 | lr=2.98e-04 | 4.3 steps/s
+  [EVAL] val_loss=4.8614 | val_acc=0.0417 | avg_blocks=4.0
+Step    600 | loss=4.8753 | task=4.8249 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.784 | lr=2.96e-04 | 3.8 steps/s
+Step    700 | loss=4.8794 | task=4.8291 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.748 | lr=2.93e-04 | 3.9 steps/s
+Step    800 | loss=4.6084 | task=4.5581 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.712 | lr=2.90e-04 | 4.1 steps/s
+Step    900 | loss=4.8670 | task=4.8168 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.676 | lr=2.86e-04 | 4.2 steps/s
+Step   1000 | loss=4.4616 | task=4.4113 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.640 | lr=2.82e-04 | 4.3 steps/s
+  [EVAL] val_loss=4.5300 | val_acc=0.0752 | avg_blocks=4.0
+Step   1100 | loss=4.5773 | task=4.5271 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.604 | lr=2.77e-04 | 4.0 steps/s
+Step   1200 | loss=4.5698 | task=4.5193 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.568 | lr=2.71e-04 | 4.0 steps/s
+Step   1300 | loss=4.4652 | task=4.4150 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.532 | lr=2.65e-04 | 4.1 steps/s
+Step   1400 | loss=4.5860 | task=4.5357 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.496 | lr=2.59e-04 | 4.2 steps/s
+Step   1500 | loss=4.2839 | task=4.2338 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.460 | lr=2.51e-04 | 4.2 steps/s
+  [EVAL] val_loss=4.3023 | val_acc=0.1041 | avg_blocks=4.0
+Step   1600 | loss=4.3479 | task=4.2977 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.424 | lr=2.44e-04 | 4.0 steps/s
+Step   1700 | loss=4.3957 | task=4.3456 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.388 | lr=2.36e-04 | 4.1 steps/s
+Step   1800 | loss=4.0299 | task=3.9797 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.352 | lr=2.28e-04 | 4.1 steps/s
+Step   1900 | loss=3.9647 | task=3.9146 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.316 | lr=2.19e-04 | 4.2 steps/s
+Step   2000 | loss=4.1092 | task=4.0591 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.280 | lr=2.10e-04 | 4.2 steps/s
+  [EVAL] val_loss=4.1923 | val_acc=0.1140 | avg_blocks=4.0
+Step   2100 | loss=3.8850 | task=3.8349 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.244 | lr=2.01e-04 | 4.1 steps/s
+Step   2200 | loss=4.2513 | task=4.2013 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.208 | lr=1.91e-04 | 4.1 steps/s
+Step   2300 | loss=3.9580 | task=3.9076 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.172 | lr=1.82e-04 | 4.1 steps/s
+Step   2400 | loss=4.2323 | task=4.1823 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.136 | lr=1.72e-04 | 4.2 steps/s
+Step   2500 | loss=4.1959 | task=4.1458 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.62e-04 | 4.2 steps/s
+  [EVAL] val_loss=4.0600 | val_acc=0.1331 | avg_blocks=4.0
+Step   2600 | loss=3.9976 | task=3.9475 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.52e-04 | 4.1 steps/s
+Step   2700 | loss=4.1523 | task=4.1023 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.42e-04 | 4.1 steps/s
+Step   2800 | loss=3.9994 | task=3.9494 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.32e-04 | 4.1 steps/s
+Step   2900 | loss=4.0949 | task=4.0448 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.23e-04 | 4.2 steps/s
+Step   3000 | loss=4.0400 | task=3.9899 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.13e-04 | 4.2 steps/s
+  [EVAL] val_loss=3.9629 | val_acc=0.1499 | avg_blocks=4.0
+Step   3100 | loss=3.8082 | task=3.7580 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.03e-04 | 4.1 steps/s
+Step   3200 | loss=4.0555 | task=4.0054 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=9.41e-05 | 4.1 steps/s
+Step   3300 | loss=4.1501 | task=4.1000 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=8.51e-05 | 4.2 steps/s
+Step   3400 | loss=4.0562 | task=4.0061 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=7.63e-05 | 4.2 steps/s
+Step   3500 | loss=4.0052 | task=3.9552 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=6.78e-05 | 4.2 steps/s
+  [EVAL] val_loss=3.8965 | val_acc=0.1600 | avg_blocks=4.0
+Step   3600 | loss=3.7175 | task=3.6673 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=5.97e-05 | 4.1 steps/s
+Step   3700 | loss=3.6901 | task=3.6401 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=5.20e-05 | 4.2 steps/s
+Step   3800 | loss=4.1654 | task=4.1152 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=4.47e-05 | 4.2 steps/s
+Step   3900 | loss=4.0258 | task=3.9758 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=3.78e-05 | 4.2 steps/s
+Step   4000 | loss=3.5122 | task=3.4621 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=3.15e-05 | 4.2 steps/s
+  [EVAL] val_loss=3.8491 | val_acc=0.1668 | avg_blocks=4.0
+Step   4100 | loss=3.7780 | task=3.7279 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=2.57e-05 | 4.1 steps/s
+Step   4200 | loss=3.7867 | task=3.7367 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=2.04e-05 | 4.2 steps/s
+Step   4300 | loss=4.0368 | task=3.9867 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.57e-05 | 4.2 steps/s
+Step   4400 | loss=4.4402 | task=4.3902 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.16e-05 | 4.2 steps/s
+Step   4500 | loss=4.0545 | task=4.0045 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=8.06e-06 | 4.2 steps/s
+  [EVAL] val_loss=3.8288 | val_acc=0.1666 | avg_blocks=4.0
+Step   4600 | loss=4.2161 | task=4.1661 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=5.17e-06 | 4.2 steps/s
+Step   4700 | loss=3.9000 | task=3.8500 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=2.91e-06 | 4.2 steps/s
+Step   4800 | loss=4.3223 | task=4.2722 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.29e-06 | 4.2 steps/s
+Step   4900 | loss=3.9442 | task=3.8942 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=3.16e-07 | 4.2 steps/s
+
+Training complete in 1181.4s
+Best val loss: 3.8288
+
+Final accuracy: 0.1695
+Final active FLOPs: 134,384,640
+Results saved to results/random_pruning_tiny_imagenet_seed1.json
+============================================================
+Baseline: Linear Sparsity Schedule | tiny_imagenet | seed=1
+============================================================
+Seed set to 1
+Starting KaleidoNet training on mps
+  Model params: 5,537,700
+  FLOPs budget: 121,006,080
+  Max steps: 5000
+
+Step      0 | loss=5.3943 | task=5.3325 | soft=62% hard=100% | logits=[0.50,0.50,0.50] | λ=0.0100 | τ=1.000 | lr=1.20e-05 | 4.1 steps/s
+Step    100 | loss=5.3074 | task=5.2569 | soft=62% hard=100% | logits=[0.45,0.50,0.55] | λ=0.0100 | τ=0.964 | lr=1.14e-04 | 4.7 steps/s
+Step    200 | loss=5.2902 | task=5.2396 | soft=62% hard=100% | logits=[0.43,0.51,0.59] | λ=0.0100 | τ=0.928 | lr=2.74e-04 | 4.8 steps/s
+Step    300 | loss=4.9364 | task=4.8859 | soft=62% hard=100% | logits=[0.43,0.51,0.63] | λ=0.0100 | τ=0.892 | lr=3.00e-04 | 4.8 steps/s
+Step    400 | loss=4.9673 | task=4.9172 | soft=62% hard=100% | logits=[0.41,0.51,0.67] | λ=0.0100 | τ=0.856 | lr=2.99e-04 | 4.8 steps/s
+Step    500 | loss=5.0341 | task=4.9830 | soft=63% hard=100% | logits=[0.41,0.51,0.67] | λ=0.0100 | τ=0.820 | lr=2.98e-04 | 4.8 steps/s
+  [EVAL] val_loss=4.8394 | val_acc=0.0410 | avg_blocks=4.0
+Step    600 | loss=4.8202 | task=4.7693 | soft=61% hard=98% | logits=[-100.00,-1.37,0.68] | λ=0.0100 | τ=0.784 | lr=2.96e-04 | 4.1 steps/s
+Step    700 | loss=4.8677 | task=4.8175 | soft=60% hard=96% | logits=[-100.00,-3.36,0.69] | λ=0.0100 | τ=0.748 | lr=2.93e-04 | 4.2 steps/s
+Step    800 | loss=4.5504 | task=4.5000 | soft=59% hard=94% | logits=[-100.00,-5.45,0.70] | λ=0.0100 | τ=0.712 | lr=2.90e-04 | 4.2 steps/s
+Step    900 | loss=4.7637 | task=4.7134 | soft=58% hard=92% | logits=[-100.00,-7.43,0.71] | λ=0.0100 | τ=0.676 | lr=2.86e-04 | 4.2 steps/s
+Step   1000 | loss=4.3652 | task=4.3149 | soft=57% hard=90% | logits=[-100.00,-9.42,0.72] | λ=0.0100 | τ=0.640 | lr=2.82e-04 | 4.3 steps/s
+  [EVAL] val_loss=4.5455 | val_acc=0.0695 | avg_blocks=4.0
+Step   1100 | loss=4.5555 | task=4.5052 | soft=55% hard=88% | logits=[-100.00,-11.51,0.73] | λ=0.0100 | τ=0.604 | lr=2.77e-04 | 3.9 steps/s
+Step   1200 | loss=4.4507 | task=4.4003 | soft=54% hard=86% | logits=[-100.00,-13.40,0.74] | λ=0.0100 | τ=0.568 | lr=2.71e-04 | 3.9 steps/s
+Step   1300 | loss=4.3992 | task=4.3490 | soft=53% hard=84% | logits=[-100.00,-15.38,0.77] | λ=0.0100 | τ=0.532 | lr=2.65e-04 | 4.0 steps/s
+Step   1400 | loss=4.5132 | task=4.4629 | soft=52% hard=82% | logits=[-100.00,-17.48,0.79] | λ=0.0100 | τ=0.496 | lr=2.59e-04 | 4.0 steps/s
+Step   1500 | loss=4.1836 | task=4.1331 | soft=51% hard=80% | logits=[-100.00,-19.46,0.79] | λ=0.0100 | τ=0.460 | lr=2.51e-04 | 4.0 steps/s
+  [EVAL] val_loss=4.2683 | val_acc=0.1013 | avg_blocks=4.0
+Step   1600 | loss=4.2859 | task=4.2356 | soft=49% hard=78% | logits=[-100.00,-21.45,0.80] | λ=0.0100 | τ=0.424 | lr=2.44e-04 | 3.8 steps/s
+Step   1700 | loss=4.3133 | task=4.2632 | soft=48% hard=76% | logits=[-100.00,-23.55,0.80] | λ=0.0100 | τ=0.388 | lr=2.36e-04 | 3.8 steps/s
+Step   1800 | loss=4.0827 | task=4.0326 | soft=47% hard=74% | logits=[-100.00,-25.43,0.81] | λ=0.0100 | τ=0.352 | lr=2.28e-04 | 3.9 steps/s
+Step   1900 | loss=4.1320 | task=4.0817 | soft=46% hard=72% | logits=[-100.00,-27.52,0.82] | λ=0.0100 | τ=0.316 | lr=2.19e-04 | 3.9 steps/s
+Step   2000 | loss=3.9818 | task=3.9316 | soft=44% hard=70% | logits=[-100.00,-29.51,0.82] | λ=0.0100 | τ=0.280 | lr=2.10e-04 | 3.9 steps/s
+  [EVAL] val_loss=4.1505 | val_acc=0.1198 | avg_blocks=4.0
+Step   2100 | loss=3.8639 | task=3.8138 | soft=43% hard=68% | logits=[-100.00,-31.50,0.82] | λ=0.0100 | τ=0.244 | lr=2.01e-04 | 3.8 steps/s
+Step   2200 | loss=4.2364 | task=4.1862 | soft=42% hard=66% | logits=[-100.00,-33.59,0.84] | λ=0.0100 | τ=0.208 | lr=1.91e-04 | 3.8 steps/s
+Step   2300 | loss=3.9218 | task=3.8714 | soft=41% hard=64% | logits=[-100.00,-35.58,0.85] | λ=0.0100 | τ=0.172 | lr=1.82e-04 | 3.8 steps/s
+Step   2400 | loss=4.2269 | task=4.1768 | soft=40% hard=62% | logits=[-100.00,-37.46,0.85] | λ=0.0100 | τ=0.136 | lr=1.72e-04 | 3.9 steps/s
+Step   2500 | loss=4.1711 | task=4.1209 | soft=38% hard=60% | logits=[-100.00,-39.56,0.87] | λ=0.0100 | τ=0.100 | lr=1.62e-04 | 3.9 steps/s
+  [EVAL] val_loss=4.0335 | val_acc=0.1374 | avg_blocks=4.0
+Step   2600 | loss=4.0071 | task=3.9570 | soft=37% hard=58% | logits=[-100.00,-41.54,0.88] | λ=0.0100 | τ=0.100 | lr=1.52e-04 | 3.8 steps/s
+Step   2700 | loss=4.1422 | task=4.0920 | soft=36% hard=56% | logits=[-100.00,-43.53,0.89] | λ=0.0100 | τ=0.100 | lr=1.42e-04 | 3.8 steps/s
+Step   2800 | loss=3.9951 | task=3.9451 | soft=35% hard=54% | logits=[-100.00,-45.63,0.90] | λ=0.0100 | τ=0.100 | lr=1.32e-04 | 3.8 steps/s
+Step   2900 | loss=4.1107 | task=4.0606 | soft=33% hard=52% | logits=[-100.00,-47.61,0.90] | λ=0.0100 | τ=0.100 | lr=1.23e-04 | 3.9 steps/s
+Step   3000 | loss=4.0842 | task=4.0341 | soft=32% hard=50% | logits=[-100.00,-49.71,0.91] | λ=0.0100 | τ=0.100 | lr=1.13e-04 | 3.9 steps/s
+  [EVAL] val_loss=3.9181 | val_acc=0.1543 | avg_blocks=4.0
+Step   3100 | loss=3.7955 | task=3.7452 | soft=31% hard=48% | logits=[-100.00,-51.59,0.91] | λ=0.0100 | τ=0.100 | lr=1.03e-04 | 3.8 steps/s
+Step   3200 | loss=3.9657 | task=3.9157 | soft=30% hard=46% | logits=[-100.00,-53.58,0.91] | λ=0.0100 | τ=0.100 | lr=9.41e-05 | 3.8 steps/s
+Step   3300 | loss=4.0587 | task=4.0086 | soft=28% hard=44% | logits=[-100.00,-55.67,0.91] | λ=0.0100 | τ=0.100 | lr=8.51e-05 | 3.8 steps/s
+Step   3400 | loss=3.9910 | task=3.9409 | soft=27% hard=42% | logits=[-100.00,-57.66,0.92] | λ=0.0100 | τ=0.100 | lr=7.63e-05 | 3.9 steps/s
+Step   3500 | loss=3.9681 | task=3.9181 | soft=26% hard=40% | logits=[-100.00,-59.65,0.93] | λ=0.0100 | τ=0.100 | lr=6.78e-05 | 3.9 steps/s
+  [EVAL] val_loss=3.8597 | val_acc=0.1649 | avg_blocks=4.0
+Step   3600 | loss=3.7411 | task=3.6910 | soft=25% hard=38% | logits=[-100.00,-61.75,0.94] | λ=0.0100 | τ=0.100 | lr=5.97e-05 | 3.8 steps/s
+Step   3700 | loss=3.6977 | task=3.6476 | soft=23% hard=36% | logits=[-100.00,-63.63,0.93] | λ=0.0100 | τ=0.100 | lr=5.20e-05 | 3.8 steps/s
+Step   3800 | loss=4.0796 | task=4.0296 | soft=22% hard=34% | logits=[-100.00,-65.62,0.93] | λ=0.0100 | τ=0.100 | lr=4.47e-05 | 3.8 steps/s
+Step   3900 | loss=4.0094 | task=3.9593 | soft=21% hard=32% | logits=[-100.00,-67.71,0.92] | λ=0.0100 | τ=0.100 | lr=3.78e-05 | 3.8 steps/s
+Step   4000 | loss=3.4934 | task=3.4434 | soft=20% hard=30% | logits=[-100.00,-69.70,0.91] | λ=0.0100 | τ=0.100 | lr=3.15e-05 | 3.9 steps/s
+  [EVAL] val_loss=3.8326 | val_acc=0.1695 | avg_blocks=4.0
+Step   4100 | loss=3.7416 | task=3.6915 | soft=20% hard=30% | logits=[-100.00,-69.70,0.92] | λ=0.0100 | τ=0.100 | lr=2.57e-05 | 3.8 steps/s
+Step   4200 | loss=3.7489 | task=3.6989 | soft=20% hard=30% | logits=[-100.00,-69.70,0.91] | λ=0.0100 | τ=0.100 | lr=2.04e-05 | 3.8 steps/s
+Step   4300 | loss=3.9821 | task=3.9320 | soft=20% hard=30% | logits=[-100.00,-69.70,0.91] | λ=0.0100 | τ=0.100 | lr=1.57e-05 | 3.8 steps/s
+Step   4400 | loss=4.4700 | task=4.4200 | soft=20% hard=30% | logits=[-100.00,-69.70,0.91] | λ=0.0100 | τ=0.100 | lr=1.16e-05 | 3.8 steps/s
+Step   4500 | loss=4.0153 | task=3.9653 | soft=20% hard=30% | logits=[-100.00,-69.70,0.92] | λ=0.0100 | τ=0.100 | lr=8.06e-06 | 3.9 steps/s
+  [EVAL] val_loss=3.8128 | val_acc=0.1732 | avg_blocks=4.0
+Step   4600 | loss=4.1639 | task=4.1138 | soft=20% hard=30% | logits=[-100.00,-69.70,0.93] | λ=0.0100 | τ=0.100 | lr=5.17e-06 | 3.8 steps/s
+Step   4700 | loss=3.9734 | task=3.9234 | soft=20% hard=30% | logits=[-100.00,-69.70,0.94] | λ=0.0100 | τ=0.100 | lr=2.91e-06 | 3.8 steps/s
+Step   4800 | loss=4.3816 | task=4.3315 | soft=20% hard=30% | logits=[-100.00,-69.70,0.95] | λ=0.0100 | τ=0.100 | lr=1.29e-06 | 3.8 steps/s
+Step   4900 | loss=3.9537 | task=3.9036 | soft=20% hard=30% | logits=[-100.00,-69.70,0.95] | λ=0.0100 | τ=0.100 | lr=3.16e-07 | 3.8 steps/s
+
+Training complete in 1295.2s
+Best val loss: 3.8128
+
+Final accuracy: 0.1723
+Final active FLOPs: 134,883,840
+Results saved to results/linear_schedule_tiny_imagenet_seed1.json
+============================================================
+Running ALL baselines: dataset=tiny_imagenet, seed=2
+============================================================
+/Users/kmagdy-ma-eg/Library/Python/3.9/lib/python/site-packages/torch/amp/autocast_mode.py:346: UserWarning: In MPS autocast, but the target dtype is not supported. Disabling autocast.
+MPS Autocast only supports dtype of torch.bfloat16 and torch.float16 currently.
+  warnings.warn(error_message)
+============================================================
+Baseline: Magnitude Pruning | tiny_imagenet | seed=2
+============================================================
+
+Phase 1: Training full model for 5000 steps (no pruning)...
+Seed set to 2
+Starting KaleidoNet training on mps
+  Model params: 5,537,700
+  FLOPs budget: 121,006,080
+  Max steps: 5000
+
+Step      0 | loss=5.4301 | task=5.3696 | soft=62% hard=100% | logits=[0.50,0.50,0.50] | λ=0.0100 | τ=1.000 | lr=1.20e-05 | 1.1 steps/s
+Step    100 | loss=5.2756 | task=5.2249 | soft=62% hard=100% | logits=[0.43,0.50,0.56] | λ=0.0100 | τ=0.964 | lr=1.14e-04 | 1.7 steps/s
+Step    200 | loss=5.0762 | task=5.0258 | soft=62% hard=100% | logits=[0.42,0.51,0.60] | λ=0.0100 | τ=0.928 | lr=2.74e-04 | 1.8 steps/s
+Step    300 | loss=5.1285 | task=5.0778 | soft=62% hard=100% | logits=[0.39,0.51,0.62] | λ=0.0100 | τ=0.892 | lr=3.00e-04 | 2.1 steps/s
+Step    400 | loss=4.9199 | task=4.8698 | soft=62% hard=100% | logits=[0.38,0.51,0.65] | λ=0.0100 | τ=0.856 | lr=2.99e-04 | 2.4 steps/s
+Step    500 | loss=4.9427 | task=4.8919 | soft=63% hard=100% | logits=[0.39,0.51,0.67] | λ=0.0100 | τ=0.820 | lr=2.98e-04 | 2.6 steps/s
+  [EVAL] val_loss=4.8627 | val_acc=0.0409 | avg_blocks=4.0
+Step    600 | loss=4.7893 | task=4.7391 | soft=63% hard=100% | logits=[0.40,0.51,0.69] | λ=0.0100 | τ=0.784 | lr=2.96e-04 | 2.6 steps/s
+Step    700 | loss=4.8920 | task=4.8412 | soft=63% hard=100% | logits=[0.40,0.51,0.70] | λ=0.0100 | τ=0.748 | lr=2.93e-04 | 2.7 steps/s
+Step    800 | loss=4.8032 | task=4.7529 | soft=63% hard=100% | logits=[0.38,0.51,0.71] | λ=0.0100 | τ=0.712 | lr=2.90e-04 | 2.9 steps/s
+Step    900 | loss=4.5107 | task=4.4607 | soft=63% hard=100% | logits=[0.39,0.52,0.73] | λ=0.0100 | τ=0.676 | lr=2.86e-04 | 3.0 steps/s
+Step   1000 | loss=4.4925 | task=4.4423 | soft=63% hard=100% | logits=[0.38,0.52,0.75] | λ=0.0100 | τ=0.640 | lr=2.82e-04 | 3.1 steps/s
+  [EVAL] val_loss=4.5752 | val_acc=0.0655 | avg_blocks=4.0
+Step   1100 | loss=4.4597 | task=4.4093 | soft=63% hard=100% | logits=[0.37,0.52,0.76] | λ=0.0100 | τ=0.604 | lr=2.77e-04 | 3.0 steps/s
+Step   1200 | loss=4.6143 | task=4.5641 | soft=63% hard=100% | logits=[0.37,0.52,0.76] | λ=0.0100 | τ=0.568 | lr=2.71e-04 | 3.1 steps/s
+Step   1300 | loss=4.3743 | task=4.3239 | soft=63% hard=100% | logits=[0.36,0.52,0.76] | λ=0.0100 | τ=0.532 | lr=2.65e-04 | 3.2 steps/s
+Step   1400 | loss=4.4095 | task=4.3591 | soft=63% hard=100% | logits=[0.34,0.52,0.76] | λ=0.0100 | τ=0.496 | lr=2.59e-04 | 3.3 steps/s
+Step   1500 | loss=4.4095 | task=4.3593 | soft=63% hard=100% | logits=[0.34,0.52,0.76] | λ=0.0100 | τ=0.460 | lr=2.51e-04 | 3.4 steps/s
+  [EVAL] val_loss=4.2939 | val_acc=0.1001 | avg_blocks=4.0
+Step   1600 | loss=4.4192 | task=4.3690 | soft=63% hard=100% | logits=[0.34,0.52,0.77] | λ=0.0100 | τ=0.424 | lr=2.44e-04 | 3.3 steps/s
+Step   1700 | loss=4.1624 | task=4.1120 | soft=63% hard=100% | logits=[0.33,0.52,0.80] | λ=0.0100 | τ=0.388 | lr=2.36e-04 | 3.3 steps/s
+Step   1800 | loss=4.2561 | task=4.2059 | soft=63% hard=100% | logits=[0.34,0.52,0.79] | λ=0.0100 | τ=0.352 | lr=2.28e-04 | 3.4 steps/s
+Step   1900 | loss=4.0945 | task=4.0444 | soft=63% hard=100% | logits=[0.34,0.52,0.79] | λ=0.0100 | τ=0.316 | lr=2.19e-04 | 3.5 steps/s
+Step   2000 | loss=4.1421 | task=4.0919 | soft=63% hard=100% | logits=[0.34,0.52,0.80] | λ=0.0100 | τ=0.280 | lr=2.10e-04 | 3.5 steps/s
+  [EVAL] val_loss=4.1712 | val_acc=0.1150 | avg_blocks=4.0
+Step   2100 | loss=4.3484 | task=4.2982 | soft=63% hard=100% | logits=[0.34,0.52,0.80] | λ=0.0100 | τ=0.244 | lr=2.01e-04 | 3.4 steps/s
+Step   2200 | loss=4.1406 | task=4.0903 | soft=63% hard=100% | logits=[0.33,0.52,0.81] | λ=0.0100 | τ=0.208 | lr=1.91e-04 | 3.5 steps/s
+Step   2300 | loss=4.2604 | task=4.2103 | soft=63% hard=100% | logits=[0.30,0.52,0.81] | λ=0.0100 | τ=0.172 | lr=1.82e-04 | 3.5 steps/s
+Step   2400 | loss=4.1380 | task=4.0879 | soft=63% hard=100% | logits=[0.30,0.52,0.81] | λ=0.0100 | τ=0.136 | lr=1.72e-04 | 3.6 steps/s
+Step   2500 | loss=4.2278 | task=4.1776 | soft=63% hard=100% | logits=[0.31,0.52,0.83] | λ=0.0100 | τ=0.100 | lr=1.62e-04 | 3.6 steps/s
+  [EVAL] val_loss=4.0304 | val_acc=0.1327 | avg_blocks=4.0
+Step   2600 | loss=4.2098 | task=4.1596 | soft=63% hard=100% | logits=[0.31,0.52,0.83] | λ=0.0100 | τ=0.100 | lr=1.52e-04 | 3.5 steps/s
+Step   2700 | loss=4.2178 | task=4.1676 | soft=63% hard=100% | logits=[0.31,0.53,0.83] | λ=0.0100 | τ=0.100 | lr=1.42e-04 | 3.6 steps/s
+Step   2800 | loss=4.3941 | task=4.3441 | soft=63% hard=100% | logits=[0.30,0.53,0.85] | λ=0.0100 | τ=0.100 | lr=1.32e-04 | 3.6 steps/s
+Step   2900 | loss=3.9316 | task=3.8816 | soft=63% hard=100% | logits=[0.30,0.53,0.85] | λ=0.0100 | τ=0.100 | lr=1.23e-04 | 3.6 steps/s
+Step   3000 | loss=4.1138 | task=4.0637 | soft=63% hard=100% | logits=[0.29,0.53,0.85] | λ=0.0100 | τ=0.100 | lr=1.13e-04 | 3.7 steps/s
+  [EVAL] val_loss=3.9162 | val_acc=0.1536 | avg_blocks=4.0
+Step   3100 | loss=3.9389 | task=3.8889 | soft=63% hard=100% | logits=[0.28,0.53,0.84] | λ=0.0100 | τ=0.100 | lr=1.03e-04 | 3.6 steps/s
+Step   3200 | loss=3.8953 | task=3.8452 | soft=63% hard=100% | logits=[0.28,0.53,0.85] | λ=0.0100 | τ=0.100 | lr=9.41e-05 | 3.6 steps/s
+Step   3300 | loss=4.0830 | task=4.0330 | soft=63% hard=100% | logits=[0.28,0.53,0.85] | λ=0.0100 | τ=0.100 | lr=8.51e-05 | 3.7 steps/s
+Step   3400 | loss=4.0211 | task=3.9709 | soft=63% hard=100% | logits=[0.28,0.53,0.84] | λ=0.0100 | τ=0.100 | lr=7.63e-05 | 3.7 steps/s
+Step   3500 | loss=3.9830 | task=3.9330 | soft=63% hard=100% | logits=[0.29,0.53,0.85] | λ=0.0100 | τ=0.100 | lr=6.78e-05 | 3.7 steps/s
+  [EVAL] val_loss=3.8757 | val_acc=0.1620 | avg_blocks=4.0
+Step   3600 | loss=4.1952 | task=4.1451 | soft=63% hard=100% | logits=[0.29,0.53,0.85] | λ=0.0100 | τ=0.100 | lr=5.97e-05 | 3.7 steps/s
+Step   3700 | loss=3.7740 | task=3.7240 | soft=63% hard=100% | logits=[0.28,0.53,0.85] | λ=0.0100 | τ=0.100 | lr=5.20e-05 | 3.7 steps/s
+Step   3800 | loss=3.7604 | task=3.7103 | soft=63% hard=100% | logits=[0.28,0.53,0.85] | λ=0.0100 | τ=0.100 | lr=4.47e-05 | 3.7 steps/s
+Step   3900 | loss=3.8498 | task=3.7997 | soft=63% hard=100% | logits=[0.27,0.53,0.85] | λ=0.0100 | τ=0.100 | lr=3.78e-05 | 3.7 steps/s
+Step   4000 | loss=3.9942 | task=3.9440 | soft=63% hard=100% | logits=[0.27,0.53,0.85] | λ=0.0100 | τ=0.100 | lr=3.15e-05 | 3.8 steps/s
+  [EVAL] val_loss=3.8080 | val_acc=0.1726 | avg_blocks=4.0
+Step   4100 | loss=3.9723 | task=3.9223 | soft=63% hard=100% | logits=[0.26,0.53,0.85] | λ=0.0100 | τ=0.100 | lr=2.57e-05 | 3.7 steps/s
+Step   4200 | loss=4.2318 | task=4.1818 | soft=63% hard=100% | logits=[0.27,0.54,0.85] | λ=0.0100 | τ=0.100 | lr=2.04e-05 | 3.7 steps/s
+Step   4300 | loss=4.0829 | task=4.0328 | soft=63% hard=100% | logits=[0.26,0.54,0.85] | λ=0.0100 | τ=0.100 | lr=1.57e-05 | 3.8 steps/s
+Step   4400 | loss=3.9036 | task=3.8535 | soft=63% hard=100% | logits=[0.24,0.54,0.85] | λ=0.0100 | τ=0.100 | lr=1.16e-05 | 3.8 steps/s
+Step   4500 | loss=3.9901 | task=3.9401 | soft=63% hard=100% | logits=[0.25,0.54,0.85] | λ=0.0100 | τ=0.100 | lr=8.06e-06 | 3.8 steps/s
+  [EVAL] val_loss=3.7966 | val_acc=0.1737 | avg_blocks=4.0
+Step   4600 | loss=3.6376 | task=3.5875 | soft=63% hard=100% | logits=[0.24,0.54,0.86] | λ=0.0100 | τ=0.100 | lr=5.17e-06 | 3.7 steps/s
+Step   4700 | loss=3.9937 | task=3.9436 | soft=63% hard=100% | logits=[0.24,0.54,0.86] | λ=0.0100 | τ=0.100 | lr=2.91e-06 | 3.8 steps/s
+Step   4800 | loss=3.9748 | task=3.9247 | soft=63% hard=100% | logits=[0.23,0.54,0.87] | λ=0.0100 | τ=0.100 | lr=1.29e-06 | 3.8 steps/s
+Step   4900 | loss=3.9536 | task=3.9035 | soft=63% hard=100% | logits=[0.24,0.54,0.86] | λ=0.0100 | τ=0.100 | lr=3.16e-07 | 3.8 steps/s
+
+Training complete in 1310.7s
+Best val loss: 3.7966
+Pre-prune accuracy: 0.1757
+
+Phase 2: Magnitude pruning (target sparsity=70%)...
+Post-prune accuracy: 0.1488
+
+Phase 3: Fine-tuning for 1000 steps...
+Seed set to 2
+Starting KaleidoNet training on mps
+  Model params: 5,537,700
+  FLOPs budget: 121,006,080
+  Max steps: 1000
+
+Step      0 | loss=4.0549 | task=4.0048 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=1.000 | lr=4.10e-06 | 4.3 steps/s
+Step    100 | loss=4.0142 | task=3.9642 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.964 | lr=9.93e-05 | 4.6 steps/s
+Step    200 | loss=3.8134 | task=3.7633 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.928 | lr=9.38e-05 | 4.6 steps/s
+Step    300 | loss=3.9816 | task=3.9316 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.892 | lr=8.36e-05 | 4.7 steps/s
+Step    400 | loss=3.8922 | task=3.8421 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.856 | lr=6.98e-05 | 4.7 steps/s
+Step    500 | loss=4.0218 | task=3.9718 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.820 | lr=5.38e-05 | 4.7 steps/s
+  [EVAL] val_loss=3.8481 | val_acc=0.1677 | avg_blocks=4.0
+Step    600 | loss=3.7774 | task=3.7274 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.784 | lr=3.74e-05 | 4.0 steps/s
+Step    700 | loss=3.8616 | task=3.8115 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.748 | lr=2.24e-05 | 4.1 steps/s
+Step    800 | loss=3.8615 | task=3.8115 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.712 | lr=1.03e-05 | 4.2 steps/s
+Step    900 | loss=3.8899 | task=3.8398 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.676 | lr=2.60e-06 | 4.2 steps/s
+
+Training complete in 235.1s
+Best val loss: 3.8481
+
+Final accuracy: 0.1726
+Final active FLOPs: 134,384,640
+Results saved to results/magnitude_pruning_tiny_imagenet_seed2.json
+============================================================
+Baseline: Random Structured Pruning | tiny_imagenet | seed=2
+============================================================
+Applying random structured mask (target sparsity=70%)...
+Seed set to 2
+Starting KaleidoNet training on mps
+  Model params: 5,537,700
+  FLOPs budget: 121,006,080
+  Max steps: 5000
+
+Step      0 | loss=5.4293 | task=5.3673 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=1.000 | lr=1.20e-05 | 1.5 steps/s
+Step    100 | loss=5.3047 | task=5.2535 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.964 | lr=1.14e-04 | 2.6 steps/s
+Step    200 | loss=5.1053 | task=5.0550 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.928 | lr=2.74e-04 | 3.4 steps/s
+Step    300 | loss=5.1653 | task=5.1149 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.892 | lr=3.00e-04 | 3.8 steps/s
+Step    400 | loss=4.9513 | task=4.9012 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.856 | lr=2.99e-04 | 4.1 steps/s
+Step    500 | loss=5.0236 | task=4.9730 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.820 | lr=2.98e-04 | 4.3 steps/s
+  [EVAL] val_loss=4.8837 | val_acc=0.0400 | avg_blocks=4.0
+Step    600 | loss=4.8930 | task=4.8424 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.784 | lr=2.96e-04 | 3.8 steps/s
+Step    700 | loss=4.9330 | task=4.8826 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.748 | lr=2.93e-04 | 3.9 steps/s
+Step    800 | loss=4.8550 | task=4.8046 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.712 | lr=2.90e-04 | 4.0 steps/s
+Step    900 | loss=4.5612 | task=4.5109 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.676 | lr=2.86e-04 | 4.1 steps/s
+Step   1000 | loss=4.5260 | task=4.4757 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.640 | lr=2.82e-04 | 4.2 steps/s
+  [EVAL] val_loss=4.5720 | val_acc=0.0725 | avg_blocks=4.0
+Step   1100 | loss=4.5750 | task=4.5247 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.604 | lr=2.77e-04 | 3.9 steps/s
+Step   1200 | loss=4.7273 | task=4.6770 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.568 | lr=2.71e-04 | 4.0 steps/s
+Step   1300 | loss=4.4487 | task=4.3984 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.532 | lr=2.65e-04 | 4.1 steps/s
+Step   1400 | loss=4.5045 | task=4.4539 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.496 | lr=2.59e-04 | 4.1 steps/s
+Step   1500 | loss=4.4597 | task=4.4093 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.460 | lr=2.51e-04 | 4.2 steps/s
+  [EVAL] val_loss=4.3380 | val_acc=0.0965 | avg_blocks=4.0
+Step   1600 | loss=4.3858 | task=4.3355 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.424 | lr=2.44e-04 | 4.0 steps/s
+Step   1700 | loss=4.2478 | task=4.1975 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.388 | lr=2.36e-04 | 4.0 steps/s
+Step   1800 | loss=4.2579 | task=4.2079 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.352 | lr=2.28e-04 | 4.1 steps/s
+Step   1900 | loss=4.1984 | task=4.1483 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.316 | lr=2.19e-04 | 4.1 steps/s
+Step   2000 | loss=4.1722 | task=4.1218 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.280 | lr=2.10e-04 | 4.2 steps/s
+  [EVAL] val_loss=4.1779 | val_acc=0.1189 | avg_blocks=4.0
+Step   2100 | loss=4.3549 | task=4.3047 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.244 | lr=2.01e-04 | 4.0 steps/s
+Step   2200 | loss=4.1964 | task=4.1463 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.208 | lr=1.91e-04 | 4.1 steps/s
+Step   2300 | loss=4.3485 | task=4.2983 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.172 | lr=1.82e-04 | 4.1 steps/s
+Step   2400 | loss=4.1938 | task=4.1435 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.136 | lr=1.72e-04 | 4.2 steps/s
+Step   2500 | loss=4.2615 | task=4.2113 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.62e-04 | 4.2 steps/s
+  [EVAL] val_loss=4.0738 | val_acc=0.1311 | avg_blocks=4.0
+Step   2600 | loss=4.2748 | task=4.2247 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.52e-04 | 4.1 steps/s
+Step   2700 | loss=4.1533 | task=4.1032 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.42e-04 | 4.1 steps/s
+Step   2800 | loss=4.5084 | task=4.4583 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.32e-04 | 4.2 steps/s
+Step   2900 | loss=3.9587 | task=3.9086 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.23e-04 | 4.2 steps/s
+Step   3000 | loss=4.1534 | task=4.1033 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.13e-04 | 4.2 steps/s
+  [EVAL] val_loss=4.0019 | val_acc=0.1430 | avg_blocks=4.0
+Step   3100 | loss=3.9800 | task=3.9299 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.03e-04 | 4.1 steps/s
+Step   3200 | loss=3.9908 | task=3.9407 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=9.41e-05 | 4.1 steps/s
+Step   3300 | loss=4.1350 | task=4.0850 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=8.51e-05 | 4.2 steps/s
+Step   3400 | loss=3.9886 | task=3.9385 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=7.63e-05 | 4.2 steps/s
+Step   3500 | loss=4.0218 | task=3.9716 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=6.78e-05 | 4.2 steps/s
+  [EVAL] val_loss=3.9196 | val_acc=0.1534 | avg_blocks=4.0
+Step   3600 | loss=4.3380 | task=4.2879 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=5.97e-05 | 4.1 steps/s
+Step   3700 | loss=3.8908 | task=3.8408 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=5.20e-05 | 4.2 steps/s
+Step   3800 | loss=3.8484 | task=3.7984 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=4.47e-05 | 4.2 steps/s
+Step   3900 | loss=3.9302 | task=3.8802 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=3.78e-05 | 4.2 steps/s
+Step   4000 | loss=4.0481 | task=3.9981 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=3.15e-05 | 4.2 steps/s
+  [EVAL] val_loss=3.8799 | val_acc=0.1617 | avg_blocks=4.0
+Step   4100 | loss=3.9764 | task=3.9263 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=2.57e-05 | 4.2 steps/s
+Step   4200 | loss=4.2411 | task=4.1911 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=2.04e-05 | 4.2 steps/s
+Step   4300 | loss=4.2235 | task=4.1735 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.57e-05 | 4.2 steps/s
+Step   4400 | loss=3.9592 | task=3.9092 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.16e-05 | 4.2 steps/s
+Step   4500 | loss=4.0355 | task=3.9854 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=8.06e-06 | 4.2 steps/s
+  [EVAL] val_loss=3.8592 | val_acc=0.1659 | avg_blocks=4.0
+Step   4600 | loss=3.7003 | task=3.6503 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=5.17e-06 | 4.2 steps/s
+Step   4700 | loss=4.1379 | task=4.0878 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=2.91e-06 | 4.2 steps/s
+Step   4800 | loss=4.1295 | task=4.0794 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.29e-06 | 4.2 steps/s
+Step   4900 | loss=4.1400 | task=4.0900 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=3.16e-07 | 4.2 steps/s
+
+Training complete in 1179.9s
+Best val loss: 3.8592
+
+Final accuracy: 0.1688
+Final active FLOPs: 134,384,640
+Results saved to results/random_pruning_tiny_imagenet_seed2.json
+============================================================
+Baseline: Linear Sparsity Schedule | tiny_imagenet | seed=2
+============================================================
+Seed set to 2
+Starting KaleidoNet training on mps
+  Model params: 5,537,700
+  FLOPs budget: 121,006,080
+  Max steps: 5000
+
+Step      0 | loss=5.4301 | task=5.3696 | soft=62% hard=100% | logits=[0.50,0.50,0.50] | λ=0.0100 | τ=1.000 | lr=1.20e-05 | 4.1 steps/s
+Step    100 | loss=5.2756 | task=5.2249 | soft=62% hard=100% | logits=[0.43,0.50,0.56] | λ=0.0100 | τ=0.964 | lr=1.14e-04 | 4.5 steps/s
+Step    200 | loss=5.0762 | task=5.0258 | soft=62% hard=100% | logits=[0.42,0.51,0.60] | λ=0.0100 | τ=0.928 | lr=2.74e-04 | 4.6 steps/s
+Step    300 | loss=5.1285 | task=5.0778 | soft=62% hard=100% | logits=[0.39,0.51,0.62] | λ=0.0100 | τ=0.892 | lr=3.00e-04 | 4.7 steps/s
+Step    400 | loss=4.9199 | task=4.8698 | soft=62% hard=100% | logits=[0.38,0.51,0.65] | λ=0.0100 | τ=0.856 | lr=2.99e-04 | 4.7 steps/s
+Step    500 | loss=4.9427 | task=4.8919 | soft=63% hard=100% | logits=[0.39,0.51,0.67] | λ=0.0100 | τ=0.820 | lr=2.98e-04 | 4.7 steps/s
+  [EVAL] val_loss=4.8627 | val_acc=0.0409 | avg_blocks=4.0
+Step    600 | loss=4.7893 | task=4.7391 | soft=61% hard=98% | logits=[-100.00,-1.37,0.69] | λ=0.0100 | τ=0.784 | lr=2.96e-04 | 4.0 steps/s
+Step    700 | loss=4.8664 | task=4.8157 | soft=60% hard=96% | logits=[-100.00,-3.36,0.70] | λ=0.0100 | τ=0.748 | lr=2.93e-04 | 4.1 steps/s
+Step    800 | loss=4.8211 | task=4.7707 | soft=59% hard=94% | logits=[-100.00,-5.45,0.70] | λ=0.0100 | τ=0.712 | lr=2.90e-04 | 4.2 steps/s
+Step    900 | loss=4.5162 | task=4.4660 | soft=58% hard=92% | logits=[-100.00,-7.44,0.71] | λ=0.0100 | τ=0.676 | lr=2.86e-04 | 4.2 steps/s
+Step   1000 | loss=4.5016 | task=4.4514 | soft=57% hard=90% | logits=[-100.00,-9.42,0.73] | λ=0.0100 | τ=0.640 | lr=2.82e-04 | 4.2 steps/s
+  [EVAL] val_loss=4.5776 | val_acc=0.0623 | avg_blocks=4.0
+Step   1100 | loss=4.4931 | task=4.4427 | soft=55% hard=88% | logits=[-100.00,-11.52,0.74] | λ=0.0100 | τ=0.604 | lr=2.77e-04 | 3.8 steps/s
+Step   1200 | loss=4.6177 | task=4.5675 | soft=54% hard=86% | logits=[-100.00,-13.40,0.74] | λ=0.0100 | τ=0.568 | lr=2.71e-04 | 3.9 steps/s
+Step   1300 | loss=4.4857 | task=4.4353 | soft=53% hard=84% | logits=[-100.00,-15.38,0.75] | λ=0.0100 | τ=0.532 | lr=2.65e-04 | 4.0 steps/s
+Step   1400 | loss=4.3996 | task=4.3492 | soft=52% hard=82% | logits=[-100.00,-17.48,0.75] | λ=0.0100 | τ=0.496 | lr=2.59e-04 | 4.0 steps/s
+Step   1500 | loss=4.4542 | task=4.4041 | soft=51% hard=80% | logits=[-100.00,-19.47,0.76] | λ=0.0100 | τ=0.460 | lr=2.51e-04 | 4.0 steps/s
+  [EVAL] val_loss=4.3016 | val_acc=0.1002 | avg_blocks=4.0
+Step   1600 | loss=4.4215 | task=4.3714 | soft=49% hard=78% | logits=[-100.00,-21.45,0.76] | λ=0.0100 | τ=0.424 | lr=2.44e-04 | 3.8 steps/s
+Step   1700 | loss=4.2210 | task=4.1707 | soft=48% hard=76% | logits=[-100.00,-23.55,0.77] | λ=0.0100 | τ=0.388 | lr=2.36e-04 | 3.8 steps/s
+Step   1800 | loss=4.2425 | task=4.1924 | soft=47% hard=74% | logits=[-100.00,-25.43,0.79] | λ=0.0100 | τ=0.352 | lr=2.28e-04 | 3.9 steps/s
+Step   1900 | loss=4.1081 | task=4.0580 | soft=46% hard=72% | logits=[-100.00,-27.52,0.81] | λ=0.0100 | τ=0.316 | lr=2.19e-04 | 3.9 steps/s
+Step   2000 | loss=4.2046 | task=4.1543 | soft=44% hard=70% | logits=[-100.00,-29.51,0.82] | λ=0.0100 | τ=0.280 | lr=2.10e-04 | 3.9 steps/s
+  [EVAL] val_loss=4.1729 | val_acc=0.1141 | avg_blocks=4.0
+Step   2100 | loss=4.3593 | task=4.3092 | soft=43% hard=68% | logits=[-100.00,-31.50,0.82] | λ=0.0100 | τ=0.244 | lr=2.01e-04 | 3.8 steps/s
+Step   2200 | loss=4.1957 | task=4.1455 | soft=42% hard=66% | logits=[-100.00,-33.59,0.82] | λ=0.0100 | τ=0.208 | lr=1.91e-04 | 3.8 steps/s
+Step   2300 | loss=4.2588 | task=4.2087 | soft=41% hard=64% | logits=[-100.00,-35.58,0.82] | λ=0.0100 | τ=0.172 | lr=1.82e-04 | 3.8 steps/s
+Step   2400 | loss=4.1455 | task=4.0954 | soft=40% hard=62% | logits=[-100.00,-37.46,0.83] | λ=0.0100 | τ=0.136 | lr=1.72e-04 | 3.9 steps/s
+Step   2500 | loss=4.2291 | task=4.1789 | soft=38% hard=60% | logits=[-100.00,-39.56,0.85] | λ=0.0100 | τ=0.100 | lr=1.62e-04 | 3.9 steps/s
+  [EVAL] val_loss=4.0356 | val_acc=0.1378 | avg_blocks=4.0
+Step   2600 | loss=4.2359 | task=4.1857 | soft=37% hard=58% | logits=[-100.00,-41.54,0.85] | λ=0.0100 | τ=0.100 | lr=1.52e-04 | 3.8 steps/s
+Step   2700 | loss=4.1523 | task=4.1021 | soft=36% hard=56% | logits=[-100.00,-43.53,0.85] | λ=0.0100 | τ=0.100 | lr=1.42e-04 | 3.8 steps/s
+Step   2800 | loss=4.5901 | task=4.5397 | soft=35% hard=54% | logits=[-100.00,-45.63,0.87] | λ=0.0100 | τ=0.100 | lr=1.32e-04 | 3.8 steps/s
+Step   2900 | loss=4.0262 | task=3.9761 | soft=33% hard=52% | logits=[-100.00,-47.61,0.86] | λ=0.0100 | τ=0.100 | lr=1.23e-04 | 3.8 steps/s
+Step   3000 | loss=4.1208 | task=4.0707 | soft=32% hard=50% | logits=[-100.00,-49.71,0.86] | λ=0.0100 | τ=0.100 | lr=1.13e-04 | 3.9 steps/s
+  [EVAL] val_loss=3.9513 | val_acc=0.1494 | avg_blocks=4.0
+Step   3100 | loss=3.9664 | task=3.9163 | soft=31% hard=48% | logits=[-100.00,-51.59,0.85] | λ=0.0100 | τ=0.100 | lr=1.03e-04 | 3.8 steps/s
+Step   3200 | loss=3.8747 | task=3.8245 | soft=30% hard=46% | logits=[-100.00,-53.58,0.85] | λ=0.0100 | τ=0.100 | lr=9.41e-05 | 3.8 steps/s
+Step   3300 | loss=4.0821 | task=4.0321 | soft=28% hard=44% | logits=[-100.00,-55.67,0.86] | λ=0.0100 | τ=0.100 | lr=8.51e-05 | 3.8 steps/s
+Step   3400 | loss=4.1062 | task=4.0562 | soft=27% hard=42% | logits=[-100.00,-57.66,0.86] | λ=0.0100 | τ=0.100 | lr=7.63e-05 | 3.8 steps/s
+Step   3500 | loss=4.0265 | task=3.9764 | soft=26% hard=40% | logits=[-100.00,-59.65,0.85] | λ=0.0100 | τ=0.100 | lr=6.78e-05 | 3.9 steps/s
+  [EVAL] val_loss=3.9047 | val_acc=0.1556 | avg_blocks=4.0
+Step   3600 | loss=4.2281 | task=4.1779 | soft=25% hard=38% | logits=[-100.00,-61.75,0.86] | λ=0.0100 | τ=0.100 | lr=5.97e-05 | 3.8 steps/s
+Step   3700 | loss=3.8321 | task=3.7821 | soft=23% hard=36% | logits=[-100.00,-63.63,0.87] | λ=0.0100 | τ=0.100 | lr=5.20e-05 | 3.8 steps/s
+Step   3800 | loss=3.8519 | task=3.8018 | soft=22% hard=34% | logits=[-100.00,-65.62,0.87] | λ=0.0100 | τ=0.100 | lr=4.47e-05 | 3.8 steps/s
+Step   3900 | loss=3.8697 | task=3.8196 | soft=21% hard=32% | logits=[-100.00,-67.71,0.88] | λ=0.0100 | τ=0.100 | lr=3.78e-05 | 3.8 steps/s
+Step   4000 | loss=4.0950 | task=4.0450 | soft=20% hard=30% | logits=[-100.00,-69.70,0.89] | λ=0.0100 | τ=0.100 | lr=3.15e-05 | 3.9 steps/s
+  [EVAL] val_loss=3.8585 | val_acc=0.1668 | avg_blocks=4.0
+Step   4100 | loss=4.0998 | task=4.0497 | soft=20% hard=30% | logits=[-100.00,-69.70,0.89] | λ=0.0100 | τ=0.100 | lr=2.57e-05 | 3.8 steps/s
+Step   4200 | loss=4.2818 | task=4.2317 | soft=20% hard=30% | logits=[-100.00,-69.70,0.88] | λ=0.0100 | τ=0.100 | lr=2.04e-05 | 3.8 steps/s
+Step   4300 | loss=4.1851 | task=4.1350 | soft=20% hard=30% | logits=[-100.00,-69.70,0.89] | λ=0.0100 | τ=0.100 | lr=1.57e-05 | 3.8 steps/s
+Step   4400 | loss=4.0023 | task=3.9522 | soft=20% hard=30% | logits=[-100.00,-69.70,0.90] | λ=0.0100 | τ=0.100 | lr=1.16e-05 | 3.8 steps/s
+Step   4500 | loss=4.0801 | task=4.0301 | soft=20% hard=30% | logits=[-100.00,-69.70,0.91] | λ=0.0100 | τ=0.100 | lr=8.06e-06 | 3.9 steps/s
+  [EVAL] val_loss=3.8483 | val_acc=0.1668 | avg_blocks=4.0
+Step   4600 | loss=3.7221 | task=3.6721 | soft=20% hard=30% | logits=[-100.00,-69.70,0.92] | λ=0.0100 | τ=0.100 | lr=5.17e-06 | 3.8 steps/s
+Step   4700 | loss=4.2041 | task=4.1540 | soft=20% hard=30% | logits=[-100.00,-69.70,0.91] | λ=0.0100 | τ=0.100 | lr=2.91e-06 | 3.8 steps/s
+Step   4800 | loss=4.0623 | task=4.0123 | soft=20% hard=30% | logits=[-100.00,-69.70,0.91] | λ=0.0100 | τ=0.100 | lr=1.29e-06 | 3.8 steps/s
+Step   4900 | loss=4.0904 | task=4.0403 | soft=20% hard=30% | logits=[-100.00,-69.70,0.91] | λ=0.0100 | τ=0.100 | lr=3.16e-07 | 3.8 steps/s
+
+Training complete in 1294.1s
+Best val loss: 3.8483
+
+Final accuracy: 0.1686
+Final active FLOPs: 134,883,840
+Results saved to results/linear_schedule_tiny_imagenet_seed2.json
+============================================================
+Running ALL baselines: dataset=tiny_imagenet, seed=3
+============================================================
+/Users/kmagdy-ma-eg/Library/Python/3.9/lib/python/site-packages/torch/amp/autocast_mode.py:346: UserWarning: In MPS autocast, but the target dtype is not supported. Disabling autocast.
+MPS Autocast only supports dtype of torch.bfloat16 and torch.float16 currently.
+  warnings.warn(error_message)
+============================================================
+Baseline: Magnitude Pruning | tiny_imagenet | seed=3
+============================================================
+
+Phase 1: Training full model for 5000 steps (no pruning)...
+Seed set to 3
+Starting KaleidoNet training on mps
+  Model params: 5,537,700
+  FLOPs budget: 121,006,080
+  Max steps: 5000
+
+Step      0 | loss=5.5543 | task=5.4938 | soft=62% hard=100% | logits=[0.50,0.50,0.50] | λ=0.0100 | τ=1.000 | lr=1.20e-05 | 1.0 steps/s
+Step    100 | loss=5.3372 | task=5.2864 | soft=62% hard=100% | logits=[0.45,0.50,0.56] | λ=0.0100 | τ=0.964 | lr=1.14e-04 | 1.6 steps/s
+Step    200 | loss=5.1733 | task=5.1229 | soft=62% hard=100% | logits=[0.42,0.51,0.60] | λ=0.0100 | τ=0.928 | lr=2.74e-04 | 1.8 steps/s
+Step    300 | loss=5.1941 | task=5.1438 | soft=62% hard=100% | logits=[0.42,0.51,0.63] | λ=0.0100 | τ=0.892 | lr=3.00e-04 | 2.1 steps/s
+Step    400 | loss=4.9474 | task=4.8970 | soft=62% hard=100% | logits=[0.41,0.51,0.64] | λ=0.0100 | τ=0.856 | lr=2.99e-04 | 2.4 steps/s
+Step    500 | loss=4.8643 | task=4.8139 | soft=63% hard=100% | logits=[0.40,0.51,0.67] | λ=0.0100 | τ=0.820 | lr=2.98e-04 | 2.6 steps/s
+  [EVAL] val_loss=4.8437 | val_acc=0.0393 | avg_blocks=4.0
+Step    600 | loss=4.7792 | task=4.7288 | soft=63% hard=100% | logits=[0.40,0.51,0.68] | λ=0.0100 | τ=0.784 | lr=2.96e-04 | 2.5 steps/s
+Step    700 | loss=4.7759 | task=4.7257 | soft=63% hard=100% | logits=[0.40,0.51,0.70] | λ=0.0100 | τ=0.748 | lr=2.93e-04 | 2.7 steps/s
+Step    800 | loss=4.9926 | task=4.9425 | soft=63% hard=100% | logits=[0.39,0.51,0.72] | λ=0.0100 | τ=0.712 | lr=2.90e-04 | 2.9 steps/s
+Step    900 | loss=4.9298 | task=4.8790 | soft=63% hard=100% | logits=[0.37,0.52,0.73] | λ=0.0100 | τ=0.676 | lr=2.86e-04 | 3.0 steps/s
+Step   1000 | loss=4.7107 | task=4.6606 | soft=63% hard=100% | logits=[0.36,0.52,0.75] | λ=0.0100 | τ=0.640 | lr=2.82e-04 | 3.1 steps/s
+  [EVAL] val_loss=4.5425 | val_acc=0.0695 | avg_blocks=4.0
+Step   1100 | loss=4.5836 | task=4.5334 | soft=63% hard=100% | logits=[0.35,0.52,0.76] | λ=0.0100 | τ=0.604 | lr=2.77e-04 | 3.0 steps/s
+Step   1200 | loss=4.3879 | task=4.3376 | soft=63% hard=100% | logits=[0.35,0.52,0.78] | λ=0.0100 | τ=0.568 | lr=2.71e-04 | 3.1 steps/s
+Step   1300 | loss=4.5064 | task=4.4561 | soft=63% hard=100% | logits=[0.35,0.52,0.78] | λ=0.0100 | τ=0.532 | lr=2.65e-04 | 3.2 steps/s
+Step   1400 | loss=4.2720 | task=4.2219 | soft=63% hard=100% | logits=[0.35,0.52,0.80] | λ=0.0100 | τ=0.496 | lr=2.59e-04 | 3.3 steps/s
+Step   1500 | loss=4.3324 | task=4.2821 | soft=63% hard=100% | logits=[0.33,0.52,0.80] | λ=0.0100 | τ=0.460 | lr=2.51e-04 | 3.3 steps/s
+  [EVAL] val_loss=4.2699 | val_acc=0.1039 | avg_blocks=4.0
+Step   1600 | loss=4.4807 | task=4.4304 | soft=63% hard=100% | logits=[0.34,0.52,0.80] | λ=0.0100 | τ=0.424 | lr=2.44e-04 | 3.3 steps/s
+Step   1700 | loss=4.3818 | task=4.3315 | soft=63% hard=100% | logits=[0.34,0.52,0.80] | λ=0.0100 | τ=0.388 | lr=2.36e-04 | 3.3 steps/s
+Step   1800 | loss=4.1988 | task=4.1486 | soft=63% hard=100% | logits=[0.33,0.52,0.80] | λ=0.0100 | τ=0.352 | lr=2.28e-04 | 3.4 steps/s
+Step   1900 | loss=4.3666 | task=4.3163 | soft=63% hard=100% | logits=[0.32,0.52,0.82] | λ=0.0100 | τ=0.316 | lr=2.19e-04 | 3.4 steps/s
+Step   2000 | loss=4.0706 | task=4.0204 | soft=63% hard=100% | logits=[0.32,0.52,0.83] | λ=0.0100 | τ=0.280 | lr=2.10e-04 | 3.5 steps/s
+  [EVAL] val_loss=4.1039 | val_acc=0.1279 | avg_blocks=4.0
+Step   2100 | loss=4.4943 | task=4.4441 | soft=63% hard=100% | logits=[0.32,0.52,0.85] | λ=0.0100 | τ=0.244 | lr=2.01e-04 | 3.4 steps/s
+Step   2200 | loss=4.2031 | task=4.1529 | soft=63% hard=100% | logits=[0.31,0.52,0.86] | λ=0.0100 | τ=0.208 | lr=1.91e-04 | 3.5 steps/s
+Step   2300 | loss=4.1175 | task=4.0674 | soft=63% hard=100% | logits=[0.31,0.52,0.87] | λ=0.0100 | τ=0.172 | lr=1.82e-04 | 3.5 steps/s
+Step   2400 | loss=4.1551 | task=4.1050 | soft=63% hard=100% | logits=[0.31,0.52,0.87] | λ=0.0100 | τ=0.136 | lr=1.72e-04 | 3.6 steps/s
+Step   2500 | loss=4.0507 | task=4.0005 | soft=63% hard=100% | logits=[0.30,0.52,0.85] | λ=0.0100 | τ=0.100 | lr=1.62e-04 | 3.6 steps/s
+  [EVAL] val_loss=4.0193 | val_acc=0.1348 | avg_blocks=4.0
+Step   2600 | loss=4.0321 | task=3.9819 | soft=63% hard=100% | logits=[0.29,0.53,0.86] | λ=0.0100 | τ=0.100 | lr=1.52e-04 | 3.5 steps/s
+Step   2700 | loss=4.0303 | task=3.9801 | soft=63% hard=100% | logits=[0.29,0.53,0.87] | λ=0.0100 | τ=0.100 | lr=1.42e-04 | 3.6 steps/s
+Step   2800 | loss=4.2220 | task=4.1719 | soft=63% hard=100% | logits=[0.29,0.53,0.89] | λ=0.0100 | τ=0.100 | lr=1.32e-04 | 3.6 steps/s
+Step   2900 | loss=4.2351 | task=4.1849 | soft=63% hard=100% | logits=[0.28,0.53,0.89] | λ=0.0100 | τ=0.100 | lr=1.23e-04 | 3.6 steps/s
+Step   3000 | loss=4.1901 | task=4.1400 | soft=63% hard=100% | logits=[0.28,0.53,0.91] | λ=0.0100 | τ=0.100 | lr=1.13e-04 | 3.7 steps/s
+  [EVAL] val_loss=3.9217 | val_acc=0.1540 | avg_blocks=4.0
+Step   3100 | loss=4.0669 | task=4.0168 | soft=63% hard=100% | logits=[0.27,0.53,0.91] | λ=0.0100 | τ=0.100 | lr=1.03e-04 | 3.6 steps/s
+Step   3200 | loss=3.8986 | task=3.8485 | soft=63% hard=100% | logits=[0.26,0.53,0.91] | λ=0.0100 | τ=0.100 | lr=9.41e-05 | 3.6 steps/s
+Step   3300 | loss=3.7376 | task=3.6875 | soft=63% hard=100% | logits=[0.27,0.53,0.91] | λ=0.0100 | τ=0.100 | lr=8.51e-05 | 3.7 steps/s
+Step   3400 | loss=3.8449 | task=3.7948 | soft=63% hard=100% | logits=[0.26,0.53,0.92] | λ=0.0100 | τ=0.100 | lr=7.63e-05 | 3.7 steps/s
+Step   3500 | loss=3.9066 | task=3.8566 | soft=63% hard=100% | logits=[0.25,0.53,0.92] | λ=0.0100 | τ=0.100 | lr=6.78e-05 | 3.7 steps/s
+  [EVAL] val_loss=3.8483 | val_acc=0.1621 | avg_blocks=4.0
+Step   3600 | loss=3.7367 | task=3.6867 | soft=63% hard=100% | logits=[0.26,0.53,0.92] | λ=0.0100 | τ=0.100 | lr=5.97e-05 | 3.7 steps/s
+Step   3700 | loss=3.8768 | task=3.8267 | soft=63% hard=100% | logits=[0.25,0.53,0.90] | λ=0.0100 | τ=0.100 | lr=5.20e-05 | 3.7 steps/s
+Step   3800 | loss=3.9019 | task=3.8519 | soft=63% hard=100% | logits=[0.25,0.53,0.91] | λ=0.0100 | τ=0.100 | lr=4.47e-05 | 3.7 steps/s
+Step   3900 | loss=3.8482 | task=3.7981 | soft=63% hard=100% | logits=[0.26,0.53,0.91] | λ=0.0100 | τ=0.100 | lr=3.78e-05 | 3.7 steps/s
+Step   4000 | loss=3.7208 | task=3.6708 | soft=63% hard=100% | logits=[0.25,0.53,0.91] | λ=0.0100 | τ=0.100 | lr=3.15e-05 | 3.8 steps/s
+  [EVAL] val_loss=3.8032 | val_acc=0.1716 | avg_blocks=4.0
+Step   4100 | loss=3.9315 | task=3.8813 | soft=63% hard=100% | logits=[0.26,0.54,0.91] | λ=0.0100 | τ=0.100 | lr=2.57e-05 | 3.7 steps/s
+Step   4200 | loss=3.9360 | task=3.8859 | soft=63% hard=100% | logits=[0.27,0.54,0.92] | λ=0.0100 | τ=0.100 | lr=2.04e-05 | 3.7 steps/s
+Step   4300 | loss=3.7079 | task=3.6578 | soft=63% hard=100% | logits=[0.27,0.54,0.93] | λ=0.0100 | τ=0.100 | lr=1.57e-05 | 3.8 steps/s
+Step   4400 | loss=4.1023 | task=4.0523 | soft=63% hard=100% | logits=[0.26,0.54,0.94] | λ=0.0100 | τ=0.100 | lr=1.16e-05 | 3.8 steps/s
+Step   4500 | loss=4.1069 | task=4.0568 | soft=63% hard=100% | logits=[0.26,0.54,0.95] | λ=0.0100 | τ=0.100 | lr=8.06e-06 | 3.8 steps/s
+  [EVAL] val_loss=3.7800 | val_acc=0.1748 | avg_blocks=4.0
+Step   4600 | loss=3.7543 | task=3.7043 | soft=63% hard=100% | logits=[0.28,0.54,0.96] | λ=0.0100 | τ=0.100 | lr=5.17e-06 | 3.8 steps/s
+Step   4700 | loss=4.0947 | task=4.0447 | soft=63% hard=100% | logits=[0.27,0.54,0.96] | λ=0.0100 | τ=0.100 | lr=2.91e-06 | 3.8 steps/s
+Step   4800 | loss=3.8347 | task=3.7847 | soft=63% hard=100% | logits=[0.27,0.54,0.97] | λ=0.0100 | τ=0.100 | lr=1.29e-06 | 3.8 steps/s
+Step   4900 | loss=4.0035 | task=3.9534 | soft=63% hard=100% | logits=[0.28,0.54,0.99] | λ=0.0100 | τ=0.100 | lr=3.16e-07 | 3.8 steps/s
+
+Training complete in 1307.5s
+Best val loss: 3.7800
+Pre-prune accuracy: 0.1764
+
+Phase 2: Magnitude pruning (target sparsity=70%)...
+Post-prune accuracy: 0.1513
+
+Phase 3: Fine-tuning for 1000 steps...
+Seed set to 3
+Starting KaleidoNet training on mps
+  Model params: 5,537,700
+  FLOPs budget: 121,006,080
+  Max steps: 1000
+
+Step      0 | loss=4.1699 | task=4.1196 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=1.000 | lr=4.10e-06 | 4.6 steps/s
+Step    100 | loss=3.7905 | task=3.7405 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.964 | lr=9.93e-05 | 4.7 steps/s
+Step    200 | loss=4.0847 | task=4.0347 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.928 | lr=9.38e-05 | 4.7 steps/s
+Step    300 | loss=4.3981 | task=4.3481 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.892 | lr=8.36e-05 | 4.8 steps/s
+Step    400 | loss=3.9790 | task=3.9289 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.856 | lr=6.98e-05 | 4.8 steps/s
+Step    500 | loss=3.8387 | task=3.7887 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.820 | lr=5.38e-05 | 4.8 steps/s
+  [EVAL] val_loss=3.8423 | val_acc=0.1648 | avg_blocks=4.0
+Step    600 | loss=3.7849 | task=3.7349 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.784 | lr=3.74e-05 | 4.1 steps/s
+Step    700 | loss=3.8520 | task=3.8020 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.748 | lr=2.24e-05 | 4.1 steps/s
+Step    800 | loss=4.2413 | task=4.1912 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.712 | lr=1.03e-05 | 4.2 steps/s
+Step    900 | loss=4.0158 | task=3.9658 | soft=30% hard=30% | logits=[-100.00,-67.11,10.01] | λ=0.0100 | τ=0.676 | lr=2.60e-06 | 4.3 steps/s
+
+Training complete in 231.6s
+Best val loss: 3.8423
+
+Final accuracy: 0.1759
+Final active FLOPs: 134,384,640
+Results saved to results/magnitude_pruning_tiny_imagenet_seed3.json
+============================================================
+Baseline: Random Structured Pruning | tiny_imagenet | seed=3
+============================================================
+Applying random structured mask (target sparsity=70%)...
+Seed set to 3
+Starting KaleidoNet training on mps
+  Model params: 5,537,700
+  FLOPs budget: 121,006,080
+  Max steps: 5000
+
+Step      0 | loss=5.5441 | task=5.4837 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=1.000 | lr=1.20e-05 | 1.2 steps/s
+Step    100 | loss=5.3373 | task=5.2866 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.964 | lr=1.14e-04 | 2.5 steps/s
+Step    200 | loss=5.1930 | task=5.1425 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.928 | lr=2.74e-04 | 3.4 steps/s
+Step    300 | loss=5.2017 | task=5.1514 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.892 | lr=3.00e-04 | 3.8 steps/s
+Step    400 | loss=4.9841 | task=4.9338 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.856 | lr=2.99e-04 | 4.1 steps/s
+Step    500 | loss=4.8804 | task=4.8302 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.820 | lr=2.98e-04 | 4.3 steps/s
+  [EVAL] val_loss=4.8822 | val_acc=0.0385 | avg_blocks=4.0
+Step    600 | loss=4.8335 | task=4.7829 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.784 | lr=2.96e-04 | 3.8 steps/s
+Step    700 | loss=4.7445 | task=4.6944 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.748 | lr=2.93e-04 | 3.9 steps/s
+Step    800 | loss=4.9856 | task=4.9354 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.712 | lr=2.90e-04 | 4.0 steps/s
+Step    900 | loss=4.8692 | task=4.8188 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.676 | lr=2.86e-04 | 4.1 steps/s
+Step   1000 | loss=4.8761 | task=4.8258 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.640 | lr=2.82e-04 | 4.2 steps/s
+  [EVAL] val_loss=4.5199 | val_acc=0.0731 | avg_blocks=4.0
+Step   1100 | loss=4.5301 | task=4.4796 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.604 | lr=2.77e-04 | 3.9 steps/s
+Step   1200 | loss=4.5042 | task=4.4542 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.568 | lr=2.71e-04 | 4.0 steps/s
+Step   1300 | loss=4.5396 | task=4.4893 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.532 | lr=2.65e-04 | 4.1 steps/s
+Step   1400 | loss=4.4094 | task=4.3593 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.496 | lr=2.59e-04 | 4.2 steps/s
+Step   1500 | loss=4.4408 | task=4.3906 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.460 | lr=2.51e-04 | 4.2 steps/s
+  [EVAL] val_loss=4.3141 | val_acc=0.1029 | avg_blocks=4.0
+Step   1600 | loss=4.5367 | task=4.4865 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.424 | lr=2.44e-04 | 4.0 steps/s
+Step   1700 | loss=4.3653 | task=4.3150 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.388 | lr=2.36e-04 | 4.1 steps/s
+Step   1800 | loss=4.1484 | task=4.0982 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.352 | lr=2.28e-04 | 4.1 steps/s
+Step   1900 | loss=4.2520 | task=4.2018 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.316 | lr=2.19e-04 | 4.2 steps/s
+Step   2000 | loss=4.1861 | task=4.1360 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.280 | lr=2.10e-04 | 4.2 steps/s
+  [EVAL] val_loss=4.1715 | val_acc=0.1222 | avg_blocks=4.0
+Step   2100 | loss=4.4874 | task=4.4373 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.244 | lr=2.01e-04 | 4.1 steps/s
+Step   2200 | loss=4.2306 | task=4.1805 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.208 | lr=1.91e-04 | 4.1 steps/s
+Step   2300 | loss=4.1421 | task=4.0918 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.172 | lr=1.82e-04 | 4.1 steps/s
+Step   2400 | loss=4.3493 | task=4.2991 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.136 | lr=1.72e-04 | 4.2 steps/s
+Step   2500 | loss=4.1417 | task=4.0916 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.62e-04 | 4.2 steps/s
+  [EVAL] val_loss=4.0544 | val_acc=0.1343 | avg_blocks=4.0
+Step   2600 | loss=4.1458 | task=4.0955 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.52e-04 | 4.1 steps/s
+Step   2700 | loss=4.2055 | task=4.1555 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.42e-04 | 4.1 steps/s
+Step   2800 | loss=4.2885 | task=4.2384 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.32e-04 | 4.2 steps/s
+Step   2900 | loss=4.1760 | task=4.1259 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.23e-04 | 4.2 steps/s
+Step   3000 | loss=4.2241 | task=4.1740 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.13e-04 | 4.2 steps/s
+  [EVAL] val_loss=3.9665 | val_acc=0.1516 | avg_blocks=4.0
+Step   3100 | loss=4.0502 | task=4.0001 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.03e-04 | 4.1 steps/s
+Step   3200 | loss=4.1424 | task=4.0924 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=9.41e-05 | 4.2 steps/s
+Step   3300 | loss=3.7589 | task=3.7088 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=8.51e-05 | 4.2 steps/s
+Step   3400 | loss=3.9211 | task=3.8710 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=7.63e-05 | 4.2 steps/s
+Step   3500 | loss=3.7981 | task=3.7480 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=6.78e-05 | 4.2 steps/s
+  [EVAL] val_loss=3.9040 | val_acc=0.1562 | avg_blocks=4.0
+Step   3600 | loss=3.7856 | task=3.7356 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=5.97e-05 | 4.2 steps/s
+Step   3700 | loss=4.0682 | task=4.0181 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=5.20e-05 | 4.2 steps/s
+Step   3800 | loss=3.9738 | task=3.9238 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=4.47e-05 | 4.2 steps/s
+Step   3900 | loss=3.9843 | task=3.9342 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=3.78e-05 | 4.2 steps/s
+Step   4000 | loss=3.9701 | task=3.9201 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=3.15e-05 | 4.2 steps/s
+  [EVAL] val_loss=3.8753 | val_acc=0.1635 | avg_blocks=4.0
+Step   4100 | loss=3.8647 | task=3.8147 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=2.57e-05 | 4.2 steps/s
+Step   4200 | loss=3.9679 | task=3.9179 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=2.04e-05 | 4.2 steps/s
+Step   4300 | loss=3.7272 | task=3.6771 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.57e-05 | 4.2 steps/s
+Step   4400 | loss=4.2303 | task=4.1803 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.16e-05 | 4.2 steps/s
+Step   4500 | loss=4.0573 | task=4.0072 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=8.06e-06 | 4.3 steps/s
+  [EVAL] val_loss=3.8504 | val_acc=0.1675 | avg_blocks=4.0
+Step   4600 | loss=3.8207 | task=3.7706 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=5.17e-06 | 4.2 steps/s
+Step   4700 | loss=4.1706 | task=4.1206 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=2.91e-06 | 4.2 steps/s
+Step   4800 | loss=3.8832 | task=3.8331 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=1.29e-06 | 4.2 steps/s
+Step   4900 | loss=4.0306 | task=3.9805 | soft=30% hard=30% | logits=[-100.00,-67.11,10.00] | λ=0.0100 | τ=0.100 | lr=3.16e-07 | 4.2 steps/s
+
+Training complete in 1173.7s
+Best val loss: 3.8504
+
+Final accuracy: 0.1689
+Final active FLOPs: 134,384,640
+Results saved to results/random_pruning_tiny_imagenet_seed3.json
+============================================================
+Baseline: Linear Sparsity Schedule | tiny_imagenet | seed=3
+============================================================
+Seed set to 3
+Starting KaleidoNet training on mps
+  Model params: 5,537,700
+  FLOPs budget: 121,006,080
+  Max steps: 5000
+
+Step      0 | loss=5.5543 | task=5.4938 | soft=62% hard=100% | logits=[0.50,0.50,0.50] | λ=0.0100 | τ=1.000 | lr=1.20e-05 | 3.5 steps/s
+Step    100 | loss=5.3372 | task=5.2864 | soft=62% hard=100% | logits=[0.45,0.50,0.56] | λ=0.0100 | τ=0.964 | lr=1.14e-04 | 4.7 steps/s
+Step    200 | loss=5.1733 | task=5.1229 | soft=62% hard=100% | logits=[0.42,0.51,0.60] | λ=0.0100 | τ=0.928 | lr=2.74e-04 | 4.8 steps/s
+Step    300 | loss=5.1941 | task=5.1438 | soft=62% hard=100% | logits=[0.42,0.51,0.63] | λ=0.0100 | τ=0.892 | lr=3.00e-04 | 4.8 steps/s
+Step    400 | loss=4.9474 | task=4.8970 | soft=62% hard=100% | logits=[0.41,0.51,0.64] | λ=0.0100 | τ=0.856 | lr=2.99e-04 | 4.8 steps/s
+Step    500 | loss=4.8643 | task=4.8139 | soft=63% hard=100% | logits=[0.40,0.51,0.67] | λ=0.0100 | τ=0.820 | lr=2.98e-04 | 4.8 steps/s
+  [EVAL] val_loss=4.8437 | val_acc=0.0393 | avg_blocks=4.0
+Step    600 | loss=4.7792 | task=4.7288 | soft=61% hard=98% | logits=[-100.00,-1.37,0.68] | λ=0.0100 | τ=0.784 | lr=2.96e-04 | 4.2 steps/s
+Step    700 | loss=4.7093 | task=4.6591 | soft=60% hard=96% | logits=[-100.00,-3.36,0.70] | λ=0.0100 | τ=0.748 | lr=2.93e-04 | 4.3 steps/s
+Step    800 | loss=5.0094 | task=4.9592 | soft=59% hard=94% | logits=[-100.00,-5.45,0.74] | λ=0.0100 | τ=0.712 | lr=2.90e-04 | 4.3 steps/s
+Step    900 | loss=4.9055 | task=4.8548 | soft=58% hard=92% | logits=[-100.00,-7.44,0.76] | λ=0.0100 | τ=0.676 | lr=2.86e-04 | 4.3 steps/s
+Step   1000 | loss=4.7162 | task=4.6660 | soft=57% hard=90% | logits=[-100.00,-9.42,0.77] | λ=0.0100 | τ=0.640 | lr=2.82e-04 | 4.4 steps/s
+  [EVAL] val_loss=4.5396 | val_acc=0.0695 | avg_blocks=4.0
+Step   1100 | loss=4.5422 | task=4.4921 | soft=55% hard=88% | logits=[-100.00,-11.52,0.78] | λ=0.0100 | τ=0.604 | lr=2.77e-04 | 4.0 steps/s
+Step   1200 | loss=4.4088 | task=4.3586 | soft=54% hard=86% | logits=[-100.00,-13.40,0.79] | λ=0.0100 | τ=0.568 | lr=2.71e-04 | 4.0 steps/s
+Step   1300 | loss=4.5100 | task=4.4598 | soft=53% hard=84% | logits=[-100.00,-15.38,0.79] | λ=0.0100 | τ=0.532 | lr=2.65e-04 | 4.1 steps/s
+Step   1400 | loss=4.2979 | task=4.2478 | soft=52% hard=82% | logits=[-100.00,-17.48,0.81] | λ=0.0100 | τ=0.496 | lr=2.59e-04 | 4.1 steps/s
+Step   1500 | loss=4.3374 | task=4.2870 | soft=51% hard=80% | logits=[-100.00,-19.47,0.81] | λ=0.0100 | τ=0.460 | lr=2.51e-04 | 4.1 steps/s
+  [EVAL] val_loss=4.2658 | val_acc=0.1063 | avg_blocks=4.0
+Step   1600 | loss=4.4729 | task=4.4225 | soft=49% hard=78% | logits=[-100.00,-21.45,0.81] | λ=0.0100 | τ=0.424 | lr=2.44e-04 | 3.9 steps/s
+Step   1700 | loss=4.3892 | task=4.3388 | soft=48% hard=76% | logits=[-100.00,-23.55,0.81] | λ=0.0100 | τ=0.388 | lr=2.36e-04 | 3.9 steps/s
+Step   1800 | loss=4.1658 | task=4.1156 | soft=47% hard=74% | logits=[-100.00,-25.43,0.82] | λ=0.0100 | τ=0.352 | lr=2.28e-04 | 4.0 steps/s
+Step   1900 | loss=4.3366 | task=4.2863 | soft=46% hard=72% | logits=[-100.00,-27.52,0.83] | λ=0.0100 | τ=0.316 | lr=2.19e-04 | 4.0 steps/s
+Step   2000 | loss=4.0696 | task=4.0195 | soft=44% hard=70% | logits=[-100.00,-29.51,0.83] | λ=0.0100 | τ=0.280 | lr=2.10e-04 | 4.0 steps/s
+  [EVAL] val_loss=4.1186 | val_acc=0.1275 | avg_blocks=4.0
+Step   2100 | loss=4.4815 | task=4.4313 | soft=43% hard=68% | logits=[-100.00,-31.50,0.85] | λ=0.0100 | τ=0.244 | lr=2.01e-04 | 3.9 steps/s
+Step   2200 | loss=4.2956 | task=4.2453 | soft=42% hard=66% | logits=[-100.00,-33.59,0.87] | λ=0.0100 | τ=0.208 | lr=1.91e-04 | 3.9 steps/s
+Step   2300 | loss=4.1466 | task=4.0965 | soft=41% hard=64% | logits=[-100.00,-35.58,0.87] | λ=0.0100 | τ=0.172 | lr=1.82e-04 | 3.9 steps/s
+Step   2400 | loss=4.2159 | task=4.1658 | soft=40% hard=62% | logits=[-100.00,-37.46,0.87] | λ=0.0100 | τ=0.136 | lr=1.72e-04 | 3.9 steps/s
+Step   2500 | loss=4.0613 | task=4.0112 | soft=38% hard=60% | logits=[-100.00,-39.56,0.86] | λ=0.0100 | τ=0.100 | lr=1.62e-04 | 4.0 steps/s
+  [EVAL] val_loss=4.0278 | val_acc=0.1357 | avg_blocks=4.0
+Step   2600 | loss=4.0888 | task=4.0386 | soft=37% hard=58% | logits=[-100.00,-41.54,0.87] | λ=0.0100 | τ=0.100 | lr=1.52e-04 | 3.8 steps/s
+Step   2700 | loss=4.0835 | task=4.0333 | soft=36% hard=56% | logits=[-100.00,-43.53,0.88] | λ=0.0100 | τ=0.100 | lr=1.42e-04 | 3.9 steps/s
+Step   2800 | loss=4.2786 | task=4.2285 | soft=35% hard=54% | logits=[-100.00,-45.63,0.90] | λ=0.0100 | τ=0.100 | lr=1.32e-04 | 3.9 steps/s
+Step   2900 | loss=4.2525 | task=4.2025 | soft=33% hard=52% | logits=[-100.00,-47.61,0.91] | λ=0.0100 | τ=0.100 | lr=1.23e-04 | 3.9 steps/s
+Step   3000 | loss=4.2372 | task=4.1872 | soft=32% hard=50% | logits=[-100.00,-49.71,0.92] | λ=0.0100 | τ=0.100 | lr=1.13e-04 | 3.9 steps/s
+  [EVAL] val_loss=3.9367 | val_acc=0.1537 | avg_blocks=4.0
+Step   3100 | loss=4.0957 | task=4.0456 | soft=31% hard=48% | logits=[-100.00,-51.59,0.92] | λ=0.0100 | τ=0.100 | lr=1.03e-04 | 3.8 steps/s
+Step   3200 | loss=3.9373 | task=3.8872 | soft=30% hard=46% | logits=[-100.00,-53.58,0.92] | λ=0.0100 | τ=0.100 | lr=9.41e-05 | 3.9 steps/s
+Step   3300 | loss=3.7639 | task=3.7139 | soft=28% hard=44% | logits=[-100.00,-55.67,0.92] | λ=0.0100 | τ=0.100 | lr=8.51e-05 | 3.9 steps/s
+Step   3400 | loss=3.8779 | task=3.8278 | soft=27% hard=42% | logits=[-100.00,-57.66,0.93] | λ=0.0100 | τ=0.100 | lr=7.63e-05 | 3.9 steps/s
+Step   3500 | loss=3.9383 | task=3.8882 | soft=26% hard=40% | logits=[-100.00,-59.65,0.92] | λ=0.0100 | τ=0.100 | lr=6.78e-05 | 3.9 steps/s
+  [EVAL] val_loss=3.8730 | val_acc=0.1634 | avg_blocks=4.0
+Step   3600 | loss=3.7644 | task=3.7143 | soft=25% hard=38% | logits=[-100.00,-61.75,0.93] | λ=0.0100 | τ=0.100 | lr=5.97e-05 | 3.8 steps/s
+Step   3700 | loss=3.9736 | task=3.9235 | soft=23% hard=36% | logits=[-100.00,-63.63,0.92] | λ=0.0100 | τ=0.100 | lr=5.20e-05 | 3.8 steps/s
+Step   3800 | loss=3.9360 | task=3.8860 | soft=22% hard=34% | logits=[-100.00,-65.62,0.93] | λ=0.0100 | τ=0.100 | lr=4.47e-05 | 3.9 steps/s
+Step   3900 | loss=3.8863 | task=3.8363 | soft=21% hard=32% | logits=[-100.00,-67.71,0.93] | λ=0.0100 | τ=0.100 | lr=3.78e-05 | 3.9 steps/s
+Step   4000 | loss=3.8594 | task=3.8094 | soft=20% hard=30% | logits=[-100.00,-69.70,0.93] | λ=0.0100 | τ=0.100 | lr=3.15e-05 | 3.9 steps/s
+  [EVAL] val_loss=3.8497 | val_acc=0.1678 | avg_blocks=4.0
+Step   4100 | loss=4.0726 | task=4.0225 | soft=20% hard=30% | logits=[-100.00,-69.70,0.93] | λ=0.0100 | τ=0.100 | lr=2.57e-05 | 3.8 steps/s
+Step   4200 | loss=4.0827 | task=4.0327 | soft=20% hard=30% | logits=[-100.00,-69.70,0.94] | λ=0.0100 | τ=0.100 | lr=2.04e-05 | 3.9 steps/s
+Step   4300 | loss=3.8240 | task=3.7739 | soft=20% hard=30% | logits=[-100.00,-69.70,0.96] | λ=0.0100 | τ=0.100 | lr=1.57e-05 | 3.9 steps/s
+Step   4400 | loss=4.2116 | task=4.1616 | soft=20% hard=30% | logits=[-100.00,-69.70,0.96] | λ=0.0100 | τ=0.100 | lr=1.16e-05 | 3.9 steps/s
+Step   4500 | loss=4.1194 | task=4.0693 | soft=20% hard=30% | logits=[-100.00,-69.70,0.98] | λ=0.0100 | τ=0.100 | lr=8.06e-06 | 3.9 steps/s
+  [EVAL] val_loss=3.8353 | val_acc=0.1700 | avg_blocks=4.0
+Step   4600 | loss=3.8479 | task=3.7979 | soft=20% hard=30% | logits=[-100.00,-69.70,0.98] | λ=0.0100 | τ=0.100 | lr=5.17e-06 | 3.8 steps/s
+Step   4700 | loss=4.1801 | task=4.1300 | soft=20% hard=30% | logits=[-100.00,-69.70,0.99] | λ=0.0100 | τ=0.100 | lr=2.91e-06 | 3.9 steps/s
+Step   4800 | loss=3.9379 | task=3.8878 | soft=20% hard=30% | logits=[-100.00,-69.70,0.98] | λ=0.0100 | τ=0.100 | lr=1.29e-06 | 3.9 steps/s
+Step   4900 | loss=4.1118 | task=4.0617 | soft=20% hard=30% | logits=[-100.00,-69.70,1.01] | λ=0.0100 | τ=0.100 | lr=3.16e-07 | 3.9 steps/s
+
+Training complete in 1277.8s
+Best val loss: 3.8353
+
+Final accuracy: 0.1710
+Final active FLOPs: 134,883,840
+Results saved to results/linear_schedule_tiny_imagenet_seed3.json

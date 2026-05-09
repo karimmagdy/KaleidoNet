@@ -1,0 +1,19 @@
+============================================================
+KaleidoNet 3-GPU Parallel Training
+GPU 0: Dense | GPU 1: Magnitude | GPU 2: Random
+============================================================
+GPU 0 (Dense): PID 1249577
+GPU 1 (Magnitude): PID 1249578
+GPU 2 (Random): PID 1249579
+
+All 3 GPUs training. Monitor with:
+  tail -f results/convergence/logs/gpu0_dense.log
+  tail -f results/convergence/logs/gpu1_magnitude.log
+  tail -f results/convergence/logs/gpu2_random.log
+
+Check GPU usage: nvidia-smi
+
+============================================================
+ALL DONE!
+============================================================
+ls: cannot access 'results/convergence/*.json': No such file or directory

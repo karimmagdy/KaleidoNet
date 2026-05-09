@@ -1,0 +1,399 @@
+============================================================
+Dense ViT Baseline — CIFAR-10
+============================================================
+Seed: 1
+/Users/kmagdy-ma-eg/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+Total params: 1,803,658
+Device: mps
+Step      0 | loss=2.4918 | lr=3.00e-04 | 2.2 steps/s
+Step     50 | loss=2.0253 | lr=3.00e-04 | 26.5 steps/s
+Step    100 | loss=1.9702 | lr=3.00e-04 | 29.4 steps/s
+Step    150 | loss=1.7490 | lr=2.99e-04 | 29.6 steps/s
+Step    200 | loss=1.7081 | lr=2.99e-04 | 29.5 steps/s
+Step    250 | loss=1.7247 | lr=2.98e-04 | 28.5 steps/s
+Step    300 | loss=1.7550 | lr=2.97e-04 | 28.1 steps/s
+Step    350 | loss=1.5954 | lr=2.96e-04 | 27.5 steps/s
+Step    400 | loss=1.6996 | lr=2.95e-04 | 27.1 steps/s
+Step    450 | loss=1.7468 | lr=2.94e-04 | 26.9 steps/s
+Step    500 | loss=1.6746 | lr=2.93e-04 | 26.7 steps/s
+  [EVAL] val_loss=1.5742 | val_acc=0.4199 | best_acc=0.4199
+Step    550 | loss=1.4986 | lr=2.91e-04 | 23.7 steps/s
+Step    600 | loss=1.4701 | lr=2.89e-04 | 23.9 steps/s
+Step    650 | loss=1.8130 | lr=2.88e-04 | 24.0 steps/s
+Step    700 | loss=1.5427 | lr=2.86e-04 | 24.2 steps/s
+Step    750 | loss=1.6267 | lr=2.84e-04 | 24.2 steps/s
+Step    800 | loss=1.5336 | lr=2.81e-04 | 24.2 steps/s
+Step    850 | loss=1.4903 | lr=2.79e-04 | 24.3 steps/s
+Step    900 | loss=1.6038 | lr=2.77e-04 | 24.3 steps/s
+Step    950 | loss=1.4310 | lr=2.74e-04 | 24.3 steps/s
+Step   1000 | loss=1.4701 | lr=2.71e-04 | 24.4 steps/s
+  [EVAL] val_loss=1.3894 | val_acc=0.5062 | best_acc=0.5062
+Step   1050 | loss=1.4344 | lr=2.68e-04 | 23.2 steps/s
+Step   1100 | loss=1.3868 | lr=2.66e-04 | 23.3 steps/s
+Step   1150 | loss=1.3297 | lr=2.62e-04 | 23.5 steps/s
+Step   1200 | loss=1.3097 | lr=2.59e-04 | 23.8 steps/s
+Step   1250 | loss=1.2831 | lr=2.56e-04 | 24.1 steps/s
+Step   1300 | loss=1.3435 | lr=2.53e-04 | 24.2 steps/s
+Step   1350 | loss=1.1707 | lr=2.49e-04 | 24.4 steps/s
+Step   1400 | loss=1.3184 | lr=2.46e-04 | 24.5 steps/s
+Step   1450 | loss=1.4968 | lr=2.42e-04 | 24.6 steps/s
+Step   1500 | loss=1.4167 | lr=2.38e-04 | 24.7 steps/s
+  [EVAL] val_loss=1.2834 | val_acc=0.5426 | best_acc=0.5426
+Step   1550 | loss=1.2871 | lr=2.34e-04 | 23.8 steps/s
+Step   1600 | loss=1.3401 | lr=2.30e-04 | 24.0 steps/s
+Step   1650 | loss=1.2760 | lr=2.26e-04 | 24.1 steps/s
+Step   1700 | loss=1.1023 | lr=2.22e-04 | 24.1 steps/s
+Step   1750 | loss=1.3774 | lr=2.18e-04 | 24.2 steps/s
+Step   1800 | loss=1.5163 | lr=2.14e-04 | 24.3 steps/s
+Step   1850 | loss=1.2221 | lr=2.09e-04 | 24.4 steps/s
+Step   1900 | loss=1.1238 | lr=2.05e-04 | 24.5 steps/s
+Step   1950 | loss=1.3373 | lr=2.01e-04 | 24.6 steps/s
+Step   2000 | loss=1.1661 | lr=1.96e-04 | 24.6 steps/s
+  [EVAL] val_loss=1.2063 | val_acc=0.5643 | best_acc=0.5643
+Step   2050 | loss=1.3643 | lr=1.92e-04 | 24.0 steps/s
+Step   2100 | loss=1.1018 | lr=1.87e-04 | 24.1 steps/s
+Step   2150 | loss=1.5066 | lr=1.83e-04 | 24.2 steps/s
+Step   2200 | loss=1.4234 | lr=1.78e-04 | 24.3 steps/s
+Step   2250 | loss=1.1242 | lr=1.73e-04 | 24.3 steps/s
+Step   2300 | loss=1.4009 | lr=1.69e-04 | 24.4 steps/s
+Step   2350 | loss=1.2496 | lr=1.64e-04 | 24.5 steps/s
+Step   2400 | loss=1.1185 | lr=1.59e-04 | 24.6 steps/s
+Step   2450 | loss=0.9356 | lr=1.55e-04 | 24.7 steps/s
+Step   2500 | loss=0.9389 | lr=1.50e-04 | 24.7 steps/s
+  [EVAL] val_loss=1.1385 | val_acc=0.5916 | best_acc=0.5916
+Step   2550 | loss=1.0215 | lr=1.45e-04 | 24.3 steps/s
+Step   2600 | loss=1.1553 | lr=1.40e-04 | 24.3 steps/s
+Step   2650 | loss=1.1901 | lr=1.36e-04 | 24.4 steps/s
+Step   2700 | loss=1.0936 | lr=1.31e-04 | 24.5 steps/s
+Step   2750 | loss=1.1703 | lr=1.26e-04 | 24.6 steps/s
+Step   2800 | loss=0.9529 | lr=1.22e-04 | 24.6 steps/s
+Step   2850 | loss=1.0024 | lr=1.17e-04 | 24.7 steps/s
+Step   2900 | loss=1.0146 | lr=1.13e-04 | 24.7 steps/s
+Step   2950 | loss=0.9216 | lr=1.08e-04 | 24.7 steps/s
+Step   3000 | loss=0.9138 | lr=1.04e-04 | 24.8 steps/s
+  [EVAL] val_loss=1.0807 | val_acc=0.6121 | best_acc=0.6121
+Step   3050 | loss=0.8510 | lr=9.91e-05 | 24.4 steps/s
+Step   3100 | loss=1.0363 | lr=9.47e-05 | 24.5 steps/s
+Step   3150 | loss=0.9222 | lr=9.03e-05 | 24.5 steps/s
+Step   3200 | loss=1.1295 | lr=8.60e-05 | 24.6 steps/s
+Step   3250 | loss=1.0137 | lr=8.18e-05 | 24.6 steps/s
+Step   3300 | loss=1.0008 | lr=7.77e-05 | 24.6 steps/s
+Step   3350 | loss=1.1080 | lr=7.36e-05 | 24.7 steps/s
+Step   3400 | loss=0.7825 | lr=6.95e-05 | 24.7 steps/s
+Step   3450 | loss=1.0248 | lr=6.56e-05 | 24.8 steps/s
+Step   3500 | loss=1.0628 | lr=6.18e-05 | 24.8 steps/s
+  [EVAL] val_loss=1.0260 | val_acc=0.6361 | best_acc=0.6361
+Step   3550 | loss=0.9664 | lr=5.80e-05 | 24.4 steps/s
+Step   3600 | loss=1.0278 | lr=5.43e-05 | 24.5 steps/s
+Step   3650 | loss=1.0341 | lr=5.07e-05 | 24.6 steps/s
+Step   3700 | loss=1.2807 | lr=4.72e-05 | 24.6 steps/s
+Step   3750 | loss=0.9600 | lr=4.39e-05 | 24.6 steps/s
+Step   3800 | loss=0.8067 | lr=4.06e-05 | 24.6 steps/s
+Step   3850 | loss=0.8212 | lr=3.74e-05 | 24.7 steps/s
+Step   3900 | loss=1.1180 | lr=3.44e-05 | 24.7 steps/s
+Step   3950 | loss=1.1565 | lr=3.14e-05 | 24.7 steps/s
+Step   4000 | loss=0.8362 | lr=2.86e-05 | 24.7 steps/s
+  [EVAL] val_loss=0.9750 | val_acc=0.6532 | best_acc=0.6532
+Step   4050 | loss=0.9929 | lr=2.59e-05 | 24.4 steps/s
+Step   4100 | loss=1.1217 | lr=2.33e-05 | 24.4 steps/s
+Step   4150 | loss=0.9339 | lr=2.08e-05 | 24.5 steps/s
+Step   4200 | loss=1.2314 | lr=1.85e-05 | 24.5 steps/s
+Step   4250 | loss=1.0061 | lr=1.63e-05 | 24.5 steps/s
+Step   4300 | loss=1.1396 | lr=1.42e-05 | 24.5 steps/s
+Step   4350 | loss=1.0526 | lr=1.23e-05 | 24.5 steps/s
+Step   4400 | loss=0.9693 | lr=1.05e-05 | 24.6 steps/s
+Step   4450 | loss=0.8225 | lr=8.84e-06 | 24.5 steps/s
+Step   4500 | loss=0.9613 | lr=7.31e-06 | 24.5 steps/s
+  [EVAL] val_loss=0.9626 | val_acc=0.6608 | best_acc=0.6608
+Step   4550 | loss=0.9962 | lr=5.93e-06 | 24.0 steps/s
+Step   4600 | loss=0.9391 | lr=4.69e-06 | 24.0 steps/s
+Step   4650 | loss=0.7748 | lr=3.59e-06 | 23.9 steps/s
+Step   4700 | loss=0.6471 | lr=2.64e-06 | 23.9 steps/s
+Step   4750 | loss=0.7941 | lr=1.83e-06 | 23.9 steps/s
+Step   4800 | loss=0.9616 | lr=1.17e-06 | 23.8 steps/s
+Step   4850 | loss=0.8193 | lr=6.57e-07 | 23.8 steps/s
+Step   4900 | loss=0.7481 | lr=2.90e-07 | 23.8 steps/s
+Step   4950 | loss=0.9605 | lr=7.11e-08 | 23.7 steps/s
+
+Dense baseline complete in 210.9s
+Best accuracy: 0.6608
+FLOPs per sample (approx): 234,475,540
+Results saved to results/dense_vit_cifar10_seed1.json
+============================================================
+Dense ViT Baseline — CIFAR-10
+============================================================
+Seed: 2
+/Users/kmagdy-ma-eg/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+Total params: 1,803,658
+Device: mps
+Step      0 | loss=2.3991 | lr=3.00e-04 | 4.0 steps/s
+Step     50 | loss=1.9382 | lr=3.00e-04 | 19.6 steps/s
+Step    100 | loss=1.8542 | lr=3.00e-04 | 20.3 steps/s
+Step    150 | loss=2.0430 | lr=2.99e-04 | 20.5 steps/s
+Step    200 | loss=1.4748 | lr=2.99e-04 | 21.1 steps/s
+Step    250 | loss=1.5971 | lr=2.98e-04 | 22.4 steps/s
+Step    300 | loss=1.7062 | lr=2.97e-04 | 23.0 steps/s
+Step    350 | loss=1.4941 | lr=2.96e-04 | 23.5 steps/s
+Step    400 | loss=1.7260 | lr=2.95e-04 | 24.2 steps/s
+Step    450 | loss=1.7333 | lr=2.94e-04 | 24.7 steps/s
+Step    500 | loss=1.4115 | lr=2.93e-04 | 25.0 steps/s
+  [EVAL] val_loss=1.5312 | val_acc=0.4458 | best_acc=0.4458
+Step    550 | loss=1.5642 | lr=2.91e-04 | 22.5 steps/s
+Step    600 | loss=1.3407 | lr=2.89e-04 | 22.8 steps/s
+Step    650 | loss=1.3257 | lr=2.88e-04 | 23.1 steps/s
+Step    700 | loss=1.6315 | lr=2.86e-04 | 23.2 steps/s
+Step    750 | loss=1.3975 | lr=2.84e-04 | 23.3 steps/s
+Step    800 | loss=1.3766 | lr=2.81e-04 | 23.4 steps/s
+Step    850 | loss=1.4554 | lr=2.79e-04 | 23.5 steps/s
+Step    900 | loss=1.4757 | lr=2.77e-04 | 23.5 steps/s
+Step    950 | loss=1.2590 | lr=2.74e-04 | 23.6 steps/s
+Step   1000 | loss=1.6354 | lr=2.71e-04 | 23.7 steps/s
+  [EVAL] val_loss=1.3851 | val_acc=0.5019 | best_acc=0.5019
+Step   1050 | loss=1.3236 | lr=2.68e-04 | 22.4 steps/s
+Step   1100 | loss=1.5428 | lr=2.66e-04 | 22.5 steps/s
+Step   1150 | loss=1.3945 | lr=2.62e-04 | 22.6 steps/s
+Step   1200 | loss=1.2889 | lr=2.59e-04 | 22.7 steps/s
+Step   1250 | loss=1.7263 | lr=2.56e-04 | 22.8 steps/s
+Step   1300 | loss=1.4143 | lr=2.53e-04 | 22.9 steps/s
+Step   1350 | loss=1.3123 | lr=2.49e-04 | 23.1 steps/s
+Step   1400 | loss=1.2633 | lr=2.46e-04 | 23.2 steps/s
+Step   1450 | loss=0.9991 | lr=2.42e-04 | 23.3 steps/s
+Step   1500 | loss=1.0845 | lr=2.38e-04 | 23.4 steps/s
+  [EVAL] val_loss=1.2516 | val_acc=0.5523 | best_acc=0.5523
+Step   1550 | loss=1.0872 | lr=2.34e-04 | 22.6 steps/s
+Step   1600 | loss=1.2748 | lr=2.30e-04 | 22.7 steps/s
+Step   1650 | loss=1.0152 | lr=2.26e-04 | 22.9 steps/s
+Step   1700 | loss=1.2601 | lr=2.22e-04 | 23.0 steps/s
+Step   1750 | loss=1.1301 | lr=2.18e-04 | 23.1 steps/s
+Step   1800 | loss=1.1699 | lr=2.14e-04 | 23.2 steps/s
+Step   1850 | loss=1.1471 | lr=2.09e-04 | 23.2 steps/s
+Step   1900 | loss=1.0117 | lr=2.05e-04 | 23.3 steps/s
+Step   1950 | loss=1.2336 | lr=2.01e-04 | 23.3 steps/s
+Step   2000 | loss=1.2350 | lr=1.96e-04 | 23.3 steps/s
+  [EVAL] val_loss=1.1449 | val_acc=0.5844 | best_acc=0.5844
+Step   2050 | loss=1.0768 | lr=1.92e-04 | 22.7 steps/s
+Step   2100 | loss=1.0428 | lr=1.87e-04 | 22.8 steps/s
+Step   2150 | loss=1.0230 | lr=1.83e-04 | 22.8 steps/s
+Step   2200 | loss=1.1761 | lr=1.78e-04 | 22.9 steps/s
+Step   2250 | loss=1.1040 | lr=1.73e-04 | 23.0 steps/s
+Step   2300 | loss=0.9112 | lr=1.69e-04 | 23.0 steps/s
+Step   2350 | loss=1.1939 | lr=1.64e-04 | 23.1 steps/s
+Step   2400 | loss=0.9718 | lr=1.59e-04 | 23.2 steps/s
+Step   2450 | loss=1.1234 | lr=1.55e-04 | 23.3 steps/s
+Step   2500 | loss=0.9581 | lr=1.50e-04 | 23.3 steps/s
+  [EVAL] val_loss=1.0693 | val_acc=0.6154 | best_acc=0.6154
+Step   2550 | loss=1.1244 | lr=1.45e-04 | 22.9 steps/s
+Step   2600 | loss=0.9006 | lr=1.40e-04 | 23.0 steps/s
+Step   2650 | loss=1.0105 | lr=1.36e-04 | 23.0 steps/s
+Step   2700 | loss=1.1035 | lr=1.31e-04 | 23.1 steps/s
+Step   2750 | loss=1.0940 | lr=1.26e-04 | 23.1 steps/s
+Step   2800 | loss=1.0811 | lr=1.22e-04 | 23.2 steps/s
+Step   2850 | loss=0.9849 | lr=1.17e-04 | 23.3 steps/s
+Step   2900 | loss=0.9760 | lr=1.13e-04 | 23.3 steps/s
+Step   2950 | loss=1.0529 | lr=1.08e-04 | 23.4 steps/s
+Step   3000 | loss=0.9553 | lr=1.04e-04 | 23.4 steps/s
+  [EVAL] val_loss=1.0362 | val_acc=0.6288 | best_acc=0.6288
+Step   3050 | loss=0.8711 | lr=9.91e-05 | 23.0 steps/s
+Step   3100 | loss=1.1624 | lr=9.47e-05 | 23.1 steps/s
+Step   3150 | loss=0.9902 | lr=9.03e-05 | 23.1 steps/s
+Step   3200 | loss=0.9806 | lr=8.60e-05 | 23.1 steps/s
+Step   3250 | loss=1.1098 | lr=8.18e-05 | 23.2 steps/s
+Step   3300 | loss=0.8709 | lr=7.77e-05 | 23.2 steps/s
+Step   3350 | loss=0.9029 | lr=7.36e-05 | 23.2 steps/s
+Step   3400 | loss=1.1341 | lr=6.95e-05 | 23.3 steps/s
+Step   3450 | loss=0.9127 | lr=6.56e-05 | 23.3 steps/s
+Step   3500 | loss=0.7729 | lr=6.18e-05 | 23.4 steps/s
+  [EVAL] val_loss=0.9883 | val_acc=0.6481 | best_acc=0.6481
+Step   3550 | loss=0.9045 | lr=5.80e-05 | 23.0 steps/s
+Step   3600 | loss=0.9053 | lr=5.43e-05 | 23.1 steps/s
+Step   3650 | loss=0.9988 | lr=5.07e-05 | 23.1 steps/s
+Step   3700 | loss=1.0230 | lr=4.72e-05 | 23.1 steps/s
+Step   3750 | loss=1.1734 | lr=4.39e-05 | 23.2 steps/s
+Step   3800 | loss=0.9878 | lr=4.06e-05 | 23.3 steps/s
+Step   3850 | loss=0.9534 | lr=3.74e-05 | 23.3 steps/s
+Step   3900 | loss=0.7439 | lr=3.44e-05 | 23.3 steps/s
+Step   3950 | loss=0.7889 | lr=3.14e-05 | 23.4 steps/s
+Step   4000 | loss=0.7385 | lr=2.86e-05 | 23.4 steps/s
+  [EVAL] val_loss=0.9359 | val_acc=0.6663 | best_acc=0.6663
+Step   4050 | loss=0.7092 | lr=2.59e-05 | 23.1 steps/s
+Step   4100 | loss=1.1665 | lr=2.33e-05 | 23.1 steps/s
+Step   4150 | loss=0.9457 | lr=2.08e-05 | 23.2 steps/s
+Step   4200 | loss=0.6612 | lr=1.85e-05 | 23.2 steps/s
+Step   4250 | loss=0.8502 | lr=1.63e-05 | 23.2 steps/s
+Step   4300 | loss=0.9969 | lr=1.42e-05 | 23.3 steps/s
+Step   4350 | loss=0.8000 | lr=1.23e-05 | 23.3 steps/s
+Step   4400 | loss=0.9645 | lr=1.05e-05 | 23.3 steps/s
+Step   4450 | loss=0.7587 | lr=8.84e-06 | 23.4 steps/s
+Step   4500 | loss=1.1158 | lr=7.31e-06 | 23.4 steps/s
+  [EVAL] val_loss=0.9233 | val_acc=0.6713 | best_acc=0.6713
+Step   4550 | loss=0.9243 | lr=5.93e-06 | 23.1 steps/s
+Step   4600 | loss=1.0912 | lr=4.69e-06 | 23.2 steps/s
+Step   4650 | loss=0.9050 | lr=3.59e-06 | 23.2 steps/s
+Step   4700 | loss=0.9502 | lr=2.64e-06 | 23.2 steps/s
+Step   4750 | loss=1.0441 | lr=1.83e-06 | 23.3 steps/s
+Step   4800 | loss=0.9283 | lr=1.17e-06 | 23.3 steps/s
+Step   4850 | loss=0.9905 | lr=6.57e-07 | 23.4 steps/s
+Step   4900 | loss=0.7818 | lr=2.90e-07 | 23.4 steps/s
+Step   4950 | loss=1.1578 | lr=7.11e-08 | 23.4 steps/s
+
+Dense baseline complete in 213.2s
+Best accuracy: 0.6713
+FLOPs per sample (approx): 234,475,540
+Results saved to results/dense_vit_cifar10_seed2.json
+============================================================
+Dense ViT Baseline — CIFAR-10
+============================================================
+Seed: 3
+/Users/kmagdy-ma-eg/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+Total params: 1,803,658
+Device: mps
+Step      0 | loss=2.3887 | lr=3.00e-04 | 2.8 steps/s
+Step     50 | loss=1.9286 | lr=3.00e-04 | 25.3 steps/s
+Step    100 | loss=1.9143 | lr=3.00e-04 | 26.7 steps/s
+Step    150 | loss=1.7224 | lr=2.99e-04 | 26.7 steps/s
+Step    200 | loss=1.7961 | lr=2.99e-04 | 26.6 steps/s
+Step    250 | loss=1.7204 | lr=2.98e-04 | 26.5 steps/s
+Step    300 | loss=1.7069 | lr=2.97e-04 | 26.4 steps/s
+Step    350 | loss=1.6368 | lr=2.96e-04 | 26.6 steps/s
+Step    400 | loss=1.8135 | lr=2.95e-04 | 26.5 steps/s
+Step    450 | loss=1.5766 | lr=2.94e-04 | 26.4 steps/s
+Step    500 | loss=1.7784 | lr=2.93e-04 | 26.4 steps/s
+  [EVAL] val_loss=1.5284 | val_acc=0.4374 | best_acc=0.4374
+Step    550 | loss=1.6962 | lr=2.91e-04 | 23.6 steps/s
+Step    600 | loss=1.6095 | lr=2.89e-04 | 23.8 steps/s
+Step    650 | loss=1.4604 | lr=2.88e-04 | 23.9 steps/s
+Step    700 | loss=1.6271 | lr=2.86e-04 | 24.1 steps/s
+Step    750 | loss=1.5017 | lr=2.84e-04 | 24.4 steps/s
+Step    800 | loss=1.4892 | lr=2.81e-04 | 24.4 steps/s
+Step    850 | loss=1.4708 | lr=2.79e-04 | 24.4 steps/s
+Step    900 | loss=1.3430 | lr=2.77e-04 | 24.4 steps/s
+Step    950 | loss=1.5744 | lr=2.74e-04 | 24.5 steps/s
+Step   1000 | loss=1.4817 | lr=2.71e-04 | 24.4 steps/s
+  [EVAL] val_loss=1.3863 | val_acc=0.5005 | best_acc=0.5005
+Step   1050 | loss=1.1822 | lr=2.68e-04 | 23.0 steps/s
+Step   1100 | loss=1.6084 | lr=2.66e-04 | 23.0 steps/s
+Step   1150 | loss=1.3256 | lr=2.62e-04 | 23.0 steps/s
+Step   1200 | loss=1.5548 | lr=2.59e-04 | 23.2 steps/s
+Step   1250 | loss=1.3541 | lr=2.56e-04 | 23.2 steps/s
+Step   1300 | loss=1.2170 | lr=2.53e-04 | 23.3 steps/s
+Step   1350 | loss=1.3651 | lr=2.49e-04 | 23.3 steps/s
+Step   1400 | loss=1.4302 | lr=2.46e-04 | 23.4 steps/s
+Step   1450 | loss=1.2307 | lr=2.42e-04 | 23.4 steps/s
+Step   1500 | loss=1.0498 | lr=2.38e-04 | 23.5 steps/s
+  [EVAL] val_loss=1.2971 | val_acc=0.5381 | best_acc=0.5381
+Step   1550 | loss=1.6593 | lr=2.34e-04 | 22.8 steps/s
+Step   1600 | loss=1.1844 | lr=2.30e-04 | 22.9 steps/s
+Step   1650 | loss=1.1631 | lr=2.26e-04 | 23.0 steps/s
+Step   1700 | loss=1.1770 | lr=2.22e-04 | 23.1 steps/s
+Step   1750 | loss=1.1673 | lr=2.18e-04 | 23.1 steps/s
+Step   1800 | loss=1.1365 | lr=2.14e-04 | 23.1 steps/s
+Step   1850 | loss=1.0079 | lr=2.09e-04 | 23.1 steps/s
+Step   1900 | loss=1.5335 | lr=2.05e-04 | 23.0 steps/s
+Step   1950 | loss=1.2151 | lr=2.01e-04 | 23.0 steps/s
+Step   2000 | loss=1.2265 | lr=1.96e-04 | 23.0 steps/s
+  [EVAL] val_loss=1.1771 | val_acc=0.5771 | best_acc=0.5771
+Step   2050 | loss=1.1988 | lr=1.92e-04 | 22.3 steps/s
+Step   2100 | loss=0.9180 | lr=1.87e-04 | 22.3 steps/s
+Step   2150 | loss=1.1664 | lr=1.83e-04 | 22.3 steps/s
+Step   2200 | loss=1.0835 | lr=1.78e-04 | 22.3 steps/s
+Step   2250 | loss=0.9761 | lr=1.73e-04 | 22.2 steps/s
+Step   2300 | loss=1.0697 | lr=1.69e-04 | 22.2 steps/s
+Step   2350 | loss=1.1006 | lr=1.64e-04 | 22.2 steps/s
+Step   2400 | loss=0.9240 | lr=1.59e-04 | 22.2 steps/s
+Step   2450 | loss=1.0333 | lr=1.55e-04 | 22.2 steps/s
+Step   2500 | loss=1.1643 | lr=1.50e-04 | 22.3 steps/s
+  [EVAL] val_loss=1.1326 | val_acc=0.5865 | best_acc=0.5865
+Step   2550 | loss=1.0327 | lr=1.45e-04 | 21.8 steps/s
+Step   2600 | loss=0.9411 | lr=1.40e-04 | 21.9 steps/s
+Step   2650 | loss=0.9676 | lr=1.36e-04 | 22.0 steps/s
+Step   2700 | loss=1.4196 | lr=1.31e-04 | 22.1 steps/s
+Step   2750 | loss=0.9224 | lr=1.26e-04 | 22.2 steps/s
+Step   2800 | loss=0.9436 | lr=1.22e-04 | 22.3 steps/s
+Step   2850 | loss=1.0520 | lr=1.17e-04 | 22.3 steps/s
+Step   2900 | loss=1.0987 | lr=1.13e-04 | 22.4 steps/s
+Step   2950 | loss=0.9707 | lr=1.08e-04 | 22.4 steps/s
+Step   3000 | loss=0.9304 | lr=1.04e-04 | 22.5 steps/s
+  [EVAL] val_loss=1.0571 | val_acc=0.6220 | best_acc=0.6220
+Step   3050 | loss=0.9727 | lr=9.91e-05 | 22.2 steps/s
+Step   3100 | loss=1.1642 | lr=9.47e-05 | 22.2 steps/s
+Step   3150 | loss=0.9431 | lr=9.03e-05 | 22.3 steps/s
+Step   3200 | loss=1.2719 | lr=8.60e-05 | 22.4 steps/s
+Step   3250 | loss=0.8945 | lr=8.18e-05 | 22.4 steps/s
+Step   3300 | loss=1.1428 | lr=7.77e-05 | 22.5 steps/s
+Step   3350 | loss=0.9100 | lr=7.36e-05 | 22.5 steps/s
+Step   3400 | loss=0.9692 | lr=6.95e-05 | 22.6 steps/s
+Step   3450 | loss=0.9622 | lr=6.56e-05 | 22.6 steps/s
+Step   3500 | loss=0.8982 | lr=6.18e-05 | 22.7 steps/s
+  [EVAL] val_loss=0.9911 | val_acc=0.6456 | best_acc=0.6456
+Step   3550 | loss=1.1575 | lr=5.80e-05 | 22.4 steps/s
+Step   3600 | loss=1.0223 | lr=5.43e-05 | 22.5 steps/s
+Step   3650 | loss=0.9143 | lr=5.07e-05 | 22.5 steps/s
+Step   3700 | loss=1.0682 | lr=4.72e-05 | 22.6 steps/s
+Step   3750 | loss=0.7421 | lr=4.39e-05 | 22.6 steps/s
+Step   3800 | loss=0.9309 | lr=4.06e-05 | 22.7 steps/s
+Step   3850 | loss=1.3077 | lr=3.74e-05 | 22.7 steps/s
+Step   3900 | loss=0.9917 | lr=3.44e-05 | 22.8 steps/s
+Step   3950 | loss=1.0130 | lr=3.14e-05 | 22.8 steps/s
+Step   4000 | loss=0.6830 | lr=2.86e-05 | 22.8 steps/s
+  [EVAL] val_loss=0.9686 | val_acc=0.6564 | best_acc=0.6564
+Step   4050 | loss=0.8660 | lr=2.59e-05 | 22.5 steps/s
+Step   4100 | loss=0.8539 | lr=2.33e-05 | 22.6 steps/s
+Step   4150 | loss=0.8602 | lr=2.08e-05 | 22.6 steps/s
+Step   4200 | loss=0.9642 | lr=1.85e-05 | 22.6 steps/s
+Step   4250 | loss=0.7095 | lr=1.63e-05 | 22.7 steps/s
+Step   4300 | loss=0.7479 | lr=1.42e-05 | 22.8 steps/s
+Step   4350 | loss=0.8188 | lr=1.23e-05 | 22.8 steps/s
+Step   4400 | loss=1.1204 | lr=1.05e-05 | 22.8 steps/s
+Step   4450 | loss=0.7277 | lr=8.84e-06 | 22.9 steps/s
+Step   4500 | loss=0.9810 | lr=7.31e-06 | 22.9 steps/s
+  [EVAL] val_loss=0.9360 | val_acc=0.6666 | best_acc=0.6666
+Step   4550 | loss=0.8414 | lr=5.93e-06 | 22.7 steps/s
+Step   4600 | loss=0.8802 | lr=4.69e-06 | 22.7 steps/s
+Step   4650 | loss=0.6587 | lr=3.59e-06 | 22.8 steps/s
+Step   4700 | loss=0.8892 | lr=2.64e-06 | 22.8 steps/s
+Step   4750 | loss=0.8312 | lr=1.83e-06 | 22.9 steps/s
+Step   4800 | loss=1.0010 | lr=1.17e-06 | 22.9 steps/s
+Step   4850 | loss=0.6895 | lr=6.57e-07 | 22.9 steps/s
+Step   4900 | loss=1.0675 | lr=2.90e-07 | 23.0 steps/s
+Step   4950 | loss=1.0725 | lr=7.11e-08 | 23.0 steps/s
+
+Dense baseline complete in 217.0s
+Best accuracy: 0.6666
+FLOPs per sample (approx): 234,475,540
+Results saved to results/dense_vit_cifar10_seed3.json
+
+============================================================
+  Dense ViT cifar10 seed=1 | seed=1 | steps=5000
+  cmd: /Library/Developer/CommandLineTools/usr/bin/python3 -u experiments/baselines/dense_vit_cifar10.py --seed 1 --steps 5000
+============================================================
+
+
+  Completed in 214s
+
+============================================================
+  Dense ViT cifar10 seed=2 | seed=2 | steps=5000
+  cmd: /Library/Developer/CommandLineTools/usr/bin/python3 -u experiments/baselines/dense_vit_cifar10.py --seed 2 --steps 5000
+============================================================
+
+
+  Completed in 216s
+
+============================================================
+  Dense ViT cifar10 seed=3 | seed=3 | steps=5000
+  cmd: /Library/Developer/CommandLineTools/usr/bin/python3 -u experiments/baselines/dense_vit_cifar10.py --seed 3 --steps 5000
+============================================================
+
+
+  Completed in 220s
+
+============================================================
+Multi-Seed Run Summary
+============================================================
+  Total runs: 3 (3 ok, 0 failed)
+  Total time: 10.8 min
+    DenseViT     seed=1 -> OK (214s)
+    DenseViT     seed=2 -> OK (216s)
+    DenseViT     seed=3 -> OK (220s)

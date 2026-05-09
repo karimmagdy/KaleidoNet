@@ -1,0 +1,21 @@
+{
+  "model": "KaleidoNet",
+  "dataset": "tiny_imagenet",
+  "seed": 2,
+  "steps": 5000,
+  "image_size": 64,
+  "patch_size": 8,
+  "params": {
+    "total_params": 5537700,
+    "active_params": 2230708,
+    "dormant_params": 3306992,
+    "active_fraction": 0.4028221102623833
+  },
+  "flops_budget": 121006080,
+  "dense_flops": 684957696,
+  "init_active_flops": 242012160,
+  "active_flops": 134883840,
+  "val_loss": 3.8429259033203125,
+  "val_accuracy": 0.1664,
+  "val_avg_blocks": 4.0
+}
