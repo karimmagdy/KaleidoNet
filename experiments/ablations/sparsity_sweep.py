@@ -51,8 +51,14 @@ def run_single(
     dataset: str, seed: int, steps: int,
     target_sparsity: float, mask_lr_scale: float,
     data_dir: str | None = None,
+    t0: int | None = None, t1: int | None = None,
 ) -> dict:
-    """Run a single KaleidoNet training with specified sparsity target and mask LR scale."""
+    """Run a single KaleidoNet training with specified sparsity target and mask LR scale.
+
+    t0/t1 default to the same 10%/80%-of-budget window used by
+    experiments/run_convergence.py so long-budget sweep runs are directly
+    comparable to the main convergence results.
+    """
     set_seed(seed)
     (train_loader, val_loader), num_classes, img_size, patch_size = get_loaders(dataset, data_dir=data_dir)
 
@@ -74,13 +80,15 @@ def run_single(
     config = TrainerConfig(
         lr=3e-4,
         max_steps=steps,
-        warmup_steps=250,
+        warmup_steps=int(steps * 0.05),
         flops_budget=int(init_active * 0.50),
         log_interval=100,
-        eval_interval=500,
+        eval_interval=max(steps // 100, 500),
         use_amp=False,
         seed=seed,
         target_sparsity=target_sparsity,
+        sparsity_start_step=t0 if t0 is not None else int(steps * 0.10),
+        sparsity_end_step=t1 if t1 is not None else int(steps * 0.80),
     )
 
     # Build trainer then override mask optimizer LR
@@ -128,6 +136,8 @@ def run_single(
         "steps": steps,
         "target_sparsity": target_sparsity,
         "mask_lr_scale": mask_lr_scale,
+        "t0": config.sparsity_start_step,
+        "t1": config.sparsity_end_step,
         "params": param_info,
         "dense_flops": dense_flops,
         "active_flops": final_flops,
@@ -138,29 +148,69 @@ def run_single(
 
 def main():
     parser = argparse.ArgumentParser(description="Sparsity & mask LR sweep")
-    parser.add_argument("--sweep", choices=["sparsity", "mask-lr", "both"], default="both")
+    parser.add_argument("--sweep", choices=["sparsity", "mask-lr", "schedule", "both"], default="both")
     parser.add_argument("--dataset", choices=["cifar10", "cifar100", "tiny_imagenet", "stl10"], default="cifar100")
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--steps", type=int, default=5000)
     parser.add_argument("--data-dir", type=str, default=None)
+    parser.add_argument("--targets", type=float, nargs="+", default=None,
+                        help="Explicit target_sparsity list for --sweep sparsity (overrides default grid)")
+    parser.add_argument("--t0-list", type=int, nargs="+", default=None,
+                        help="Schedule start steps for --sweep schedule (each at default t1)")
+    parser.add_argument("--t1-list", type=int, nargs="+", default=None,
+                        help="Schedule end steps for --sweep schedule (each at default t0)")
+    parser.add_argument("--skip-existing", action="store_true",
+                        help="Skip a run if its result JSON already exists")
     args = parser.parse_args()
 
     os.makedirs("results", exist_ok=True)
     all_results = []
 
+    def _run_and_save(fname: str, **kwargs):
+        path = os.path.join("results", fname)
+        if args.skip_existing and os.path.exists(path):
+            print(f"  [skip-existing] {fname}")
+            with open(path) as f:
+                r = json.load(f)
+            all_results.append(r)
+            return r
+        r = run_single(args.dataset, args.seed, args.steps, data_dir=args.data_dir, **kwargs)
+        all_results.append(r)
+        with open(path, "w") as f:
+            json.dump(r, f, indent=2)
+        print(f"  -> acc={r['val_accuracy']:.4f}, flops={r['active_flops']}  [{fname}]")
+        return r
+
     # Sparsity sweep (mask_lr_scale fixed at 3 — the default)
     if args.sweep in ("sparsity", "both"):
-        targets = [0.50, 0.60, 0.70, 0.80, 0.90]
+        targets = args.targets if args.targets else [0.50, 0.60, 0.70, 0.80, 0.90]
         for target in targets:
             print(f"\n{'='*60}")
             print(f"Sparsity sweep: target={target:.2f} | {args.dataset} | seed={args.seed}")
             print(f"{'='*60}")
-            r = run_single(args.dataset, args.seed, args.steps, target, mask_lr_scale=3.0, data_dir=args.data_dir)
-            all_results.append(r)
-            fname = f"sparsity_sweep_{target:.2f}_{args.dataset}_seed{args.seed}.json"
-            with open(os.path.join("results", fname), "w") as f:
-                json.dump(r, f, indent=2)
-            print(f"  -> acc={r['val_accuracy']:.4f}, flops={r['active_flops']}")
+            _run_and_save(
+                f"sparsity_sweep_{target:.2f}_{args.dataset}_seed{args.seed}_steps{args.steps}.json",
+                target_sparsity=target, mask_lr_scale=3.0,
+            )
+
+    # Schedule-window sweep (one-factor-at-a-time around the 10%/80% defaults)
+    if args.sweep == "schedule":
+        for t0 in (args.t0_list or []):
+            print(f"\n{'='*60}")
+            print(f"Schedule sweep: t0={t0} (default t1) | {args.dataset} | seed={args.seed}")
+            print(f"{'='*60}")
+            _run_and_save(
+                f"schedule_sweep_t0_{t0}_{args.dataset}_seed{args.seed}_steps{args.steps}.json",
+                target_sparsity=0.70, mask_lr_scale=3.0, t0=t0,
+            )
+        for t1 in (args.t1_list or []):
+            print(f"\n{'='*60}")
+            print(f"Schedule sweep: t1={t1} (default t0) | {args.dataset} | seed={args.seed}")
+            print(f"{'='*60}")
+            _run_and_save(
+                f"schedule_sweep_t1_{t1}_{args.dataset}_seed{args.seed}_steps{args.steps}.json",
+                target_sparsity=0.70, mask_lr_scale=3.0, t1=t1,
+            )
 
     # Mask LR sweep (target_sparsity fixed at 0.70 — the default)
     if args.sweep in ("mask-lr", "both"):
@@ -169,12 +219,10 @@ def main():
             print(f"\n{'='*60}")
             print(f"Mask LR sweep: scale={scale:.1f}x | {args.dataset} | seed={args.seed}")
             print(f"{'='*60}")
-            r = run_single(args.dataset, args.seed, args.steps, target_sparsity=0.70, mask_lr_scale=scale, data_dir=args.data_dir)
-            all_results.append(r)
-            fname = f"mask_lr_sweep_{scale:.1f}x_{args.dataset}_seed{args.seed}.json"
-            with open(os.path.join("results", fname), "w") as f:
-                json.dump(r, f, indent=2)
-            print(f"  -> acc={r['val_accuracy']:.4f}, flops={r['active_flops']}")
+            _run_and_save(
+                f"mask_lr_sweep_{scale:.1f}x_{args.dataset}_seed{args.seed}.json",
+                target_sparsity=0.70, mask_lr_scale=scale,
+            )
 
     # Summary
     print(f"\n{'='*60}")

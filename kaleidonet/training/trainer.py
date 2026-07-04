@@ -113,6 +113,7 @@ class TrainerConfig:
     gradient_masking_enabled: bool = True   # If False, do not zero out gradients for pruned mask logits (lets logits drift back)
     dual_rate_enabled: bool = True           # If False, mask params share the main AdamW optimizer (single LR)
     mask_lr_multiplier: float = 3.0          # When dual_rate_enabled, mask LR = lr * multiplier
+    mask_grad_scale: float = 1.0             # Multiply mask-logit grads post-backward (emulates scaling the loss term instead of the LR; for the R1.Q2/R3.1 ablation)
 
 
 class KaleidoNetTrainer:
@@ -177,6 +178,7 @@ class KaleidoNetTrainer:
                 mask_params.append(param)
             else:
                 other_params.append(param)
+        self.mask_params = mask_params
 
         if config.dual_rate_enabled and mask_params:
             # Dual-rate optimisation: separate Adam optimiser for mask logits at higher LR
@@ -300,6 +302,10 @@ class KaleidoNetTrainer:
                         m.mask_logits.grad[m.mask_logits.data <= -50] = 0.0
                     if hasattr(m, 'head_mask_logits') and m.head_mask_logits.grad is not None:
                         m.head_mask_logits.grad[m.head_mask_logits.data <= -50] = 0.0
+            if self.config.mask_grad_scale != 1.0:
+                for p in self.mask_params:
+                    if p.grad is not None:
+                        p.grad.mul_(self.config.mask_grad_scale)
             nn.utils.clip_grad_norm_(self.model.parameters(), self.config.grad_clip)
             import torch_xla.core.xla_model as xm
             xm.optimizer_step(self.optimizer)
@@ -316,6 +322,10 @@ class KaleidoNetTrainer:
                         m.mask_logits.grad[m.mask_logits.data <= -50] = 0.0
                     if hasattr(m, 'head_mask_logits') and m.head_mask_logits.grad is not None:
                         m.head_mask_logits.grad[m.head_mask_logits.data <= -50] = 0.0
+            if self.config.mask_grad_scale != 1.0:
+                for p in self.mask_params:
+                    if p.grad is not None:
+                        p.grad.mul_(self.config.mask_grad_scale)
             nn.utils.clip_grad_norm_(self.model.parameters(), self.config.grad_clip)
             self.scaler.step(self.optimizer)
             if self.mask_optimizer:

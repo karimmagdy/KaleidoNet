@@ -55,6 +55,10 @@ ALL_METHODS = [
     "cubic_only",     # cubic schedule only (no gradient masking, no dual-rate)
     "masking_only",   # cubic + gradient masking (no dual-rate)
     "dual_only",      # cubic + dual-rate (no gradient masking)
+    "loss_scale",     # cubic + 3x mask-grad scale at base LR (dual-rate vs loss-scaling test)
+    # Non-MoE ViT controls (R2.3) — not included in "all"; run explicitly
+    "dense_vit",          # same width/depth, single expert, no masks
+    "flops_matched_vit",  # width calibrated to KaleidoNet's active FLOPs
 ]
 ALL_DATASETS = ["cifar10", "cifar100", "stl10", "tiny_imagenet"]
 DEFAULT_STEPS = 50_000
@@ -206,8 +210,14 @@ def _train_with_curves(
     curve_logger: CurveLogger,
     task_loss_fn: nn.Module | None = None,
     patch_pruning_fn=None,
+    mask_dist_path: str | None = None,
 ) -> dict:
-    """Train using KaleidoNetTrainer and log curves. Returns final eval metrics."""
+    """Train using KaleidoNetTrainer and log curves. Returns final eval metrics.
+
+    When mask_dist_path is given, per-layer mask-logit distributions are logged
+    at every eval step (same schema as the Lagrangian runs' *_mask_dist.csv),
+    enabling side-by-side selective-vs-collapse diagnostics.
+    """
     trainer = KaleidoNetTrainer(
         model=model,
         config=config,
@@ -215,6 +225,19 @@ def _train_with_curves(
         val_loader=val_loader,
         task_loss_fn=task_loss_fn or nn.CrossEntropyLoss(),
     )
+
+    mask_dist_fp = None
+    mask_dist_writer = None
+    if mask_dist_path is not None:
+        os.makedirs(os.path.dirname(mask_dist_path) or ".", exist_ok=True)
+        mask_dist_fp = open(mask_dist_path, "w", newline="")
+        mask_dist_writer = csv.writer(mask_dist_fp)
+        mask_dist_writer.writerow([
+            "step", "layer_idx", "layer_name",
+            "mean", "std", "min", "max",
+            "frac_active", "num_neurons",
+        ])
+        mask_dist_fp.flush()
 
     # Optionally replace pruning method (for linear baseline)
     if patch_pruning_fn is not None:
@@ -244,11 +267,31 @@ def _train_with_curves(
             val_accuracy=val_m.get("val_accuracy") if val_m else None,
             lr=_last_train_metrics.get("lr", 0.0),
         )
+        if mask_dist_writer is not None:
+            with torch.no_grad():
+                for idx, m in enumerate(model.modules()):
+                    if isinstance(m, ElasticLinear):
+                        logits = m.mask_logits
+                        soft_mask = torch.sigmoid(logits)
+                        mask_dist_writer.writerow([
+                            step, idx, type(m).__name__,
+                            f"{logits.mean().item():.4f}",
+                            f"{logits.std().item():.4f}",
+                            f"{logits.min().item():.4f}",
+                            f"{logits.max().item():.4f}",
+                            f"{(soft_mask > 0.5).float().mean().item():.4f}",
+                            logits.numel(),
+                        ])
+                mask_dist_fp.flush()
         return val_m
 
     trainer.eval_step = _hooked_eval
 
-    trainer.train()
+    try:
+        trainer.train()
+    finally:
+        if mask_dist_fp is not None:
+            mask_dist_fp.close()
     return trainer
 
 
@@ -266,7 +309,9 @@ def run_kaleidonet(dataset, seed, steps, data_dir=None):
     curve_path = os.path.join(RESULTS_DIR, "curves", f"{label}.csv")
     logger = CurveLogger(curve_path)
 
-    _train_with_curves(model, config, train_loader, val_loader, logger)
+    mask_dist_path = os.path.join(RESULTS_DIR, "curves", f"{label}_mask_dist.csv")
+    _train_with_curves(model, config, train_loader, val_loader, logger,
+                       mask_dist_path=mask_dist_path)
     logger.close()
 
     final_metrics = eval_model(model, val_loader, config.device)
@@ -291,7 +336,7 @@ def run_kaleidonet(dataset, seed, steps, data_dir=None):
 def _run_kaleidonet_variant(
     dataset, seed, steps, label_prefix,
     gradient_masking_enabled, dual_rate_enabled,
-    data_dir=None,
+    data_dir=None, mask_grad_scale=1.0,
 ):
     """Shared runner for KaleidoNet schedule add-on ablations.
 
@@ -314,11 +359,14 @@ def _run_kaleidonet_variant(
         flops_budget=int(init_active * 0.50),
         gradient_masking_enabled=gradient_masking_enabled,
         dual_rate_enabled=dual_rate_enabled,
+        mask_grad_scale=mask_grad_scale,
     )
     curve_path = os.path.join(RESULTS_DIR, "curves", f"{label}.csv")
     logger = CurveLogger(curve_path)
 
-    _train_with_curves(model, config, train_loader, val_loader, logger)
+    mask_dist_path = os.path.join(RESULTS_DIR, "curves", f"{label}_mask_dist.csv")
+    _train_with_curves(model, config, train_loader, val_loader, logger,
+                       mask_dist_path=mask_dist_path)
     logger.close()
 
     final_metrics = eval_model(model, val_loader, config.device)
@@ -336,6 +384,7 @@ def _run_kaleidonet_variant(
         "curve_file": curve_path,
         "gradient_masking_enabled": gradient_masking_enabled,
         "dual_rate_enabled": dual_rate_enabled,
+        "mask_grad_scale": mask_grad_scale,
         **final_metrics,
     }
     _save(results, f"{label}.json")
@@ -367,6 +416,116 @@ def run_dual_only(dataset, seed, steps, data_dir=None):
         gradient_masking_enabled=False, dual_rate_enabled=True,
         data_dir=data_dir,
     )
+
+
+def run_loss_scale(dataset, seed, steps, data_dir=None):
+    """Variant (d): cubic + 3x mask-logit GRADIENT scale at single (base) LR.
+
+    Tests whether dual-rate optimisation can be replaced by scaling the loss
+    term / gradient instead of the learning rate (R1.Q2). Under Adam, a
+    constant gradient rescale cancels in m_t/sqrt(v_t), so this is predicted
+    to match cubic_only, not dual_only.
+    """
+    return _run_kaleidonet_variant(
+        dataset, seed, steps, label_prefix="loss_scale",
+        gradient_masking_enabled=False, dual_rate_enabled=False,
+        data_dir=data_dir, mask_grad_scale=3.0,
+    )
+
+
+def _run_vit_control(dataset, seed, steps, label_prefix, embed_dim, num_heads,
+                     data_dir=None):
+    """Non-MoE ViT control: single expert, no elastic masks, no pruning.
+
+    With num_experts=1 / top_k=1 the router is trivial and the backbone is a
+    plain ViT of the same depth; elastic=False removes mask logits entirely.
+    """
+    label = f"{label_prefix}_{dataset}_seed{seed}"
+    print(f"\n{'='*60}\n  {label_prefix} (ViT control, d={embed_dim}) | {dataset} "
+          f"| seed={seed} | {steps} steps\n{'='*60}")
+
+    set_seed(seed)
+    (train_loader, val_loader), num_classes, img_size, patch_size = get_loaders(dataset, data_dir=data_dir)
+    model = KaleidoNet(
+        embed_dim=embed_dim, num_blocks=4, num_heads=num_heads,
+        num_experts=1, top_k=1, num_classes=num_classes,
+        vocab_size=0, image_size=img_size, patch_size=patch_size,
+        elastic=False, drop_path_rate=0.1,
+    )
+    dense_flops, init_active = calibrate_flops_budget(model, img_size, patch_size)
+
+    config = _make_config(steps, seed, flops_budget=dense_flops)
+    # No elastic masks exist; push the pruning window past training for safety.
+    config.sparsity_start_step = steps + 1000
+    config.sparsity_end_step = steps + 2000
+    curve_path = os.path.join(RESULTS_DIR, "curves", f"{label}.csv")
+    logger = CurveLogger(curve_path)
+
+    _train_with_curves(model, config, train_loader, val_loader, logger)
+    logger.close()
+
+    final_metrics = eval_model(model, val_loader, config.device)
+    param_info = model.count_active_params()
+
+    results = {
+        "model": label_prefix,
+        "dataset": dataset,
+        "seed": seed,
+        "steps": steps,
+        "embed_dim": embed_dim,
+        "num_heads": num_heads,
+        "params": param_info,
+        "dense_flops": dense_flops,
+        "active_flops": init_active,
+        "curve_file": curve_path,
+        **final_metrics,
+    }
+    _save(results, f"{label}.json")
+    return results
+
+
+def run_dense_vit(dataset, seed, steps, data_dir=None):
+    """True dense ViT control: same depth/width, single expert, no masks (R2.3)."""
+    return _run_vit_control(dataset, seed, steps, "dense_vit",
+                            embed_dim=192, num_heads=6, data_dir=data_dir)
+
+
+def run_flops_matched_vit(dataset, seed, steps, data_dir=None):
+    """Dense ViT control with width calibrated to KaleidoNet's post-pruning
+    active FLOPs (R2.3: same-active-FLOPs baseline).
+
+    Probes candidate widths (divisible by num_heads=6) and picks the one whose
+    per-token FLOPs are closest to the target. Target = the measured
+    kaleidonet active_flops for this dataset (seed 1) if available, else the
+    canonical 132.4M.
+    """
+    target = 132_387_840
+    ref_path = os.path.join(RESULTS_DIR, f"kaleidonet_{dataset}_seed1.json")
+    if os.path.exists(ref_path):
+        with open(ref_path) as f:
+            ref = json.load(f)
+        if ref.get("active_flops"):
+            target = int(ref["active_flops"])
+
+    (_, _), num_classes, img_size, patch_size = get_loaders(dataset, data_dir=data_dir)
+    best_dim, best_flops, best_gap = None, None, None
+    for dim in (120, 126, 132, 138, 144, 150, 156, 162, 168, 174):
+        probe = KaleidoNet(
+            embed_dim=dim, num_blocks=4, num_heads=6,
+            num_experts=1, top_k=1, num_classes=num_classes,
+            vocab_size=0, image_size=img_size, patch_size=patch_size,
+            elastic=False, drop_path_rate=0.1,
+        )
+        _, active = calibrate_flops_budget(probe, img_size, patch_size)
+        gap = abs(active - target)
+        print(f"  [calibrate] d={dim}: active={active/1e6:.1f}M (target {target/1e6:.1f}M)")
+        if best_gap is None or gap < best_gap:
+            best_dim, best_flops, best_gap = dim, active, gap
+        del probe
+
+    print(f"  [calibrate] selected d={best_dim} ({best_flops/1e6:.1f}M vs target {target/1e6:.1f}M)")
+    return _run_vit_control(dataset, seed, steps, "flops_matched_vit",
+                            embed_dim=best_dim, num_heads=6, data_dir=data_dir)
 
 
 def run_dense(dataset, seed, steps, data_dir=None):
@@ -787,6 +946,10 @@ METHOD_RUNNERS = {
     "cubic_only": run_cubic_only,
     "masking_only": run_masking_only,
     "dual_only": run_dual_only,
+    "loss_scale": run_loss_scale,
+    # Non-MoE ViT controls (R2.3)
+    "dense_vit": run_dense_vit,
+    "flops_matched_vit": run_flops_matched_vit,
 }
 
 
@@ -825,7 +988,9 @@ def main():
                         help="Skip runs whose result JSON already exists")
     args = parser.parse_args()
 
-    methods = ALL_METHODS if args.method == "all" else [args.method]
+    # "all" preserves the original sweep set; new controls/ablations run explicitly
+    _EXPLICIT_ONLY = ("loss_scale", "dense_vit", "flops_matched_vit")
+    methods = [m for m in ALL_METHODS if m not in _EXPLICIT_ONLY] if args.method == "all" else [args.method]
     datasets = ALL_DATASETS if args.dataset == "all" else [args.dataset]
 
     os.makedirs(os.path.join(RESULTS_DIR, "curves"), exist_ok=True)

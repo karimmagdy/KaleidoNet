@@ -1,20 +1,8 @@
 [
   {
-    "tag": "dual_only/cifar100/seed1",
+    "tag": "cubic_only/cifar100/seed9",
     "status": "ok",
-    "time_s": 5555.643756151199,
-    "val_accuracy": 0.5885
-  },
-  {
-    "tag": "dual_only/cifar100/seed2",
-    "status": "ok",
-    "time_s": 5601.81912112236,
-    "val_accuracy": 0.5958
-  },
-  {
-    "tag": "dual_only/cifar100/seed3",
-    "status": "ok",
-    "time_s": 5618.649615764618,
-    "val_accuracy": 0.5892
+    "time_s": 1426.864784002304,
+    "val_accuracy": 0.3022
   }
 ]

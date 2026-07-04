@@ -5,10 +5,15 @@ Tests all combinations of pillars on/off to produce the compound speedup
 decomposition figure for the paper.
 
 Run: python experiments/ablations/pillar_ablation.py
+     # Full-budget rerun under the main-table protocol (R2.8):
+     python experiments/ablations/pillar_ablation.py --steps 50000 --seeds 1 2 3 \
+         --match-convergence-protocol --skip-existing
 """
 
+import argparse
 import itertools
 import json
+import os
 import time
 from dataclasses import dataclass
 
@@ -18,7 +23,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
 from kaleidonet.model import KaleidoNet
-from kaleidonet.training.trainer import KaleidoNetTrainer, TrainerConfig
+from kaleidonet.training.trainer import KaleidoNetTrainer, TrainerConfig, set_seed
 from kaleidonet.metrics.flops import FLOPsCounter
 
 
@@ -71,11 +76,16 @@ def get_cifar100_loaders(batch_size: int = 64):
     )
 
 
-def run_ablation(ablation: AblationConfig, train_loader, val_loader, max_steps: int = 2000):
+def run_ablation(ablation: AblationConfig, train_loader, val_loader,
+                 max_steps: int = 2000, seed: int = 1,
+                 match_protocol: bool = False):
     print(f"\n{'='*60}")
-    print(f"Ablation: {ablation.name}")
+    print(f"Ablation: {ablation.name} | seed={seed} | {max_steps} steps"
+          f"{' | convergence protocol' if match_protocol else ''}")
     print(f"  elastic={ablation.elastic}, moe={ablation.moe}, early_exit={ablation.early_exit}")
     print(f"{'='*60}")
+
+    set_seed(seed)
 
     model = KaleidoNet(
         embed_dim=192,
@@ -92,15 +102,32 @@ def run_ablation(ablation: AblationConfig, train_loader, val_loader, max_steps: 
         confidence_threshold=0.9 if ablation.early_exit else 1.0,
     )
 
-    config = TrainerConfig(
-        lr=3e-4,
-        max_steps=max_steps,
-        warmup_steps=100,
-        flops_budget=200_000_000,  # Placeholder, calibrated below
-        log_interval=100,
-        eval_interval=500,
-        use_amp=False,
-    )
+    if match_protocol:
+        # Mirror experiments/run_convergence.py::_make_config so full-budget
+        # ablations are directly comparable to the main table (R2.8).
+        config = TrainerConfig(
+            lr=3e-4,
+            max_steps=max_steps,
+            warmup_steps=int(max_steps * 0.05),
+            flops_budget=200_000_000,  # Placeholder, calibrated below
+            log_interval=100,
+            eval_interval=max(max_steps // 100, 500),
+            use_amp=False,
+            seed=seed,
+            sparsity_start_step=int(max_steps * 0.10),
+            sparsity_end_step=int(max_steps * 0.80),
+        )
+    else:
+        config = TrainerConfig(
+            lr=3e-4,
+            max_steps=max_steps,
+            warmup_steps=100,
+            flops_budget=200_000_000,  # Placeholder, calibrated below
+            log_interval=100,
+            eval_interval=500,
+            use_amp=False,
+            seed=seed,
+        )
 
     # Calibrate FLOPs budget from init active FLOPs
     _dummy = torch.randn(1, 3, 32, 32)
@@ -133,6 +160,9 @@ def run_ablation(ablation: AblationConfig, train_loader, val_loader, max_steps: 
 
     result = {
         "name": ablation.name,
+        "seed": seed,
+        "steps": max_steps,
+        "match_protocol": match_protocol,
         "config": {
             "elastic": ablation.elastic,
             "moe": ablation.moe,
@@ -154,15 +184,43 @@ def run_ablation(ablation: AblationConfig, train_loader, val_loader, max_steps: 
 
 
 def main():
+    parser = argparse.ArgumentParser(description="KaleidoNet pillar ablation")
+    parser.add_argument("--steps", type=int, default=2000)
+    parser.add_argument("--seeds", type=int, nargs="+", default=[1])
+    parser.add_argument("--match-convergence-protocol", action="store_true",
+                        help="Use the run_convergence.py config (5%% warmup, 10%%-80%% pruning window)")
+    parser.add_argument("--skip-existing", action="store_true")
+    parser.add_argument("--configs", type=str, nargs="+", default=None,
+                        help="Subset of config names to run (default: all 8)")
+    args = parser.parse_args()
+
     print("KaleidoNet Pillar Ablation Study")
     print("=" * 60)
 
     train_loader, val_loader = get_cifar100_loaders(batch_size=64)
     results = []
+    out_dir = "experiments/ablations"
+    configs = [c for c in ABLATION_CONFIGS if args.configs is None or c.name in args.configs]
 
-    for ablation in ABLATION_CONFIGS:
-        result = run_ablation(ablation, train_loader, val_loader, max_steps=2000)
-        results.append(result)
+    for seed in args.seeds:
+        for ablation in configs:
+            per_run_path = os.path.join(
+                out_dir,
+                f"pillar_{ablation.name.replace('+', '_')}_seed{seed}_steps{args.steps}.json",
+            )
+            if args.skip_existing and os.path.exists(per_run_path):
+                print(f"[skip-existing] {per_run_path}")
+                with open(per_run_path) as f:
+                    results.append(json.load(f))
+                continue
+            result = run_ablation(
+                ablation, train_loader, val_loader,
+                max_steps=args.steps, seed=seed,
+                match_protocol=args.match_convergence_protocol,
+            )
+            with open(per_run_path, "w") as f:
+                json.dump(result, f, indent=2, default=str)
+            results.append(result)
 
     # Summary table
     print("\n\n" + "=" * 80)
@@ -180,10 +238,15 @@ def main():
             f"{r['wall_time_seconds']:>9.1f}"
         )
 
-    # Save results
-    with open("experiments/ablations/results.json", "w") as f:
+    # Save combined results (legacy path preserved for the default 2000-step run)
+    combined = (
+        "experiments/ablations/results.json"
+        if args.steps == 2000 and args.seeds == [1] and not args.match_convergence_protocol
+        else f"experiments/ablations/results_steps{args.steps}_seeds{'-'.join(map(str, args.seeds))}.json"
+    )
+    with open(combined, "w") as f:
         json.dump(results, f, indent=2, default=str)
-    print("\nResults saved to experiments/ablations/results.json")
+    print(f"\nResults saved to {combined}")
 
 
 if __name__ == "__main__":

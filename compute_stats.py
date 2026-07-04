@@ -44,7 +44,7 @@ MAIN_METHODS = ["dense", "magnitude", "random", "linear", "lagrangian", "kaleido
 ABLATION_METHODS = ["cubic_only", "masking_only", "dual_only", "linear", "kaleidonet"]
 
 METHOD_LABELS = {
-    "dense": "Dense ViT (reference)",
+    "dense": "Unpruned MoE (reference)",
     "magnitude": "Magnitude + fine-tune",
     "random": "Random mask",
     "linear": "Linear schedule",
