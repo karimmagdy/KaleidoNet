@@ -1,0 +1,19 @@
+{
+  "model": "dense_vit",
+  "dataset": "tiny_imagenet",
+  "seed": 1,
+  "steps": 50000,
+  "embed_dim": 192,
+  "num_heads": 6,
+  "params": {
+    "total_params": 1969548,
+    "active_params": 1969548,
+    "dormant_params": 0,
+    "active_fraction": 1.0
+  },
+  "dense_flops": 175054848,
+  "active_flops": 177715200,
+  "curve_file": "/home/sweilam/Research/KaleidoNet/results/convergence/curves/dense_vit_tiny_imagenet_seed1.csv",
+  "val_loss": 2.461409062194824,
+  "val_accuracy": 0.4418
+}

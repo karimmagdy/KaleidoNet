@@ -1,0 +1,20 @@
+{
+  "model": "loss_scale",
+  "dataset": "cifar100",
+  "seed": 2,
+  "steps": 50000,
+  "params": {
+    "total_params": 5490752,
+    "active_params": 2183760,
+    "dormant_params": 3306992,
+    "active_fraction": 0.3977160141270267
+  },
+  "dense_flops": 682444800,
+  "active_flops": 132387840,
+  "curve_file": "/home/sweilam/Research/KaleidoNet/results/convergence/curves/loss_scale_cifar100_seed2.csv",
+  "gradient_masking_enabled": false,
+  "dual_rate_enabled": false,
+  "mask_grad_scale": 3.0,
+  "val_loss": 1.6076333555221558,
+  "val_accuracy": 0.5659
+}

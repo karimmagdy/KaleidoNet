@@ -1,0 +1,20 @@
+{
+  "model": "KaleidoNet",
+  "dataset": "cifar100",
+  "seed": 1,
+  "steps": 50000,
+  "target_sparsity": 0.55,
+  "mask_lr_scale": 3.0,
+  "t0": 5000,
+  "t1": 40000,
+  "params": {
+    "total_params": 5490752,
+    "active_params": 2895696,
+    "dormant_params": 2595056,
+    "active_fraction": 0.5273769421747695
+  },
+  "dense_flops": 682444800,
+  "active_flops": 155450880,
+  "val_accuracy": 0.5976,
+  "val_loss": 1.5323445349693299
+}
