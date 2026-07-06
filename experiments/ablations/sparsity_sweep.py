@@ -201,7 +201,9 @@ def main():
             print(f"{'='*60}")
             _run_and_save(
                 f"schedule_sweep_t0_{t0}_{args.dataset}_seed{args.seed}_steps{args.steps}.json",
-                target_sparsity=0.70, mask_lr_scale=3.0, t0=t0,
+                # pin t1 to the paper protocol (500/4000 fixed at any budget),
+                # NOT the 10%/80%-of-budget default
+                target_sparsity=0.70, mask_lr_scale=3.0, t0=t0, t1=4000,
             )
         for t1 in (args.t1_list or []):
             print(f"\n{'='*60}")
@@ -209,7 +211,8 @@ def main():
             print(f"{'='*60}")
             _run_and_save(
                 f"schedule_sweep_t1_{t1}_{args.dataset}_seed{args.seed}_steps{args.steps}.json",
-                target_sparsity=0.70, mask_lr_scale=3.0, t1=t1,
+                # pin t0 to the paper protocol (see t0 arm)
+                target_sparsity=0.70, mask_lr_scale=3.0, t0=500, t1=t1,
             )
 
     # Mask LR sweep (target_sparsity fixed at 0.70 — the default)

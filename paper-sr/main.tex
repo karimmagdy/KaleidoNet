@@ -1,7 +1,7 @@
 % =====================================================================
 % Scientific Reports submission
 % Title: Why Lagrangian pruning fails in Mixture-of-Experts Vision
-%        Transformers: gradient-scale mismatch and a schedule-based fix
+%        Transformers: a gated, non-selective penalty and a schedule-based fix
 % Authors: Karim Magdy, Ghada Khoriba, Hala Abbas
 % =====================================================================
 \documentclass[fleqn,10pt]{article}
@@ -40,21 +40,20 @@
 \newtheorem{remark}{Remark}
 
 % =====================================================================
-\title{Why Lagrangian Pruning Fails in Mixture-of-Experts:\\Gradient-Scale Mismatch and a Schedule-Based Fix}
+\title{Why Lagrangian Pruning Fails at Per-Neuron Granularity in Mixture-of-Experts Vision Transformers:\\A Gated, Non-Selective Penalty and a Schedule-Based Fix}
 
-\author[5,$\boxtimes$]{Karim Magdy}
+\author[1,$\boxtimes$]{Karim Magdy}
 \author[1,2]{Ghada Khoriba}
 \author[4]{Mohamed N. Swailam}
-\author[3]{Hala Abbas}
+\author[1,3]{Hala Abbas}
 \affil[1]{Computer Science Department, Faculty of Computers and Artificial
-Intelligence, Helwan University, Helwan, Egypt}
+Intelligence, Capital University, Helwan, Egypt}
 \affil[2]{School of Information Technology and Computer Science (ITCS),
 Nile University, Giza, Egypt}
 \affil[3]{Faculty of Computer Studies, Arab Open University, Cairo, Egypt}
 \affil[4]{Department of Informatics, Systems and Communication,
 Universit\`a degli Studi di Milano-Bicocca, Milano, Italy}
-\affil[5]{Independent Researcher, Cairo, Egypt}
-\affil[$\boxtimes$]{Corresponding author: \texttt{karimagdy22@gmail.com}}
+\affil[$\boxtimes$]{Corresponding author: \texttt{karimmagdy\_csp@fci.capu.edu.eg}}
 
 \date{}
 
@@ -64,28 +63,37 @@ Universit\`a degli Studi di Milano-Bicocca, Milano, Italy}
 % =====================================================================
 \begin{abstract}
 \noindent
-We identify a gradient-scale failure mode of per-neuron Lagrangian
-FLOPs pruning in Mixture-of-Experts (MoE) Vision Transformers. In an
-elastic four-block MoE ViT, each neuron contributes roughly
-$10^{-6}$ of the compute budget, so the penalty gradient on a mask
-logit is of order $10^{-4}$, two orders of magnitude weaker than the
-task gradient. The optimiser satisfies the budget by collapsing all
-logits uniformly rather than selecting neurons---a phenomenon we call
-uniform mask collapse. Empirically, the Lagrangian baseline reaches
-only $36.4\%$, $10.4\%$, and $4.7\%$ on CIFAR-10, CIFAR-100, and
-Tiny-ImageNet despite hitting the FLOPs target, while every
-schedule-based method survives. As a practical remedy we propose
+We show, with direct gradient measurements, why per-neuron Lagrangian
+FLOPs pruning fails in Mixture-of-Experts (MoE) Vision Transformers:
+the penalty never carries a per-neuron selection signal. The
+ReLU-gated constraint emits zero gradient on more than $80\%$ of
+training steps---switching off whenever the soft active fraction
+reaches its target---and on the steps where it does fire it pushes
+every logit in a layer equally. The optimiser therefore satisfies
+the differentiable budget proxy without ever selecting neurons, a
+failure we call \emph{selectivity collapse}: mask logits separate
+under task gradient and sampling noise rather than importance,
+entire layers can deactivate, executed compute drifts far from the
+proxy ($61$--$81\%$ of the reference against a $50\%$ target), and
+accuracy collapses to $36.4\%$, $10.4\%$, and $4.7\%$ on CIFAR-10,
+CIFAR-100, and Tiny-ImageNet. The failure is robust: sweeping the
+multiplier over three orders of magnitude under both fixed and
+annealed Gumbel temperatures collapses in every configuration,
+while every schedule-based method survives. As a practical remedy we propose
 KaleidoNet, an instantiation that replaces the Lagrangian penalty
-with a deterministic cubic sparsity schedule, irreversible gradient
-masking, and dual-rate optimisation. Trained to convergence
-(50{,}000 steps, three seeds), KaleidoNet achieves a $1.80\times$
-active-FLOPs reduction and retains $98.3$--$99.2\%$ of dense
-accuracy, outperforming every schedule-based pruning baseline.
+with a deterministic cubic sparsity schedule combined with dual-rate
+optimisation---a $3\times$ higher mask-logit learning rate that our
+ablation identifies as the active ingredient (an additional
+irreversible gradient-masking safeguard proves inert at
+convergence). Trained to convergence (50{,}000 steps, three seeds),
+KaleidoNet achieves a $1.80\times$ active-FLOPs reduction and
+retains $98.2$--$99.3\%$ of the unpruned reference accuracy, ranking
+first among schedule-based pruning baselines on every dataset.
 Post-training surgery yields a $1.63\times$ parameter compression.
 Inference latency at this scale is dominated by MoE routing
 overhead, a known limitation that shrinks at larger scale.
 Validation covers CIFAR-10/100 and Tiny-ImageNet on a
-5.49M-parameter MoE ViT; ImageNet-1K with larger backbones
+${\approx}5.5$M-parameter MoE ViT; ImageNet-1K with larger backbones
 is future work.
 \end{abstract}
 
@@ -132,45 +140,58 @@ the natural next level of granularity: pruning individual neurons
 \emph{within} MoE experts. The intuition is that experts are
 over-parameterised and that many of their hidden units are redundant
 for a given task. Empirically, however, the Lagrangian recipe fails
-catastrophically in this setting. A properly tuned Lagrangian baseline
-that reaches the target FLOPs ratio converges to accuracy barely above
-random chance.
+catastrophically in this setting: it satisfies its differentiable
+budget proxy yet converges to accuracy barely above random chance.
 
 The contributions of this work are organised as follows.
 
-\textit{Primary contribution---failure-mode diagnosis.} We show that
-this collapse is a direct consequence of a gradient-scale mismatch.
-Per-neuron FLOPs contributions are six orders of magnitude smaller
-than the total budget, so the penalty gradient on a mask logit is
-roughly $10^{-4}$, while the task-loss gradient on the same logit is
-$\sim\!10^{-2}$. The optimiser therefore cannot use the penalty to
-distinguish useful neurons from useless ones: the only feasible way
-to reduce the penalty term is to drive \emph{all} logits uniformly
-toward zero, a phenomenon we call \emph{uniform mask collapse}. This
-analysis is the central novelty of the paper.
+\textit{Primary contribution---failure-mode diagnosis.} We show, by
+measuring the task-loss and penalty gradient components on the mask
+logits directly during training, that the per-neuron Lagrangian
+penalty never functions as a selection signal. Two measured
+properties are responsible. First, the penalty is \emph{gated}: with
+the standard hinge formulation
+$\lambda\,\mathrm{relu}(\hat{s}-s^{*})$ on the soft active fraction
+$\hat{s}$, the gradient is exactly zero whenever the constraint is
+satisfied in expectation---which, after a brief transient, is more
+than $80\%$ of training steps at every multiplier setting we tested.
+Second, when the gate is open the penalty is \emph{non-selective}:
+its gradient on every mask logit of a layer is identical (each
+neuron contributes equally to the layer's FLOPs), so it shifts all
+logits in lock-step and carries no information about which neurons
+matter. Mask logits therefore evolve under task gradient and
+Gumbel-sampling noise alone, the executed compute decouples from the
+soft proxy, and no task-aligned structure emerges---a failure we
+call \emph{selectivity collapse}. This measured diagnosis is the
+central novelty of the paper.
 
 \textit{Secondary contribution---empirical validation across
-baselines.} We confirm the prediction empirically on three datasets
-under a 50{,}000-step convergence budget: the Lagrangian baseline
-collapses on every dataset despite reaching the FLOPs target, while
-\emph{every} schedule-based pruning method (cubic, linear, random,
-magnitude) bypasses the gradient-scale issue and reaches near-dense
-accuracy. The defining axis is therefore not the specific schedule
-shape but whether the structural decision is taken outside the
-gradient-scale-mismatched optimisation.
+baselines and configurations.} We confirm the diagnosis on three
+datasets under a 50{,}000-step convergence budget: the Lagrangian
+baseline collapses on every dataset while satisfying its soft budget
+proxy (executed FLOPs drift to $61$--$81\%$ of the reference against
+a $50\%$ target), and a probe grid over $\lambda \in [10^{-3},1]$
+under both fixed and annealed Gumbel temperatures collapses in
+every configuration. Every schedule-based pruning method (cubic,
+linear, random, magnitude) survives, because it takes the
+structural decision outside the penalty pathway entirely. The
+defining axis is therefore not the specific schedule shape but
+whether selection is delegated to a gradient that cannot carry it.
 
 \textit{Tertiary contribution---KaleidoNet as a stable practical
 instantiation.} We propose \textbf{KaleidoNet}, an elastic MoE ViT
 that replaces the Lagrangian penalty with a deterministic
-\emph{cubic sparsity schedule}~\citep{zhu2017prune} combined with two
-mechanisms that further stabilise selective pruning. First,
-\emph{gradient masking}: once a neuron has been removed by the
-schedule, its mask logit is clamped to a large negative value and
-its gradient is zeroed, so pruning decisions are irreversible.
-Second, \emph{dual-rate optimisation}: mask logits are updated with
-a learning rate three times larger than that of the task weights, so
+\emph{cubic sparsity schedule}~\citep{zhu2017prune} combined with
+\emph{dual-rate optimisation}: mask logits are updated with a
+learning rate three times larger than that of the task weights, so
 structural decisions track the schedule faster than representations
-drift. Together with a Gumbel-sigmoid reparameterisation and
+drift. The convergence ablation (Table~\ref{tab:ablation_schedule}) shows
+this is the only load-bearing add-on. A second mechanism,
+\emph{gradient masking}---once a neuron has been removed by the
+schedule, its mask logit is clamped to a large negative value and
+its gradient is zeroed, so pruning decisions are irreversible---is
+retained as a safeguard but is shown by the same ablation to be
+inert at convergence. Together with a Gumbel-sigmoid reparameterisation and
 straight-through estimator~\citep{jang2017categorical,
 maddison2017concrete,bengio2013estimating,courbariaux2016binarized},
 these choices let a simple importance heuristic (the mask logit
@@ -182,20 +203,48 @@ see~\citep{chen2024dynamic} for a contemporary survey. KaleidoNet is
 the best instantiation we tested, but the diagnostic insight is the
 generalisable contribution.
 
+Figure~\ref{fig:overview} summarises the setting, the two competing
+pathways for the per-neuron pruning decision, and the three
+contributions.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\linewidth]{figures/fig_overview.pdf}
+\caption{\textbf{Overview of the study.} (a) The setting: an elastic
+MoE Vision Transformer routes each token to one of four experts, and
+every hidden neuron inside every expert carries a differentiable
+mask logit $m_i$; the question is which neurons survive, and which
+signal decides. (b) The two pathways compared under an identical
+backbone, budget, and optimiser grouping: delegating the decision to
+a Lagrangian FLOPs penalty leaves it to a gradient that is gated to
+zero for most of training and cannot distinguish neurons when
+active, producing selectivity collapse, whereas KaleidoNet takes
+the decision outside the penalty pathway---a deterministic cubic
+schedule prunes the lowest-scoring neurons while dual-rate
+optimisation lets task-driven importance accumulate in the logits.
+(c) The three contributions: the measured diagnosis, its validation
+across configurations and controls, and the practical
+instantiation.}
+\label{fig:overview}
+\end{figure}
+
 We evaluate the diagnosis and the fix on CIFAR-10, CIFAR-100, and
 Tiny-ImageNet using a small but controlled four-block MoE ViT
-(5.49M parameters). Under a shared 50{,}000-step convergence budget
+(${\approx}5.5$M parameters). Under a shared 50{,}000-step convergence budget
 with three seeds, the Lagrangian baseline collapses in the predicted
-way (all mask logits drift uniformly toward zero), while KaleidoNet's
+way (its gated penalty never expresses a preference between neurons,
+so mask structure reflects noise rather than importance), while KaleidoNet's
 schedule-based approach maintains selective pruning and achieves a
-$1.80\times$ reduction in active FLOPs while retaining $98.3$--$99.2\%$
-of dense-model accuracy (Table~\ref{tab:main} and
-Fig.~\ref{fig:pareto}). KaleidoNet attains $82.0\pm0.4\%$ on
-CIFAR-10, $59.1\pm0.2\%$ on CIFAR-100, and $40.1\pm0.3\%$ on
-Tiny-ImageNet, outperforming all schedule-based pruning baselines
-(cubic $>$ linear $>$ random $>$ magnitude, with a 0.2--0.7 pp margin
-over the next best method on each dataset). The residual gap to the
-dense reference is small (0.5--1.1 pp) and reflects the unavoidable
+$1.80\times$ reduction in active FLOPs while retaining $98.2$--$99.3\%$
+of the unpruned reference accuracy (Table~\ref{tab:main} and
+Fig.~\ref{fig:pareto}). KaleidoNet attains $82.1\pm0.4\%$ on
+CIFAR-10, $59.1\pm0.2\%$ on CIFAR-100, and $40.2\pm0.3\%$ on
+Tiny-ImageNet, ranking first among schedule-based pruning baselines
+on every dataset (cubic $>$ linear $>$ random $>$ magnitude, with a
+0.2--0.7 pp margin over the next best method; the margin over the
+linear schedule is not statistically conclusive at three seeds,
+Table~\ref{tab:main_stats}). The residual gap to the
+dense reference is small (0.4--0.9 pp) and reflects the unavoidable
 cost of $1.80\times$ FLOPs compression. Post-training model surgery
 physically removes pruned neurons and produces a compact network
 with a $1.63\times$ parameter reduction. We frame these results as
@@ -208,8 +257,8 @@ this work, expected to shrink substantially at larger model scales.
 
 The honest takeaway is that the Lagrangian--MoE pruning recipe, which
 has been assumed to scale to any granularity, in fact breaks at
-per-neuron level inside experts. Schedule-based pruning with gradient
-masking is a simple, stable alternative, and the analysis extends
+per-neuron level inside experts. Schedule-based pruning with a
+properly scaled mask learning rate is a simple, stable alternative, and the analysis extends
 naturally to other architectures where decisions are made at a
 granularity too fine for budget gradients to be informative.
 
@@ -225,17 +274,33 @@ with top-1 routing, and per-neuron elastic layers in each expert.
 Patch sizes are 4 for CIFAR-10/100 ($32{\times}32$ images) and 8 for
 Tiny-ImageNet~\citep{le2015tiny} ($64{\times}64$ images downsampled
 to $32{\times}32$); we follow the data-efficient ViT training recipe
-of~\citep{touvron2021training}. The dense baseline uses the identical
-backbone without MoE or elastic layers (1.82M parameters); KaleidoNet
-totals 5.49M parameters (4 experts $\times$ 2-layer FFN) with 2.18M
-active under top-1 routing. We train each model with batch size 64 for
+of~\citep{touvron2021training}. The reference model for all training
+comparisons---labelled \emph{Unpruned MoE (reference)} in the tables
+and called the \emph{unpruned reference} in the text---is the
+identical MoE backbone with elastic pruning disabled: all
+${\approx}5.5$M parameters retained (4 experts $\times$ 2-layer FFN;
+5.47--5.54M depending on the classification-head size), executing
+239.5M per-token active FLOPs under top-1 routing. Because the
+reference and every pruned model share the architecture, router, and
+training recipe, the main comparison isolates the pruning mechanism
+itself rather than an architecture difference. KaleidoNet trains the
+same backbone with the cubic schedule enabled, carrying 2.18M active
+parameters per token under top-1 routing. Throughout, \emph{active
+FLOPs} denotes the per-token compute actually executed under top-1
+routing (the meter used in every table); summing over all four
+experts as if densely activated would instead give 682M FLOPs for
+this backbone. We quote FLOPs reductions against the unpruned
+reference's 239.5M on this meter. We train each model with batch size 64 for
 $T{=}50{,}000$ steps (convergence budget), using
 AdamW~\citep{loshchilov2019decoupled} for task parameters at learning
-rate $3\times10^{-4}$ with cosine schedule (500-step warmup),
+rate $3\times10^{-4}$ with cosine schedule (2{,}500-step warmup,
+$5\%$ of the budget),
 Adam for mask logits at learning rate $9\times10^{-4}$, gradient
 clipping at norm 1.0, and three independent random seeds per
-configuration. The cubic sparsity schedule ramps from step 500 to
-4{,}000 with target sparsity 70\%, leaving a long post-schedule
+configuration. The cubic sparsity schedule window is a fixed
+fraction of the training budget---pruning begins at $10\%$ and ends
+at $80\%$ of max steps, i.e.\ steps 5{,}000 to 40{,}000 at the
+convergence budget---with target sparsity 70\%, leaving a long post-schedule
 recovery phase for the task parameters to re-adapt to the pruned
 architecture. Unless otherwise noted, all quantities report mean
 $\pm$ standard deviation across three seeds.
@@ -243,63 +308,92 @@ $\pm$ standard deviation across three seeds.
 \paragraph{Apples-to-apples baseline configuration.} All methods in
 Table~\ref{tab:main} (KaleidoNet, Linear, Random, Magnitude,
 Lagrangian) use the \emph{identical} early-exit confidence-head
-architecture, ponder regulariser $\lambda_{\mathrm{ponder}}{=}0.05$,
-exit threshold $\theta{=}0.85$, and MoE balance-loss coefficient
-$\beta_{\mathrm{bal}}{=}0.01$; the only axis that varies between
+architecture, ponder regulariser $\lambda_{\mathrm{ponder}}{=}0.01$,
+exit threshold $\theta{=}0.95$, and MoE balance-loss coefficient
+$\beta_{\mathrm{bal}}{=}0.01$; the primary axis that varies between
 rows is the per-neuron mask-training rule (cubic vs.\ linear vs.\
-random vs.\ magnitude vs.\ Lagrangian). This rules out the concern
+random vs.\ magnitude vs.\ Lagrangian). One protocol difference is
+disclosed for completeness: schedule-based methods anneal the
+Gumbel-sigmoid temperature from $1.0$ to $0.1$ over the first
+2{,}500 steps, whereas the Lagrangian family runs at its fixed
+initialisation $\tau{=}5.0$; the Lagrangian sensitivity analysis
+(Discussion) covers temperature explicitly, so the collapse is not
+an artefact of this choice. This rules out the concern
 that the Lagrangian baseline's collapse could be attributed to a
 mis-configured early-exit head or balance-loss coupling rather than
-to the gradient-scale mismatch we diagnose.
+to the gated, non-selective penalty we diagnose.
 
-\subsection*{The gradient-scale problem in practice}
+\subsection*{The gated penalty in practice}
 
-Figure~\ref{fig:motivation} summarises the mechanism that we argue is
-the root cause of Lagrangian failure in this setting. Mask logits in
-our elastic linear layers receive two sources of gradient. The task
-gradient is of order $10^{-2}$: it reflects how much the loss would
-change if neuron $i$'s activation were toggled. The Lagrangian penalty
-gradient, derived in the Methods, is proportional to the fraction of
-total FLOPs controlled by a single neuron and is of order $10^{-4}$.
-This two-order-of-magnitude gap means that when the two gradients are
-summed, the task gradient dominates whenever the task still has
-anything to gain from the neuron. The only way for the optimiser to
-reduce the Lagrangian term is to slightly lower all logits at once,
-producing a near-uniform distribution of mask values rather than a
-selective pattern. This is uniform mask collapse.
+Figure~\ref{fig:mechanism} shows the mechanism measured directly
+during training. Separating the two gradient sources on the mask
+logits by independent backward passes (Methods, measurement
+protocol), the task-loss component holds steady at
+${\sim}2\times10^{-6}$ per logit, while the penalty component
+spikes only during the first few hundred steps---while dual ascent
+is still raising $\lambda$ and the soft active fraction $\hat{s}$
+still exceeds the target---and is \emph{exactly zero} thereafter
+(84\% of all steps for the baseline configuration;
+Fig.~\ref{fig:mechanism}a). The dual variable plateaus once
+$\hat{s}$ settles at the target (Fig.~\ref{fig:mechanism}c): the
+constraint is satisfied in expectation, the hinge gate closes, and
+from that point the penalty exerts no influence whatsoever on which
+neurons survive. Mask structure is left to the task gradient and
+Gumbel-sampling noise.
 
-Empirically, applying the Lagrangian recipe to our elastic MoE ViT
-reproduces this phenomenon exactly. With a tuned adaptive
-multiplier $\lambda$ targeting a $50\%$ FLOPs ratio, the optimiser
-reaches the budget but drives the network to $10.4\%$ accuracy on
-CIFAR-100 (barely above the $1\%$ random baseline), $36.4\%$ on
-CIFAR-10, and $4.7\%$ on Tiny-ImageNet, while all mask logits cluster
-around a single value. Running the same Lagrangian schedule at higher
-$\lambda$ sends the mask logits below zero en masse; running it at
-lower $\lambda$ leaves them around zero without ever reaching the
-budget. There is no value of $\lambda$ that simultaneously produces
-selectivity and respects the budget, because the penalty gradient per
-neuron is simply too weak to differentiate between neurons.
+The failure is insensitive to configuration. Across a probe grid of
+$\lambda_0 \in \{10^{-3},10^{-2},10^{-1},1\}$ under both the fixed
+($\tau{=}5.0$) and annealed ($1.0\!\to\!0.1$) temperature protocols,
+accuracy at the probe budget lands between $3.5\%$ and $3.8\%$ in
+every configuration, while a cubic-schedule run at the identical
+budget reaches $30.2\%$ (Fig.~\ref{fig:mechanism}b). The gate-closed
+fraction is $80$--$88\%$ in every cell of the grid.
+
+Over the full 50{,}000-step runs the consequences accumulate
+(Fig.~\ref{fig:collapse}): per-layer active fractions disperse from
+the target rather than converging on it---some layers deactivate
+entirely, which by itself is catastrophic for a four-block
+network---and the final mask logits show wide within-layer spread
+that reflects noise rather than task-aligned selectivity. The
+executed per-token compute of the converged models ends at
+$61$--$81\%$ of the unpruned reference (against the $50\%$ target)
+across all nine runs, even though the soft proxy sat at its target
+throughout: the differentiable proxy and the executed compute
+decouple. The network pays the accuracy price of heavy stochastic
+masking with none of the intended compression.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.95\linewidth]{figures/fig_motivation.pdf}
-\caption{\textbf{Gradient-scale mismatch in per-neuron Lagrangian
-pruning.} (a) Gradient magnitudes for different parameter groups on
-an elastic MoE ViT: mask logits receive penalty gradients that are
-roughly 100$\times$ smaller than the task gradients on the same
-variables. (b) Under a Lagrangian penalty with a shared learning rate,
-all mask logits drift uniformly toward zero, yielding non-selective
-pruning. (c) KaleidoNet's cubic schedule combined with dual-rate
-optimisation produces clear separation between kept and removed
-neurons.}
-\label{fig:motivation}
+\includegraphics[width=0.98\linewidth]{figures/fig_mechanism.pdf}
+\caption{\textbf{The measured mechanism: a gated, non-selective
+penalty.} (a) Task-loss and penalty gradient components on the mask
+logits (median across layers, independent backward passes,
+protocol-replica probe): the penalty is exactly zero for 84\% of
+steps and only spikes while the soft constraint is violated.
+(b) Final accuracy of every $(\lambda_0, \tau)$ probe configuration
+versus a cubic-schedule run at the identical budget: collapse in
+every cell of the grid. (c) The soft active fraction settles at the
+target and the dual variable plateaus---the gate closes and stays
+closed.}
+\label{fig:mechanism}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\linewidth]{figures/fig_collapse_50k.pdf}
+\caption{\textbf{Selectivity collapse over the full convergence
+runs (CIFAR-100, three seeds).} (a) Per-layer soft active fractions
+disperse rather than converge---several layers deactivate entirely.
+(b) Final mask logits per layer (mean $\pm$ std, seed 1): wide
+within-layer spread without task-aligned structure, not uniform
+suppression.}
+\label{fig:collapse}
 \end{figure}
 
 \subsection*{Main comparison: pruning methods at a 1.80$\times$ FLOPs budget}
 
 We compare four pruning methods applied to the same elastic MoE
-backbone, plus the dense ViT reference, across CIFAR-10, CIFAR-100,
+backbone, plus the unpruned MoE reference, across CIFAR-10, CIFAR-100,
 and Tiny-ImageNet. Schedule-based methods share the cubic schedule's
 start and end steps but differ in the sparsity curve they use. The
 \emph{linear} baseline replaces the cubic ramp with a linear one.
@@ -309,20 +403,20 @@ the target sparsity before training and freezes it. The
 by $L_2$ norm to the target sparsity, then fine-tunes for the
 remainder of the budget. The \emph{Lagrangian} baseline follows
 Eq.~\ref{eq:lagrangian} with per-neuron gradients, as derived in the
-Methods. KaleidoNet uses the cubic schedule with gradient masking and
-dual-rate optimisation.
+Methods. KaleidoNet uses the cubic schedule with dual-rate
+optimisation (and the gradient-masking safeguard).
 
 Table~\ref{tab:main} reports the $1.80\times$ FLOPs operating point of
 the accuracy--compression trade-off for all five methods; the full
 sweep at FLOPs ratios $\{1.3, 1.5, 1.8, 2.0, 2.5\}\times$ is reported
-in Table~\ref{tab:sensitivity} and Figure~\ref{fig:pareto_sweep}, and
+in Figure~\ref{fig:pareto}, and
 sensitivity to schedule hyperparameters (mask-LR multiplier, schedule
 shape) is reported in the same sensitivity analysis below. At the
 $1.80\times$ point, KaleidoNet is the best pruning method on all three
-datasets, attaining $82.0\pm0.4\%$ on CIFAR-10, $59.1\pm0.2\%$ on
-CIFAR-100, and $40.1\pm0.3\%$ on Tiny-ImageNet (Figure~\ref{fig:pareto}
-also visualises the point estimates). This retains $98.3$--$99.2\%$ of
-dense-model accuracy (gap of only 0.5--1.1 pp) at $56\%$ of the
+datasets, attaining $82.1\pm0.4\%$ on CIFAR-10, $59.1\pm0.2\%$ on
+CIFAR-100, and $40.2\pm0.3\%$ on Tiny-ImageNet (Figure~\ref{fig:pareto}
+also visualises the point estimates). This retains $98.2$--$99.3\%$ of
+dense-model accuracy (gap of only 0.4--0.9 pp) at ${\sim}55\%$ of the
 compute cost. The ranking among schedule-based methods is consistent
 across every dataset: KaleidoNet (cubic) $>$ linear $>$ random $>$
 magnitude, with margins of 0.2--0.7 pp over the next-best baseline
@@ -343,14 +437,16 @@ multiply-accumulate operations per forward pass in the active expert
 path. $\Delta_{\mathrm{dense}}$ is the accuracy gap relative to the
 dense baseline. The best \emph{pruned} result in each column is in
 bold. KaleidoNet achieves the target $1.80\times$ FLOPs reduction
-while retaining $98.3$--$99.2\%$ of dense-model accuracy and
-outperforms every schedule-based pruning baseline; both the
+while retaining $98.2$--$99.3\%$ of the unpruned reference accuracy
+and ranks first among schedule-based pruning baselines; both the
 global-$\lambda$ Lagrangian baseline and the L0 / Hard-Concrete
-differentiable-sparsity baseline (Louizos et al.\ 2018, added in
-response to reviewer W8) collapse on every dataset, confirming the
-diagnosis that per-neuron sparsity-inducing mechanisms whose
-gradient signal is too weak relative to the task gradient cannot
-recover selectivity at MoE-expert granularity. Tiny-ImageNet
+differentiable-sparsity baseline (Louizos et al.\ 2018) collapse
+on every dataset, confirming the diagnosis that per-neuron
+rate-style penalties, gated by their own constraint and indifferent
+between interchangeable neurons, cannot perform selection at
+MoE-expert granularity. The Lagrangian's executed FLOPs never reach
+the target (the range across datasets and seeds is shown; its
+penalty satisfies only the soft proxy). Tiny-ImageNet
 Hard-Concrete numbers were not run on the Milano-Bicocca compute
 target due to dataset infrastructure limitations and are omitted.
 Per-(layer, expert) Lagrangian variants are reported separately in
@@ -371,33 +467,43 @@ Table~\ref{tab:lagrangian_strengthened}.}
  & \textbf{Acc.\ (\%)} & $\Delta$
  & \textbf{Acc.\ (\%)} & $\Delta$ \\
 \midrule
-Dense ViT (reference)          & 236.7
- & $83.1\pm0.2$ & ---
+Unpruned MoE (reference)       & 239.5
+ & $83.0\pm0.3$ & ---
  & $59.6\pm0.5$ & ---
- & $40.8\pm0.3$ & --- \\
+ & $41.0\pm0.4$ & --- \\
+\midrule
+\multicolumn{8}{@{}l}{\emph{Non-MoE ViT controls (same training budget; no pruning):}} \\
+Dense ViT (same width)         & 175.2
+ & $85.2\pm0.4$ & $+2.3$
+ & $60.9\pm0.2$ & $+1.3$
+ & $44.3\pm0.1$ & $+3.3$ \\
+Thin ViT (FLOPs-matched)       & 134.4
+ & $85.3\pm0.3$ & $+2.3$
+ & $60.2\pm0.5$ & $+0.7$
+ & $43.4\pm0.4$ & $+2.5$ \\
 \midrule
 \textbf{KaleidoNet} (this work) & 132.4
- & $\mathbf{82.0\pm0.4}$ & $-1.1$
- & $\mathbf{59.1\pm0.2}$ & $-0.5$
- & $\mathbf{40.1\pm0.3}$ & $-0.7$ \\
+ & $\mathbf{82.1\pm0.4}$ & $-0.9$
+ & $\mathbf{59.1\pm0.2}$ & $-0.4$
+ & $\mathbf{40.2\pm0.3}$ & $-0.8$ \\
 Linear schedule                & 132.4
- & $81.8\pm0.3$ & $-1.3$
- & $58.4\pm0.1$ & $-1.2$
- & $39.4\pm0.0$ & $-1.4$ \\
+ & $81.8\pm0.3$ & $-1.2$
+ & $58.3\pm0.2$ & $-1.2$
+ & $39.5\pm0.3$ & $-1.4$ \\
 Random mask                    & 131.9
- & $81.5\pm0.2$ & $-1.6$
- & $57.9\pm0.4$ & $-1.7$
- & $38.9\pm0.1$ & $-1.9$ \\
+ & $81.4\pm0.2$ & $-1.6$
+ & $57.7\pm0.6$ & $-1.9$
+ & $39.0\pm0.2$ & $-2.0$ \\
 Magnitude + fine-tune          & 131.9
- & $81.0\pm0.1$ & $-2.1$
- & $57.2\pm0.2$ & $-2.4$
- & $38.5\pm0.1$ & $-2.3$ \\
+ & $80.9\pm0.3$ & $-2.0$
+ & $56.9\pm0.5$ & $-2.7$
+ & $38.3\pm0.3$ & $-2.6$ \\
 \midrule
-Lagrangian (per-neuron)        & 132.4
+Lagrangian (per-neuron)        & 146--195
  & $36.4\pm1.2$ & $-46.7$
  & $10.4\pm0.3$ & $-49.2$
  & $4.7\pm0.3$  & $-36.1$ \\
-L0 / Hard-Concrete (NEW)\cite{louizos2018learning} & $\approx 84$
+L0 / Hard-Concrete\cite{louizos2018learning} & $\approx 84$
  & $37.86\pm0.47$ & $-45.2$
  & $9.91\pm0.15$ & $-49.7$
  & --- (data unavailable) & --- \\
@@ -406,32 +512,33 @@ L0 / Hard-Concrete (NEW)\cite{louizos2018learning} & $\approx 84$
 \end{table}
 
 \paragraph{Statistical significance.}
-A reviewer concern with three-seed experiments is whether observed
-mean differences carry statistical weight. We therefore complement
-Table~\ref{tab:main} with paired $t$-tests of every baseline against
-KaleidoNet across the three matched random seeds, plus 95\% bootstrap
-confidence intervals on each mean (Table~\ref{tab:main_stats}). The
-Lagrangian collapse is highly significant on every dataset
-($p<0.001$), which directly confirms the gradient-scale prediction.
-Magnitude and Random pruning are significantly worse than KaleidoNet
-on at least two of the three datasets ($p \leq 0.038$). The
-KaleidoNet-vs-Linear margins (CIFAR-100 $p=0.084$, Tiny-ImageNet
-$p=0.068$, CIFAR-10 $p=0.106$) trend in KaleidoNet's favour without
-crossing the conventional $0.05$ threshold; with only three seeds the
-test is underpowered. We therefore treat $p < 0.05$ as indicative
-rather than confirmatory and recommend a five-seed re-run for any
-camera-ready version. Cohen's $d$ values (KaleidoNet vs.\ Linear) are
-$0.51$, $4.43$, and $2.86$ on CIFAR-10/100/Tiny-ImageNet
-respectively---a medium-to-large effect size on CIFAR-100 and
-Tiny-ImageNet despite the small sample.
+A natural concern with small-sample experiments is whether observed
+mean differences carry statistical weight. All schedule-based
+methods and the unpruned reference were therefore run with five
+matched random seeds, and Table~\ref{tab:main_stats} reports paired
+$t$-tests of every baseline against KaleidoNet across those seeds
+(the collapsed Lagrangian-family baselines retain their original
+three seeds; their verdicts are unambiguous at any sample size).
+The Lagrangian collapse is highly significant on every dataset
+($p<0.001$), directly confirming the selectivity-collapse
+prediction. Magnitude and Random pruning are significantly worse
+than KaleidoNet on all three datasets ($p \leq 0.006$). The
+KaleidoNet-vs-Linear margin is significant on the two harder
+datasets---CIFAR-100 ($t(4){=}5.70$, $p{=}0.005$) and Tiny-ImageNet
+($t(4){=}5.17$, $p{=}0.007$)---and remains inconclusive on CIFAR-10
+($t(4){=}2.48$, $p{=}0.068$); we word our ranking claims
+accordingly. Relative to the unpruned MoE reference, the
+$1.80\times$ compression costs a significant but small amount of
+accuracy on CIFAR-10 and Tiny-ImageNet ($0.7$--$0.9$ pp) and a
+non-significant amount on CIFAR-100 ($p{=}0.115$).
 
 \begin{table}[t]
 \centering
 \caption{Main comparison with statistical significance (50{,}000 steps,
-3 seeds, mean $\pm$ std). $p$ values are paired $t$-tests vs.\
-KaleidoNet across the matched seeds. With 3 seeds the test is
-underpowered; we report $p<0.05$ as indicative rather than
-confirmatory.}
+five seeds, mean $\pm$ std; the collapsed Lagrangian-family baselines
+use the original three seeds---their $p<0.001$ verdicts do not
+require additional power). $p$ values are paired $t$-tests vs.\
+KaleidoNet across the matched seeds, two-tailed, $\mathrm{df}=4$.}
 \label{tab:main_stats}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -441,13 +548,13 @@ confirmatory.}
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
   & Acc.\ (\%) & $p$ vs. ref. & Acc.\ (\%) & $p$ vs. ref. & Acc.\ (\%) & $p$ vs. ref. \\
 \midrule
-Dense ViT (reference)        & $83.14\pm0.29$ & $0.042$  & $59.64\pm0.56$ & $0.201$  & $40.81\pm0.38$ & $0.068$ \\
-Magnitude + fine-tune        & $80.97\pm0.15$ & $0.032$  & $57.24\pm0.23$ & $0.008$  & $38.51\pm0.10$ & $0.023$ \\
-Random mask                  & $81.49\pm0.30$ & $0.038$  & $57.95\pm0.48$ & $0.029$  & $38.92\pm0.13$ & $0.021$ \\
-Linear schedule              & $81.82\pm0.35$ & $0.106$  & $58.44\pm0.16$ & $0.084$  & $39.44\pm0.03$ & $0.068$ \\
-Lagrangian (per-neuron)      & $36.38\pm1.45$ & $<\!0.001$ & $10.45\pm0.33$ & $<\!0.001$ & $4.68\pm0.34$ & $<\!0.001$ \\
-L0 / Hard-Concrete (NEW)     & $37.86\pm0.47$ & $<\!0.001$ & $9.91\pm0.15$  & $<\!0.001$ & ---            & --- \\
-\textbf{KaleidoNet}          & $\mathbf{82.02\pm0.47}$ & --- & $\mathbf{59.09\pm0.20}$ & --- & $\mathbf{40.09\pm0.32}$ & --- \\
+Unpruned MoE (reference)     & $82.98\pm0.33$ & $0.010$  & $59.55\pm0.45$ & $0.115$  & $40.97\pm0.35$ & $0.002$ \\
+Magnitude + fine-tune        & $80.94\pm0.27$ & $0.001$  & $56.93\pm0.48$ & $<\!0.001$ & $38.33\pm0.29$ & $0.001$ \\
+Random mask                  & $81.41\pm0.24$ & $0.006$  & $57.69\pm0.61$ & $0.005$  & $38.97\pm0.16$ & $<\!0.001$ \\
+Linear schedule              & $81.80\pm0.26$ & $0.068$  & $58.34\pm0.17$ & $0.005$  & $39.54\pm0.26$ & $0.007$ \\
+Lagrangian (per-neuron, 3 seeds) & $36.38\pm1.45$ & $<\!0.001$ & $10.45\pm0.33$ & $<\!0.001$ & $4.68\pm0.34$ & $<\!0.001$ \\
+L0 / Hard-Concrete (3 seeds) & $37.86\pm0.47$ & $<\!0.001$ & $9.91\pm0.15$  & $<\!0.001$ & ---            & --- \\
+\textbf{KaleidoNet}          & $\mathbf{82.10\pm0.38}$ & --- & $\mathbf{59.13\pm0.15}$ & --- & $\mathbf{40.22\pm0.29}$ & --- \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -459,37 +566,62 @@ L0 / Hard-Concrete (NEW)     & $37.86\pm0.47$ & $<\!0.001$ & $9.91\pm0.15$  & $<
 50{,}000 steps, three seeds).} The dense baseline (rightmost)
 provides the upper reference at $59.6\%$. Pruned methods cluster at
 $\sim\!132$M FLOPs ($1.80\times$ reduction). KaleidoNet sits closest
-to the Pareto front, recovering $99.2\%$ of dense accuracy at $56\%$
+to the Pareto front, recovering $99.3\%$ of dense accuracy at ${\sim}55\%$
 of the computational cost; the Lagrangian baseline collapses to
 near-random accuracy despite reaching the same FLOPs budget. Error
 bars show one s.d.\ across three seeds.}
 \label{fig:pareto}
 \end{figure}
 
-Two observations should be stated clearly.
+Three observations should be stated clearly.
 
-\textit{Every schedule-based method bypasses the gradient-scale
-issue; KaleidoNet is the best instantiation tested.} The decisive
+\textit{Every schedule-based method bypasses the gated penalty;
+KaleidoNet is the best instantiation tested.} The decisive
 axis in Table~\ref{tab:main} is not which schedule shape is used but
-whether the structural decision is made \emph{outside} the
-gradient-scale-mismatched optimisation. All four schedule-based
+whether the structural decision is made \emph{outside} the penalty
+pathway. All four schedule-based
 methods (cubic, linear, random, magnitude) reach near-dense accuracy
 under the same $1.80\times$ FLOPs budget---each one recovers
-$96.7$--$99.2\%$ of dense accuracy on every dataset---while the
-Lagrangian baseline collapses on every dataset despite hitting the
-same FLOPs target. This is the empirical signature of the diagnosis:
+$93.6$--$99.3\%$ of the reference accuracy across datasets---while the
+Lagrangian baseline collapses on every dataset while satisfying
+only its soft budget proxy (its executed compute drifts to
+$61$--$81\%$ of the reference). This is the empirical signature of the diagnosis:
 the failure mode is specific to optimising the per-neuron decision
 through a budget gradient, and \emph{any} mechanism that takes the
 decision out of that gradient pathway recovers near-dense accuracy.
 Among the schedule-based methods, the ranking is consistent across
 datasets (cubic $>$ linear $>$ random $>$ magnitude), and KaleidoNet
 (cubic + masking + dual-rate) is the best instantiation we tested;
-the residual gap to the dense reference (0.5--1.1 pp) reflects the
-unavoidable cost of compressing the network to $56\%$ of its
+the residual gap to the dense reference (0.4--0.9 pp) reflects the
+unavoidable cost of compressing the network to ${\sim}55\%$ of its
 original FLOPs budget. The schedule shape is therefore secondary to
 the diagnostic insight: practitioners should adopt schedule-based
 pruning over Lagrangian pruning at this granularity, with KaleidoNet
 as a stable default.
+
+\textit{At this scale, non-MoE ViT controls outperform the MoE
+backbone itself.} Two controls requested by the review isolate the
+architecture from the pruning strategy (Table~\ref{tab:main}, second
+block): a plain dense ViT of the same width (no experts, no masks;
+175.2M per-token FLOPs) and a thin dense ViT calibrated to
+KaleidoNet's executed budget (134.4M). Both outperform not only
+KaleidoNet but the \emph{unpruned} MoE on all three datasets---the
+FLOPs-matched thin ViT reaches $85.3\%$/$60.2\%$/$43.4\%$ against
+KaleidoNet's $82.0\%$/$59.1\%$/$40.1\%$ at essentially the same
+executed compute. We state the implication plainly: at
+${\approx}5.5$M-parameter scale on $32{\times}32$ inputs, the MoE
+architecture is an accuracy liability rather than an asset, with or
+without pruning, and a practitioner whose goal is simply the best
+model at a given FLOPs budget should train a thin dense ViT. This
+does not affect the paper's diagnostic contribution---which concerns
+\emph{how pruning decisions interact with penalty gradients inside
+an MoE}, whatever the reason for using one---and it does not affect
+the within-MoE comparisons, but it bounds the practical relevance
+of pruned small-scale MoEs and we report it as such. Conditional
+capacity is expected to pay off only at scales where experts can
+specialise~\citep{fedus2022switch,riquelme2021scaling}; whether the
+crossover interacts with pruning is an open question for the
+larger-scale follow-up already discussed.
 
 \textit{Convergence is essential for schedule-based methods.}
 Preliminary 5{,}000-step runs showed all schedule-based methods
@@ -499,40 +631,42 @@ schedule left insufficient recovery time after pruning completed at
 step 4{,}000. Training to convergence (50{,}000 steps) both raises
 absolute accuracies and reverses the method ranking: once the network
 has had time to re-adapt to the pruned architecture, the cubic
-schedule's importance-aware trajectory outperforms all alternatives.
+schedule's importance-aware trajectory ranks ahead of all alternatives.
 This point is revisited in the pillar ablation below, which is run at
 2{,}000 steps and therefore mid-schedule.
 
 \subsection*{Pruning trajectory}
 
-Figure~\ref{fig:trajectory} shows the evolution of the \emph{hard
-active fraction} (the fraction of neurons whose mask logit is above
-zero, i.e.\ that would be kept in a hard-threshold inference path) and
-the validation accuracy during training. The cubic schedule drives
-active fraction from $100\%$ at step 500 to $30\%$ at step 4{,}000
-along the curve in Eq.~\ref{eq:cubic} below. Validation accuracy
-decreases during the aggressive middle phase of the schedule (steps
-1{,}500--3{,}000, where active fraction drops below $60\%$) and
-recovers once the schedule completes. The long post-pruning recovery
-phase (steps 4{,}000--50{,}000) is essential: accuracy climbs
-steadily while the task parameters re-adapt to the pruned
-architecture, then plateaus near the converged value of $59\%$ on
-CIFAR-100 well before step 50{,}000. Under the preliminary 5{,}000-step
-budget used in early runs, the network had not yet recovered and
-KaleidoNet trailed simpler baselines; with the convergence budget the
-cubic schedule's advantage fully materialises.
+Figure~\ref{fig:trajectory} shows the evolution of the \emph{elastic
+active fraction} (the fraction of expert-FFN neurons kept by the
+schedule) and the validation accuracy during training. At the
+convergence budget the pruning window spans steps 5{,}000 to
+40{,}000 ($10\%$ to $80\%$ of the budget); the cubic curve of
+Eq.~\ref{eq:cubic} drives the elastic active fraction from $100\%$
+to $30\%$ with the steepest removal in the first third of the
+window. Accuracy at this budget climbs throughout training, with
+only a brief plateau early in the pruning window
+(${\sim}$steps 7{,}500--8{,}000, where capacity is being removed
+fastest), and converges to ${\sim}59\%$ on CIFAR-100 over the final
+${\sim}10{,}000$ steps. The contrast with the preliminary
+5{,}000-step budget (schedule window 500--4{,}000) is instructive:
+there, accuracy visibly dipped during pruning and the network had
+not recovered by the end of training, so KaleidoNet trailed simpler
+baselines; with the convergence budget the post-schedule recovery
+phase is long and the cubic schedule's advantage fully materialises.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.75\linewidth]{figures/fig2_pruning_evolution.pdf}
 \caption{\textbf{Training trajectory of KaleidoNet on CIFAR-100
-(50{,}000 steps).} \textbf{Top:} hard-active neuron fraction follows
-the cubic sparsity schedule from $100\%$ at step 500 to $30\%$ at
-step 4{,}000. \textbf{Bottom:} validation accuracy dips during active
-pruning, recovers strongly after the schedule completes, and
-plateaus near $59\%$ well before step 50{,}000. The extended
-post-pruning recovery phase is what allows the cubic schedule to
-outperform all other pruning baselines at convergence.}
+(50{,}000 steps).} \textbf{Top:} elastic-neuron active fraction
+under the cubic sparsity schedule at the convergence budget, from
+$100\%$ at step 5{,}000 to $30\%$ at step 40{,}000. \textbf{Bottom:}
+validation accuracy (three seeds) climbs throughout training, with
+a brief plateau early in the pruning window, and converges near
+$59\%$. The extended post-schedule recovery is what allows the
+cubic schedule to rank first among the pruning baselines at
+convergence.}
 \label{fig:trajectory}
 \end{figure}
 
@@ -548,7 +682,7 @@ cubic schedule is still in its rapid-pruning phase (active fraction
 $\sim\!43\%$ at step 2{,}000); the MoE + early-exit combination is
 the best performer. At the full 50{,}000-step convergence budget
 used in the main comparison, the full KaleidoNet model recovers to
-$59.1\%$ on CIFAR-100, outperforming every other pruning method and
+$59.1\%$ on CIFAR-100, ranking first among the pruning methods and
 trailing the dense baseline by only 0.5 pp. The ablation thus
 isolates the cost of pruning (elastic) as \emph{transient}, resolved
 by the long post-schedule recovery phase at convergence, while the
@@ -585,8 +719,8 @@ All three pillars (KaleidoNet)& 20.85 & 153.1 & 7\,653 \\
 \subsection*{Schedule add-on ablation at convergence}
 
 The pillar ablation above isolates KaleidoNet's \emph{architectural}
-contributions (elastic / MoE / early exit). A separate question---raised
-by reviewers---is the contribution of the two \emph{schedule add-ons}
+contributions (elastic / MoE / early exit). A separate question is
+the contribution of the two \emph{schedule add-ons}
 that distinguish KaleidoNet from a vanilla cubic pruning baseline:
 irreversible gradient masking and dual-rate optimisation. To isolate
 these we run three ablation conditions at the same convergence budget
@@ -623,12 +757,22 @@ $82.05\%$/$59.12\%$/$40.09\%$ versus KaleidoNet's
 $82.02\%$/$59.09\%$/$40.09\%$ ($p\!\geq\!0.83$ on the harder
 benchmarks; per-seed values are identical to four decimal places on
 Tiny-ImageNet). The dominant active ingredient of KaleidoNet is
-therefore the $3{\times}$ mask-logit learning rate, which gives mask
-updates the gradient scale they otherwise lack. This decomposition
+therefore the $3{\times}$ mask-logit learning rate, which lets the
+task-driven importance signal move the logits decisively before the
+schedule commits each pruning decision. This decomposition
 reinforces the broader framing of the paper: the \emph{diagnosis} of
-the gradient-scale failure mode is the primary contribution, and the
-practical remedy reduces, at convergence, to a single hyperparameter
-(the mask-LR multiplier) that closes the gradient-scale gap.
+the gated, non-selective penalty is the primary contribution, and
+the practical remedy reduces, at convergence, to a single
+hyperparameter (the mask-LR multiplier) applied inside a mechanism
+that never asks the penalty to select. The \emph{loss-scale} row
+of Table~\ref{tab:ablation_schedule} closes the natural follow-up
+question: replacing the higher mask learning rate with an equivalent
+$3\times$ scaling of the mask-logit gradient (at the base learning
+rate) reproduces cubic-only almost exactly on all three datasets
+($80.7\%$/$56.4\%$/$36.5\%$), exactly as the Adam-invariance
+argument in the Methods predicts---the lever is the
+post-normalisation update magnitude, which only the learning rate
+controls.
 
 \subsection*{Model surgery and compression}
 
@@ -714,32 +858,34 @@ algorithm.
 \label{sec:discussion}
 
 \paragraph{What the diagnosis says and does not say.}
-Our main claim is diagnostic: per-neuron Lagrangian FLOPs pruning
-inside MoE experts fails because the penalty gradient per mask logit
-is orders of magnitude weaker than the task gradient on the same
-logit. This mismatch is structural: it follows from the ratio
-$\mathrm{flops}_i / B$, which is inherently small at per-neuron
-granularity. No choice of the multiplier $\lambda$ removes the
-mismatch; raising $\lambda$ simply pushes all logits negative without
-producing selectivity, and lowering $\lambda$ leaves the budget
-unsatisfied. This bounds the utility of Lagrangian recipes at this
-granularity regardless of tuning. The diagnosis \emph{does not}
-imply Lagrangian pruning is broken at coarser granularities. At
-per-layer or per-expert granularity, a single decision controls
-$\sim\!10\%$ of total FLOPs and the penalty gradient is comparable to
-the task gradient; the mismatch does not arise and Lagrangian methods
-work well, as shown in prior work~\citep{gordon2018morphnet,
-lemaire2019structured}. This distinction is a practical guide: use
-Lagrangian penalties where the ratio $\mathrm{flops}_i / B$ is
-non-negligible; use schedule-based or importance-based pruning where
-it is not.
+Our main claim is diagnostic, and it is measured rather than
+asserted: the per-neuron penalty is gated off for the vast majority
+of training and is non-selective within a layer when active
+(Fig.~\ref{fig:mechanism}), so no choice of $\lambda$---we measured
+three orders of magnitude---produces selectivity. The diagnosis
+\emph{does not} imply Lagrangian pruning is broken at coarser
+granularities: when the units being pruned control different
+amounts of compute (whole layers, whole experts), the penalty
+gradient differs across units and can express a preference, and
+Lagrangian methods work well there~\citep{gordon2018morphnet,
+lemaire2019structured}. The practical guide: use Lagrangian
+penalties where pruning units have heterogeneous cost; use
+schedule-based or importance-based pruning where the units are
+interchangeable.
 
 \paragraph{A Lagrangian sensitivity analysis.}
-To probe whether the failure is about $\lambda$ alone, we swept the
-multiplier over three orders of magnitude ($\lambda \in
-[10^{-3}, 1]$) and the Gumbel temperature $\tau$ over two orders
-($\tau \in [0.1, 5.0]$, annealed or fixed); no configuration of the
-\emph{global-$\lambda$} baseline produced selective pruning. To
+To probe whether the failure is about $\lambda$ alone, we ran an
+instrumented probe grid of the \emph{global-$\lambda$} baseline:
+initial multipliers $\lambda_0 \in \{10^{-3},10^{-2},10^{-1},1\}$
+under both the fixed temperature ($\tau{=}5.0$) and the annealed
+protocol ($\tau\!:1.0\!\to\!0.1$ over 2{,}500 steps), at a
+5{,}000-step probe budget on CIFAR-100 with gradient components
+logged throughout (Fig.~\ref{fig:mechanism}b and Methods,
+measurement protocol). Every configuration collapses to
+$3.5$--$3.8\%$ accuracy with the penalty gate closed on
+$80$--$88\%$ of steps, while a cubic-schedule run at the identical
+budget trains normally; no configuration produced selective
+pruning. To
 probe whether the failure is about $\lambda$'s
 \emph{shape} (global vs.\ per-layer vs.\ per-expert) rather than its
 magnitude, we additionally evaluated four strengthened-Lagrangian
@@ -753,47 +899,81 @@ method). Table~\ref{tab:lagrangian_strengthened} reports the
 results across CIFAR-10 and CIFAR-100. The per-expert variant
 attains $36.17 \pm 2.65\%$ on CIFAR-10 and $10.12 \pm 0.24\%$ on
 CIFAR-100 (only $\approx 9$~pp above random for a 100-class
-problem), with the dual ascent overshooting the FLOPs constraint
-to $\approx 26\%$ of dense rather than the targeted $50\%$. This
+problem), with its executed compute decoupled from the target
+(satisfying only the soft proxy, as in the global baseline). This
 confirms the diagnosis: reshaping $\lambda$ at per-layer or
 per-expert granularity does \emph{not} eliminate the mismatch at
 \emph{per-neuron} granularity within an expert. The effective
 per-neuron penalty is $\lambda \cdot \mathrm{flops}_i/B$ regardless
 of how $\lambda$ is parametrised, so the resulting collapse mode
 persists. Strikingly, all four strengthened-Lagrangian variants
-\emph{collapse to within $\pm 1$~pp of each other on CIFAR-100}:
+collapse to within $\pm 1$~pp of each other \emph{and of the
+global-$\lambda$ baseline} on CIFAR-100:
 per-layer $9.37 \pm 0.89\%$, per-expert $10.12 \pm 0.24\%$,
-augmented $10.08 \pm 0.16\%$, rescaled $9.71 \pm 0.26\%$
-(Table~\ref{tab:lagrangian_strengthened}). All five variants are
-worse than the global-$\lambda$ baseline ($36.4\%$ from the
-original protocol)
-on CIFAR-100, because the per-(block, expert) and per-layer dual
-variables become more aggressive at locally enforcing the constraint,
-depressing all mask logits within an expert in lock-step. The
-augmented-Lagrangian quadratic term and the explicit
-penalty-gradient $3\times$ rescale do not change the qualitative
-outcome either: they overshoot the FLOPs target (the dual ascent
-locks active~FLOPs at $\approx 26\%$ rather than the targeted
-$50\%$) and the resulting model has too few neurons to fit the
-100-class problem. The diagnosis is therefore strengthened, not
-weakened, by the variant sweep: \emph{no} reshaping of the
-Lagrangian dual variable recovers selectivity at per-neuron
-granularity within an expert.
+augmented $10.08 \pm 0.16\%$, rescaled $9.71 \pm 0.26\%$, against
+$10.45 \pm 0.33\%$ for the global baseline
+(Table~\ref{tab:lagrangian_strengthened}). The reason follows
+directly from the diagnosis: reshaping the dual variable changes
+\emph{how strongly} the constraint is enforced per layer or per
+expert, but leaves the within-expert cost symmetry untouched---no
+shape of $\lambda$ lets the penalty prefer one neuron over another
+inside an expert. The augmented-Lagrangian quadratic term and the
+explicit penalty-gradient $3\times$ rescale do not change the
+qualitative outcome either, and in every variant the executed
+compute decouples from the target exactly as in the global
+baseline. The diagnosis is therefore strengthened, not weakened, by
+the variant sweep: \emph{no} reshaping of the Lagrangian dual
+variable recovers selectivity at per-neuron granularity within an
+expert.
+
+Because the variants' executed compute never matched the target,
+one could still ask whether they fail merely by operating at a
+harder compression level. The bottom block of
+Table~\ref{tab:lagrangian_strengthened} closes this question: we
+re-ran the cubic schedule with its final sparsity calibrated so
+that its executed per-token compute lands exactly in the range the
+Lagrangian variants reached ($64$--$75\%$ of the reference). At
+these matched budgets the schedule loses nothing ($82.8$--$83.1\%$
+on CIFAR-10, $59.7$--$59.9\%$ on CIFAR-100), while every Lagrangian
+variant at the same executed compute remains collapsed---and the
+schedule's \emph{standard} operating point is more compressed than
+any variant reached. The gap is therefore attributable to
+selectivity, not to compression quantity.
+
+\paragraph{Schedule-window sensitivity.}
+The window parameters of the cubic schedule are not delicately
+tuned. A one-factor-at-a-time star around the operating point
+($t_0{=}500$, $t_1{=}4{,}000$), run at the full 50{,}000-step budget
+on CIFAR-100 within a matched single-seed harness, varies accuracy
+by less than one percentage point: $t_0 \in \{250, 1{,}000,
+2{,}000\}$ gives $57.7$/$57.8$/$57.6\%$ and $t_1 \in \{2{,}000,
+8{,}000, 16{,}000\}$ gives $57.5$/$57.3$/$58.3\%$, against $57.4\%$
+for the unperturbed configuration in the same harness ($59.1\%$ in
+the main-table protocol; the $\approx\!1.6$ pp offset between the
+two harnesses is constant across configurations and does not affect
+the within-star comparison). The long post-schedule recovery phase
+absorbs even an $8\times$ change in either window parameter. The
+final-sparsity axis is covered by the matched-budget runs of
+Table~\ref{tab:lagrangian_strengthened}, which train the schedule at
+$s_f \in \{0.39, 0.55, 0.70\}$ with smooth, small accuracy
+variation. These are single-seed probes and we label them as such.
 
 The L0 / Hard-Concrete baseline\cite{louizos2018learning}, which
 sidesteps the FLOPs-budget formulation entirely by penalising the
 expected $L_0$ norm of the mask, exhibits a similar but
-mechanistically distinct collapse: it under-prunes the budget
-(active~FLOPs $\approx 12\%$ rather than the targeted $50\%$),
-attains $37.86 \pm 0.47\%$ on CIFAR-10 (slightly above the
+mechanistically distinct collapse: it over-compresses relative to
+the target (executed per-token FLOPs ${\approx}35\%$ of the
+unpruned reference rather than the targeted $50\%$), attains
+$37.86 \pm 0.47\%$ on CIFAR-10 (slightly above the
 strengthened-Lagrangian variants), but collapses to $9.91 \pm 0.15\%$
 on CIFAR-100 like all the others. The shared failure across both
-formulations indicates that the issue is not specific to a Lagrangian
-penalty---it is a property of any per-neuron sparsity-inducing
-mechanism whose differentiable signal is too weak relative to the
-task gradient at MoE-expert granularity. Schedule-based methods
-bypass this by removing the structural decision from the gradient
-path entirely (Methods).
+formulations indicates that the issue is not specific to a
+Lagrangian penalty---it is a property of any per-neuron
+sparsity-inducing mechanism that asks a rate-style differentiable
+penalty, indifferent between interchangeable neurons, to perform
+selection at MoE-expert granularity. Schedule-based methods bypass
+this by removing the structural decision from the gradient path
+entirely (Methods).
 
 \begin{table}[t]
 \centering
@@ -801,16 +981,23 @@ path entirely (Methods).
 pruning.} All variants share the elastic MoE-ViT backbone,
 50{,}000-step training schedule, identical optimizer grouping
 (AdamW for task params at LR $3{\times}10^{-4}$, Adam for mask
-logits at LR $9{\times}10^{-4}$), Gumbel-sigmoid temperature
-$\tau{=}1.0$, gradient clip $1.0$, and target FLOPs ratio of
-$50\%$ of dense (1.80$\times$ reduction). Mean $\pm$ std over 3
-seeds. ``Active~FLOPs'' is the post-training fraction of dense
-FLOPs under hard masks; an actively-overshooting Lagrangian
-variant ends up at $\approx 26\%$ rather than the targeted $50\%$,
-which is the structural signature of the gradient-scale collapse.
-KaleidoNet (last row) is the cubic-schedule reference. Tiny-ImageNet
-runs require additional data infrastructure on the compute target
-and are reported as a follow-up extension.}
+logits at LR $9{\times}10^{-4}$), Gumbel-sigmoid temperature fixed
+at $\tau{=}5.0$ (as in the global-$\lambda$ baseline), gradient
+clip $1.0$, and target FLOPs ratio of $50\%$ of the unpruned
+reference. Mean $\pm$ std over 3
+seeds. ``Active~FLOPs'' is the post-training executed per-token
+compute under hard masks, as a percentage of the unpruned MoE
+reference (239.5M multiply-accumulates per token)---the same meter
+for every row. Because the penalty acts only on a soft proxy, the
+executed compute decouples from the $50\%$ target in every
+Lagrangian variant---one more symptom of the gated, non-selective
+penalty. The bottom block reports the cubic schedule at its
+standard operating point and at two operating points calibrated to
+bracket the compute the Lagrangian variants actually reached: at
+matched executed budgets the schedule loses no accuracy, so the
+variants' collapse is a failure of selectivity, not of compression
+quantity. Tiny-ImageNet runs require additional data infrastructure
+on the compute target and are reported as a follow-up extension.}
 \label{tab:lagrangian_strengthened}
 \small
 \begin{tabular}{@{}lcccc@{}}
@@ -819,38 +1006,42 @@ and are reported as a follow-up extension.}
 \cmidrule(lr){2-3} \cmidrule(lr){4-5}
 Variant & Acc.\ (\%) & Active FLOPs (\%) & Acc.\ (\%) & Active FLOPs (\%) \\
 \midrule
-Global $\lambda$ (baseline)            & --- (collapse) & --- & $36.4$ (collapse) & --- \\
-Per-layer $\lambda_\ell$ (NEW)         & $33.71 \pm 1.08$ & $22.2 \pm 0.2$ & $9.37 \pm 0.89$  & $22.4 \pm 0.1$ \\
-Per-expert $\lambda_{e,\ell}$ (NEW)    & $36.17 \pm 2.65$ & $25.6 \pm 0.4$ & $10.12 \pm 0.24$ & $26.0 \pm 0.1$ \\
-Augmented Lagrangian (NEW)             & $35.57 \pm 2.14$ & $25.7 \pm 0.4$ & $10.08 \pm 0.16$ & $26.1 \pm 0.2$ \\
-Penalty-gradient rescaled (3$\times$, NEW) & $34.34 \pm 3.62$ & $25.9 \pm 0.3$ & $9.71 \pm 0.26$  & $26.2 \pm 0.2$ \\
+Global $\lambda$ (baseline)            & $36.38 \pm 1.45$ & $66.1 \pm 6.5$ & $10.45 \pm 0.33$ & $71.5 \pm 7.8$ \\
+Per-layer $\lambda_\ell$               & $33.71 \pm 1.08$ & $63.1 \pm 0.6$ & $9.37 \pm 0.89$  & $63.8 \pm 0.4$ \\
+Per-expert $\lambda_{e,\ell}$          & $36.17 \pm 2.65$ & $72.7 \pm 1.0$ & $10.12 \pm 0.24$ & $74.1 \pm 0.4$ \\
+Augmented Lagrangian                   & $35.57 \pm 2.14$ & $72.9 \pm 1.2$ & $10.08 \pm 0.16$ & $74.3 \pm 0.6$ \\
+Penalty-gradient rescaled (3$\times$)  & $34.34 \pm 3.62$ & $73.6 \pm 1.0$ & $9.71 \pm 0.26$  & $74.6 \pm 0.6$ \\
 \midrule
-\multicolumn{5}{@{}l}{\emph{Differentiable-sparsity baseline (acceptance gate (b)):}} \\
-L0 / Hard-Concrete\cite{louizos2018learning} (NEW) & $37.86 \pm 0.47$ & $12.3 \pm 0.0$ & $9.91 \pm 0.15$ & $12.6 \pm 0.0$ \\
+\multicolumn{5}{@{}l}{\emph{Differentiable-sparsity baseline:}} \\
+L0 / Hard-Concrete\cite{louizos2018learning} & $37.86 \pm 0.47$ & $35.0 \pm 0.0$ & $9.91 \pm 0.15$ & $36.0 \pm 0.0$ \\
 \midrule
-KaleidoNet (cubic schedule, ref.) & $\approx 82$ & $\approx 50$ & $\approx 59$ & $\approx 50$ \\
+\multicolumn{5}{@{}l}{\emph{Cubic schedule (KaleidoNet) at matched executed budgets:}} \\
+KaleidoNet, standard ($s_f{=}0.70$)     & $82.02 \pm 0.47$ & $55.3$ & $59.09 \pm 0.20$ & $55.3$ \\
+KaleidoNet, matched ($s_f{=}0.55$)      & $82.75 \pm 0.65$ & $64.0$ & $59.88 \pm 0.48$ & $64.9$ \\
+KaleidoNet, matched ($s_f{=}0.39$)      & $83.09 \pm 0.29$ & $74.3$ & $59.74 \pm 0.21$ & $75.2$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \paragraph{What is novel.}
-The primary novelty of this work is the failure-mode diagnosis: a
-gradient-scale mismatch between the Lagrangian FLOPs penalty and the
-task loss makes per-neuron Lagrangian pruning incapable of
-selectivity inside MoE experts, regardless of multiplier tuning, and
-this bound is a property of the granularity rather than of any
+The primary novelty of this work is the measured failure-mode
+diagnosis: the per-neuron Lagrangian penalty is gated to zero for
+the vast majority of training and is non-selective between
+interchangeable neurons when active, so it cannot perform selection
+inside MoE experts regardless of multiplier tuning---a property of
+the granularity (cost symmetry within an expert) rather than of any
 specific implementation. The empirical validation across four
-schedule-based baselines and three datasets is the secondary
-contribution: every schedule-based method (cubic, linear, random,
-magnitude) bypasses the gradient-scale issue and reaches near-dense
-accuracy, while the Lagrangian baseline collapses on every dataset.
-The defining axis is therefore not the schedule shape but whether
-the structural decision is taken outside the
-gradient-scale-mismatched optimisation. KaleidoNet itself is a
+schedule-based baselines, a $\lambda\times\tau$ probe grid, and
+three datasets is the secondary contribution: every schedule-based
+method (cubic, linear, random, magnitude) bypasses the penalty
+pathway and reaches near-dense accuracy, while every Lagrangian
+configuration collapses. The defining axis is therefore not the
+schedule shape but whether selection is delegated to a gradient
+that cannot carry it. KaleidoNet itself is a
 tertiary contribution: a stable practical instantiation that
-combines a cubic schedule, irreversible gradient masking, and
-dual-rate optimisation, and that is the best instantiation tested in
-our experiments. The diagnostic insight is what generalises;
+combines a cubic schedule with dual-rate optimisation (plus an
+irreversibility safeguard that the ablation shows to be inert), and
+that is the best instantiation tested in our experiments. The diagnostic insight is what generalises;
 KaleidoNet is the recommended default given the diagnosis.
 
 \paragraph{Scope: FLOPs vs.\ wall-clock.}
@@ -861,7 +1052,7 @@ intrinsic properties of the pruned architecture and are reported here
 as $1.80\times$ and $1.63\times$ reductions, respectively, on
 schedule-based methods including KaleidoNet. Wall-clock latency, by
 contrast, depends on hardware, kernel implementation, and routing
-overhead; at the small scale we evaluate (5.49M-parameter MoE ViT,
+overhead; at the small scale we evaluate (${\approx}5.5$M-parameter MoE ViT,
 expert FFN width $4d{=}768$ pruned to $\sim\!230$, Apple MPS), MoE
 routing dominates inference time and KaleidoNet runs $\sim\!18\times$
 slower than the dense ViT. We document this as a platform-specific
@@ -873,26 +1064,23 @@ that translation is not demonstrated here and is an obvious direction
 for follow-up.
 
 \paragraph{When is the accuracy--FLOPs tradeoff worthwhile?}
-At convergence KaleidoNet retains $98.3$--$99.2\%$ of dense accuracy
-while cutting active FLOPs by $1.80\times$, and it outperforms every
-other pruning method tested under the same compute budget. The
-tradeoff is therefore worth taking whenever (a) active FLOPs or
+The tradeoff is worth taking whenever (a) active FLOPs or
 active-parameter counts are hard-constrained---for example by an
-energy or memory budget---\emph{and} (b) pruning is already on the
-table. Among the schedule-based options we tested,
-KaleidoNet is the best pruning method on all three datasets, so if
-the decision is "which pruning recipe to use", the answer is clear.
-The residual 0.5--1.1 pp gap to dense is the unavoidable cost of
-$1.80\times$ FLOPs compression, not a failure of the method. The
-tradeoff is less compelling when compute is unconstrained, when the
-only metric is top-line accuracy, or when wall-clock latency on small
-MoE kernels is the bottleneck (Table~\ref{tab:latency}): at the
-current model scale the $\sim\!18\times$ routing overhead dominates
-the FLOPs savings, a limitation that is expected to shrink
-substantially at larger model scales but is not yet demonstrated
-empirically. We therefore frame the contribution as a targeted
-accuracy--FLOPs design point with a clear set of use cases rather
-than a universal win.
+energy or memory budget---(b) pruning is already on the
+table, \emph{and} (c) the MoE architecture is already on the table
+for reasons other than small-scale accuracy (conditional capacity,
+modularity, or an existing MoE deployment): the ViT controls in
+Table~\ref{tab:main} show that at this scale a plain thin ViT is
+the stronger pure-accuracy choice at the same budget. Given
+(a)--(c), KaleidoNet is the clear choice among the recipes tested,
+and the residual gap to the unpruned reference is the cost of the
+compression, not a failure of the method. It is less compelling when compute is
+unconstrained, when the only metric is top-line accuracy, or when
+wall-clock latency on small MoE kernels is the bottleneck
+(Table~\ref{tab:latency} and the scope paragraph above). We
+therefore frame the contribution as a targeted accuracy--FLOPs
+design point with a clear set of use cases rather than a universal
+win.
 
 \paragraph{Relation to concurrent work.}
 Several recent works address MoE compression from complementary
@@ -902,7 +1090,25 @@ redundant neurons within each via iterative prune-and-distill. STUN
 expert-level and weight-level pruning for scalable MoE compression.
 MoNE~\citep{mone2025} replaces redundant experts with lightweight
 ``novice'' networks. MoE-Pruner~\citep{moepruner2025} uses
-router-guided magnitude pruning at the neuron level. Lu et
+router-guided magnitude pruning at the neuron level. Two further
+works operate at exactly the granularity we analyse and merit
+individual discussion. TENP~\citep{tenp2026} ranks experts by their
+output magnitude and directional influence and then prunes
+individual neurons inside the less important experts, preserving
+parameters in a trapezoidal pattern across depth; notably, its
+neuron-selection signal is an explicit importance score (projected
+contribution to the expert output) computed \emph{outside} any
+differentiable penalty---consistent with our diagnosis that a
+budget gradient cannot carry this information. DERN~\citep{dern2025}
+drops redundant experts using router statistics and then decomposes
+them into neuron-level segments that are merged into the surviving
+experts, again performing neuron-granular surgery retraining-free
+and without a sparsity penalty. Both are post-hoc methods for
+billion-parameter pretrained language MoEs, whereas we study
+during-training pruning of a small vision MoE; the shared pattern
+across settings is that successful per-neuron MoE compression
+delegates selection to explicit importance signals rather than to
+penalty gradients. Lu et
 al.~\citep{lu2024expertslimming} show that not all experts contribute
 equally and propose expert pruning and skipping for MoE LLMs. He et
 al.~\citep{he2024demystifying} demystify MoE compression through a
@@ -935,52 +1141,74 @@ evaluate L0 / Hard-Concrete as a head-to-head baseline in
 Table~\ref{tab:main} and Table~\ref{tab:lagrangian_strengthened}.
 \textbf{Stochastic Gates} (STG)~\citep{yamada2020stg} use a Bernoulli
 relaxation with a separate $\ell_2$ regulariser on the active rate,
-which is closely related to L0 in spirit; we cite it as the natural
-follow-up baseline if Reviewer 2 demands a second differentiable
-sparsity comparison. \textbf{MorphNet}~\citep{gordon2018morphnet}
+which is closely related to L0 in spirit and stands as a natural
+second differentiable-sparsity baseline for future comparison. \textbf{MorphNet}~\citep{gordon2018morphnet}
 applies a Lagrangian penalty at \emph{per-layer} granularity --- exactly
-the regime where, by our analysis, the gradient-scale mismatch does
-not arise; our per-layer-$\lambda$ strengthened-Lagrangian variant
+the regime where, by our analysis, the penalty can still express a
+preference (different layers control different amounts of compute);
+our per-layer-$\lambda$ strengthened-Lagrangian variant
 (Table~\ref{tab:lagrangian_strengthened}) is the natural per-neuron
 analogue. \textbf{Augmented Lagrangian / ADMM}
 methods~\citep{boyd2011admm,zhang2018admm,bertsekas1996constrained,
 nocedal2006numerical} add a quadratic penalty term to soften the
 constraint enforcement; we evaluate the augmented variant as a
 strengthened-Lagrangian condition. The takeaway is that the
-gradient-scale mismatch we diagnose is specific to per-neuron
-\emph{Lagrangian} pruning under a budget constraint; mechanisms that
-either change granularity (per-layer / per-expert), or replace
-the FLOPs constraint with an $\ell_0$/active-rate surrogate, route
-around the mismatch by construction.
+selection failure we diagnose is specific to \emph{per-neuron}
+budget-style penalties; changing granularity (per-layer /
+per-expert) restores the penalty's ability to discriminate between
+units, whereas replacing the FLOPs constraint with an
+$\ell_0$/active-rate surrogate does not (the surrogate is equally
+indifferent between interchangeable neurons, and collapses in our
+experiments as well).
 
 \paragraph{Limitations.}
 Our experiments use a small model ($\sim\!5$M parameters) trained on
 three $32{\times}32$-resolution datasets (CIFAR-10, CIFAR-100,
 Tiny-ImageNet) with a shared 50{,}000-step convergence budget; this
 choice isolates the pruning mechanism across all methods but limits
-the strength of the scale claim. The conjecture that the
-gradient-scale mismatch persists at ImageNet-1K with larger ViTs is
-consistent with the scaling argument ($\mathrm{flops}_i/B$ becomes
-even smaller in larger networks) but not validated empirically.
+the strength of the scale claim. The conjecture that selectivity
+collapse persists at ImageNet-1K with larger ViTs is structural
+rather than scale-dependent---the hinge gate and the within-expert
+cost symmetry that disable the penalty's selection capacity do not
+depend on width or dataset size---but it is not validated
+empirically.
 Attention-head pruning is not addressed by the current schedule: all
 six heads survive in KaleidoNet, leaving potential compression on
-the table. Wall-clock latency at this scale is $18\times$ that of
-the dense baseline due to MoE routing overhead, a limitation that,
-while expected to shrink at larger scale, cannot be read off our
-experiments directly.
+the table. Expert-utilisation dynamics (routing balance under
+pruning, and whether the router compensates for pruned experts) are
+not analysed in depth. The extension of the diagnosis to
+language-model MoEs (Switch, GShard) is an explicit conjecture with
+no empirical evidence in this paper. Wall-clock latency at this
+scale is $18\times$ that of the dense baseline due to MoE routing
+overhead, a limitation that, while expected to shrink at larger
+scale, cannot be read off our experiments directly; no deployment
+speedup is demonstrated. In practical terms, the method is
+best suited to settings where active FLOPs or parameters are
+hard-constrained; practitioners whose bottleneck is small-batch
+latency on current hardware, or who need post-hoc compression of an
+already-trained model, are better served by the post-hoc
+neuron-level methods discussed under concurrent work. Finally, the
+non-MoE controls show that at this scale the MoE backbone itself
+underperforms a plain ViT at matched compute, so the practical
+scope of pruned small-scale MoEs is limited to settings where the
+MoE is required for other reasons; the diagnosis is independent of
+this, but the instantiation's utility is not.
 
 \paragraph{Future work.}
 Three directions are natural extensions of this analysis. First,
 applying the same schedule-based approach jointly to expert FFN
 widths and attention heads, using a shared cubic curve or two
 staggered ones, should close the attention-head compression gap.
-Second, validating the gradient-scale analysis at ImageNet-1K scale
+Second, validating the gating analysis at ImageNet-1K scale
 with ViT-Small or ViT-Base would turn the current conjecture into a
-result. Third, the analysis applies beyond vision: language-model
-MoE layers have the same per-neuron granularity problem, and the
-schedule-based fix should transfer directly to pruning expert FFNs
-inside models such as Switch Transformer~\citep{fedus2022switch} or
-GShard~\citep{lepikhin2021gshard}.
+result. Third, the analysis may apply beyond vision: language-model
+MoE layers have the same per-neuron cost symmetry, so we
+conjecture---without empirical evidence in this paper---that the
+gating diagnosis and the schedule-based fix transfer to pruning
+expert FFNs inside models such as Switch
+Transformer~\citep{fedus2022switch} or
+GShard~\citep{lepikhin2021gshard}; testing this on a language MoE
+is future work.
 
 % =====================================================================
 \section*{Methods}
@@ -1030,61 +1258,132 @@ ponder cost acts as a mild regulariser.
 
 \subsection*{Why Lagrangian per-neuron pruning fails}
 
-The standard compute-constrained pruning recipe adds a Lagrangian
-penalty $\lambda(\mathrm{FLOPs}-B)$ to the task loss
-(Eq.~\ref{eq:lagrangian}). For an elastic linear layer with input
-dimension $d_{\mathrm{in}}$, batch size $N$, and sequence length $L$,
-the FLOPs contributed by neuron $i$ are
+We analyse the penalty exactly as implemented and then verify each
+step of the analysis with direct gradient measurements during
+training. The compute-constrained recipe (Eq.~\ref{eq:lagrangian})
+is implemented, as is standard for differentiable pruning, on a
+\emph{soft budget proxy}: the mean soft mask across the $M$ elastic
+neurons of the model,
 \begin{equation}
-\label{eq:flopsi}
-\mathrm{flops}_i = 2\,d_{\mathrm{in}}\,N\,L\,\sigma(m_i/\tau),
+\label{eq:proxy}
+\hat{s}(\bm) = \frac{1}{M}\sum_{i=1}^{M} \sigma(m_i/\tau),
+\qquad
+\mathcal{L}_{\mathrm{FLOPs}}
+ = \lambda\,\mathrm{relu}\!\bigl(\hat{s}(\bm) - s^{*}\bigr),
 \end{equation}
-with $\sigma$ the sigmoid. Differentiating
-$\mathcal{L}_{\mathrm{FLOPs}} = \lambda(\mathrm{FLOPs} - B)$
-with respect to $m_i$ gives
+where $s^{*}$ is the target active fraction (0.5 in our
+experiments) and $\sigma$ the sigmoid. Differentiating,
 \begin{equation}
 \label{eq:gradscale}
 \frac{\partial \mathcal{L}_{\mathrm{FLOPs}}}{\partial m_i}
- = \lambda\cdot\frac{2\,d_{\mathrm{in}}\,N\,L}{B}
-     \cdot\frac{\sigma'(m_i/\tau)}{\tau}.
+ = \underbrace{\mathbb{1}\bigl[\hat{s} > s^{*}\bigr]}_{\text{gate}}
+   \cdot \lambda \cdot
+   \underbrace{\frac{\sigma'(m_i/\tau)}{M\,\tau}}_{\text{per-neuron factor}}.
 \end{equation}
-Plugging in the hyperparameters used in our experiments
-($d_{\mathrm{in}}{=}192$, $N{=}64$, $L{=}64$, $B{=}2\times10^{8}$,
-$\lambda{=}10^{-2}$, $\tau{=}1$) yields
-$\partial\mathcal{L}_{\mathrm{FLOPs}}/\partial m_i \approx 10^{-4}$,
-while the task-loss gradient $\partial\mathcal{L}_{\mathrm{task}}/\partial m_i$
-measured in our training runs is of order $10^{-2}$. The 100-fold gap
-is the gradient-scale mismatch. In every optimisation step, the task
-gradient dominates when the neuron is useful; when many neurons are
-near the decision boundary, the Lagrangian term adds an
-indiscriminate drift term that is approximately equal on all logits,
-producing uniform mask collapse.
+Two structural properties follow, and both are confirmed by
+measurement (Fig.~\ref{fig:mechanism}).
+
+\emph{Step 1 --- the penalty is gated.} The hinge makes the entire
+penalty gradient exactly zero whenever the soft proxy satisfies the
+constraint. Measured on the mask logits during training (task and
+penalty components separated by independent backward passes), the
+penalty gradient is identically zero on $80$--$88\%$ of steps for
+every $\lambda \in \{10^{-3},10^{-2},10^{-1},1\}$ and under both
+temperature protocols: after a transient of a few hundred steps,
+dual ascent raises $\lambda$ until $\hat{s}$ settles at $s^{*}$ and
+the gate closes (Fig.~\ref{fig:mechanism}a,c). From that point the
+penalty exerts no influence on which neurons survive.
+
+\emph{Step 2 --- when the gate is open, the penalty is
+non-selective.} Within a layer, every neuron contributes the same
+amount to $\hat{s}$, so the open-gate gradient in
+Eq.~\ref{eq:gradscale} differs across neurons only through
+$\sigma'(m_i/\tau)$, which is maximal (and nearly equal) precisely
+for the undecided logits near zero. The penalty therefore shifts all
+undecided logits of a layer in lock-step: it can reduce the proxy,
+but it cannot express a preference between neurons. Selection is
+left entirely to the task gradient and the Gumbel-sampling noise.
+
+\emph{Step 3 --- the consequences.} Because the proxy $\hat{s}$ is
+soft, satisfying it does not pin down the executed compute: hard
+active fractions per layer drift apart (some layers deactivate
+completely), and the executed per-token FLOPs of the converged
+models end at $61$--$81\%$ of the unpruned reference against the
+$50\%$ target across all nine runs, even though the soft proxy sits
+at its target throughout (Fig.~\ref{fig:mechanism}c,
+Fig.~\ref{fig:collapse}). The result is \emph{selectivity collapse}:
+masks whose structure reflects noise rather than importance, with
+catastrophic accuracy (Table~\ref{tab:main}).
 
 \begin{remark}
-This failure mode is specific to per-neuron granularity. At per-layer
-or per-expert granularity, the numerator $2\,d_{\mathrm{in}}\,N\,L$
-is replaced by a much larger term (the total FLOPs of the layer or
-expert), the ratio $\mathrm{flops}_i/B$ becomes non-negligible, and
-Lagrangian methods work well~\citep{gordon2018morphnet}.
+This failure mode is specific to fine granularity. At per-layer or
+per-expert granularity, the units being pruned control
+\emph{different} amounts of compute, so the penalty gradient differs
+across units and can express a preference between them; per-layer
+Lagrangian methods work well in this
+regime~\citep{gordon2018morphnet}. At per-neuron granularity within
+an expert, all units are interchangeable in cost, and the penalty's
+selection capacity vanishes by symmetry.
 \end{remark}
+
+\paragraph{Why adaptive optimisation does not rescue the penalty.}
+A natural objection is that Adam-style preconditioning normalises
+update magnitudes and might restore the penalty's influence. It
+cannot, for two measured reasons. First, no rescaling can revive a
+gradient that is exactly zero: the gate of Eq.~\ref{eq:gradscale}
+closes for the vast majority of steps, and Adam's second-moment
+estimate merely adapts to the surviving task-gradient component.
+Second, Adam normalises the \emph{summed} per-coordinate gradient
+and is blind to its composition: on the steps where the gate opens,
+the penalty component is (near-)identical across a layer's
+coordinates, so preconditioning rescales it together with the task
+component and preserves its non-selectivity. The same argument
+explains why rescaling the penalty term itself is a no-op: under
+Adam, multiplying a loss term by a constant $c$ scales the first
+moment by $c$ and the square root of the second moment by $c$ as
+well, leaving the applied update approximately invariant. Our
+$\lambda$-grid measurement confirms this directly---multipliers
+spanning three orders of magnitude produce indistinguishable
+collapse (Fig.~\ref{fig:mechanism}b)---and the same invariance
+predicts that dual-rate optimisation cannot be replaced by a loss
+or gradient scaling factor, which we verify as a separate ablation
+in Table~\ref{tab:ablation_schedule}.
+
+\paragraph{Measurement protocol.} All gradient-component
+measurements use 5{,}000-step probes on CIFAR-100 (seed 1,
+batch 64): every 100 steps we run two additional backward
+passes on the current batch---task loss only, then penalty only---
+and record the mean absolute gradient per elastic layer, together
+with the Adam second-moment state of the mask logits, the dual
+variable $\lambda$, and the soft active fraction $\hat{s}$. The
+probe grid covers $\lambda_0 \in \{10^{-3},10^{-2},10^{-1},1\}$
+under (i) the Lagrangian family's fixed $\tau{=}5.0$ and (ii) the
+schedule methods' annealed $\tau$ ($1.0\!\to\!0.1$ over 2{,}500
+steps); a cubic-schedule run at the identical probe budget provides
+the reference. The 50{,}000-step mask-distribution time series
+(logged every 500 steps for all convergence runs) provide the
+long-horizon trajectories in Fig.~\ref{fig:collapse}.
 
 \paragraph{Implementation details of the Lagrangian baseline.} The
 Lagrangian baseline reported in Table~\ref{tab:main} mirrors the
 standard per-neuron recipe so that the failure we diagnose is
-attributable to the gradient-scale mismatch of
+attributable to the gated, non-selective penalty of
 Eq.~\ref{eq:gradscale} rather than to under-tuning. Specifically:
 (i) a single shared scalar multiplier $\lambda$ initialised at
-$0.01$, updated by dual ascent at $\eta_{\mathrm{dual}}{=}10^{-3}$
-on the normalised violation $(\mathrm{FLOPs}-B)/B$ and clamped to
-$[0,10]$ (implementation in
-\texttt{kaleidonet/morphing/lagrangian.py:34--50});
+$0.01$, updated by dual ascent at $\eta_{\mathrm{dual}}{=}10^{-2}$
+on the normalised violation (the soft active fraction minus the
+target ratio) and clamped to $[0,100]$ (implementation in
+\texttt{experiments/baselines/lagrangian\_pruning.py});
 (ii) AdamW for task parameters at LR $3\times 10^{-4}$, separate
 Adam for mask logits at $9\times 10^{-4}$ ($3\times$ multiplier ---
 the same dual-rate factor used by the cubic-schedule method, so
 that the comparison is on the structural-decision rule rather than
 on the optimiser); gradient clip $1.0$;
-(iii) Gumbel-sigmoid temperature $\tau{=}1.0$ shared across
-methods;
+(iii) Gumbel-sigmoid temperature fixed at its initialisation
+$\tau{=}5.0$ for the Lagrangian family (schedule-based methods
+instead anneal $\tau$ from $1.0$ to $0.1$ over the first 2{,}500
+steps; the temperature sensitivity analysis in the Discussion
+verifies the collapse is not an artefact of this difference);
 (iv) no per-layer / per-expert reparameterisation in this baseline
 \emph{by design} --- this is the underpowered configuration whose
 failure we diagnose. Strengthened variants (per-layer
@@ -1097,11 +1396,11 @@ This analysis concerns FLOPs and parameter granularity; wall-clock
 latency on production hardware is a separate question, addressed
 below as a documented limitation rather than a claim of this work.
 
-\subsection*{Cubic sparsity schedule with gradient masking}
+\subsection*{Cubic sparsity schedule and mask optimisation}
 
 The cubic sparsity schedule~\citep{zhu2017prune} externally dictates
 the target active fraction at each training step, bypassing the
-gradient-scale problem entirely. Given start step $t_0$, end step
+penalty pathway entirely. Given start step $t_0$, end step
 $t_1$, and final sparsity $s_f$,
 \begin{equation}
 \label{eq:cubic}
@@ -1113,10 +1412,19 @@ s_f\,\Bigl[1 - \bigl(1 - \tfrac{t - t_0}{t_1 - t_0}\bigr)^3\Bigr]
 s_f & t > t_1.
 \end{cases}
 \end{equation}
-We use $t_0{=}500$, $t_1{=}4000$, $s_f{=}0.70$. The cubic shape starts
-slowly (letting the network learn representations before committing)
-and accelerates toward the end (locking in decisions once importance
-is established).
+We set the window as fixed fractions of the training budget:
+$t_0$ at $10\%$ and $t_1$ at $80\%$ of max steps ($t_0{=}5000$,
+$t_1{=}40{,}000$ under the 50{,}000-step convergence budget;
+$t_0{=}500$, $t_1{=}4000$ under the preliminary 5{,}000-step
+budget), with $s_f{=}0.70$. The cubic shape
+removes neurons fastest at the start of the pruning window---after
+the $t_0$ warm-up has established initial importance estimates, while
+representations are still plastic enough to absorb the loss of
+capacity---and decelerates smoothly toward $t_1$, so the final
+decisions are made gently and the surviving subnetwork is stable
+well before the schedule ends. The post-schedule phase (the final
+$20\%$ of training) then provides recovery at full architectural
+stability.
 
 \textit{Gradient masking.} Every 100 steps, for each elastic linear
 layer, the $k = \lfloor s(t)\cdot d_{\mathrm{out}}\rfloor$ neurons
@@ -1130,10 +1438,16 @@ m_i \leftarrow -100,
 \text{for pruned neurons}.
 \end{equation}
 Setting $m_i = -100$ ensures $\sigma(m_i/\tau) \approx 0$ for any
-$\tau$, and zeroing the gradient prevents accidental recovery. This
-hard masking is the key mechanism: rather than hoping weak
-Lagrangian gradients will find the right pattern, we \emph{force}
-the pattern using the mask logit as a task-driven importance score.
+$\tau$, and zeroing the gradient prevents accidental recovery. Hard
+masking makes decisions irreversible by construction; the
+convergence ablation (Table~\ref{tab:ablation_schedule}) shows it is in
+practice a safeguard rather than an active ingredient---by the time
+a logit is clamped to $-100$ its gradient is already negligible.
+What drives selectivity is the schedule itself: rather than hoping
+weak Lagrangian gradients will find the right pattern, the schedule
+\emph{forces} the pattern at each step, using the mask logit as a
+task-driven importance score whose updates are given adequate scale
+by the dual-rate optimisation below.
 
 \textit{Gumbel-sigmoid with straight-through.} For the active
 neurons, the forward pass samples a binary mask via
@@ -1143,9 +1457,10 @@ neurons, the forward pass samples a binary mask via
 \end{equation}
 where $g_1, g_2 \sim \mathrm{Gumbel}(0,1)$ and the indicator uses the
 straight-through estimator~\citep{bengio2013estimating} (hard forward,
-soft backward). The temperature $\tau$ anneals linearly from $5.0$ to
-$0.1$ over training, transitioning from stochastic exploration to
-near-deterministic masks.
+soft backward). For schedule-based methods the temperature $\tau$
+anneals linearly from $1.0$ to $0.1$ over the first 2{,}500 steps,
+transitioning from stochastic exploration to near-deterministic
+masks early and holding $\tau{=}0.1$ for the remainder of training.
 
 \textit{Dual-rate optimisation.} We split parameters into two
 optimiser groups:
@@ -1174,15 +1489,15 @@ penalty is added}: the cubic schedule replaces it entirely.
 \caption{KaleidoNet training loop.}
 \label{alg:training}
 \begin{algorithmic}[1]
-\REQUIRE Model $f_\btheta$ with elastic layers; data $\mathcal{D}$;
+\REQUIRE Model $f_{\btheta}$ with elastic layers; data $\mathcal{D}$;
   total steps $T$; schedule $[t_0,t_1,s_f]$.
 \STATE Initialise mask logits $\bm \leftarrow 0.5\cdot\mathbf{1}$.
 \STATE Initialise optimisers: $\mathrm{opt}_w$ (lr $=3\mathrm{e}{-4}$),
   $\mathrm{opt}_m$ (lr $=9\mathrm{e}{-4}$).
 \FOR{$t = 1,\dots,T$}
   \STATE Sample minibatch $(\bx,y) \sim \mathcal{D}$.
-  \STATE $\tau \leftarrow 5.0 + (0.1 - 5.0)\cdot\min(t/T,1)$.
-  \STATE $\hat y \leftarrow f_\btheta(\bx;\bm,\tau)$.
+  \STATE $\tau \leftarrow 1.0 + (0.1 - 1.0)\cdot\min(t/2500,1)$.
+  \STATE $\hat y \leftarrow f_{\btheta}(\bx;\bm,\tau)$.
   \STATE
    $\mathcal{L} \leftarrow \mathcal{L}_{\mathrm{CE}}(\hat y, y)
     + 0.01\,\mathcal{L}_{\mathrm{balance}}
@@ -1223,8 +1538,11 @@ seeds each), AdamW for task parameters with learning rate
 $3\times10^{-4}$ and weight decay 0.01, Adam for mask logits with
 learning rate $9\times10^{-4}$, cosine LR schedule with 500-step
 warmup, gradient clipping at norm 1.0. The cubic sparsity schedule
-ramps from step 500 to 4{,}000 with final sparsity 0.70. The
-Gumbel-sigmoid temperature anneals linearly from 5.0 to 0.1. Balance
+window is fixed at $10\%$--$80\%$ of the training budget (steps
+5{,}000 to 40{,}000 at 50{,}000 steps) with final sparsity 0.70. The
+Gumbel-sigmoid temperature anneals linearly from 1.0 to 0.1 over the
+first 2{,}500 steps for schedule-based methods (the Lagrangian family
+runs at its fixed initialisation $\tau{=}5.0$). Balance
 and ponder loss weights are 0.01. Hardware: Apple M4 (MPS backend)
 with supplementary runs on Google Colab Pro (NVIDIA A100 / H100).
 
@@ -1250,11 +1568,11 @@ Key files and entry points are documented in the repository README.
 
 % =====================================================================
 \section*{Author contributions}
-K.M.\ designed the architecture, performed the gradient-scale
+K.M.\ designed the architecture, performed the penalty-gating
 analysis, implemented KaleidoNet, ran all experiments, and drafted
 the manuscript. G.K.\ advised on the MoE design, the pruning
 methodology, and experimental protocol, and contributed to manuscript
-revision. M.N.S.\ [CONTRIBUTION TBC]. H.A.\ contributed to the
+revision. M.N.S.\ advised on Vision Transformer architecture and contributed to experimental setup on the CUDA backend. H.A.\ contributed to the
 writing, reviewed the mathematical analysis, and advised on scope and
 framing. All authors read and approved the final manuscript.
 
@@ -1265,15 +1583,20 @@ The authors declare no competing interests.
 % =====================================================================
 \section*{Acknowledgements}
 We thank the Faculty of Computers and Artificial Intelligence at
-Helwan University, the School of Information Technology and Computer
+Capital University, the School of Information Technology and Computer
 Science at Nile University, and the Faculty of Computer Studies at
 Arab Open University for computing resources and research support.
 Supplementary compute was provided by Google Colab Pro (NVIDIA
-A100/H100). This research received no specific grant from any
-funding agency.
+A100/H100).
+
+\section*{Funding}
+The authors received no specific grant from any funding agency in the
+public, commercial, or not-for-profit sectors for this work. Compute
+resources (Google Colab Pro and personal hardware) were self-funded
+by the corresponding author.
 
 % =====================================================================
-\bibliographystyle{naturemag}
+\bibliographystyle{plainnat}
 \bibliography{references}
 
 \end{document}

@@ -1,0 +1,17 @@
+{
+  "model": "Dense",
+  "dataset": "tiny_imagenet",
+  "seed": 5,
+  "steps": 50000,
+  "params": {
+    "total_params": 5537700,
+    "active_params": 5535963,
+    "dormant_params": 1737,
+    "active_fraction": 0.9996863318706322
+  },
+  "dense_flops": 684957696,
+  "active_flops": 684957696,
+  "curve_file": "/home/sweilam/Research/KaleidoNet/results/convergence/curves/dense_tiny_imagenet_seed5.csv",
+  "val_loss": 2.5300533348083496,
+  "val_accuracy": 0.4118
+}
