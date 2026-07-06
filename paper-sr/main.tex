@@ -795,7 +795,7 @@ to a physically compact network. Parameter counts exclude mask
 logits.}
 \label{tab:surgery}
 \small
-\begin{tabular}{lccc}
+\begin{tabular*}{\textwidth}{@{}l@{\extracolsep{\fill}}ccc@{}}
 \toprule
 \textbf{Component} & \textbf{Before} & \textbf{After}
  & \textbf{Retained (\%)} \\
@@ -805,7 +805,7 @@ MoE expert FC1 neurons     & 768     & 231     & 30.1 \\
 MoE expert FC2 neurons     & 192     & 58      & 30.2 \\
 Attention heads per block  & 6       & 6       & 100  \\
 \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table}
 
 \subsection*{Wall-clock latency}
