@@ -199,7 +199,7 @@ magnitude) drive selective pruning. The approach conceptually
 inherits from earlier work on learnable gated networks and
 structured regularisation~\citep{louizos2018learning} and on elastic
 architectures~\citep{yu2019universally,cai2020once,hou2020dynabert};
-see~\citep{chen2024dynamic} for a contemporary survey. KaleidoNet is
+see~\citep{montello2026survey} for a contemporary survey. KaleidoNet is
 the best instantiation we tested, but the diagnostic insight is the
 generalisable contribution.
 
@@ -1111,17 +1111,15 @@ delegates selection to explicit importance signals rather than to
 penalty gradients. Lu et
 al.~\citep{lu2024expertslimming} show that not all experts contribute
 equally and propose expert pruning and skipping for MoE LLMs. He et
-al.~\citep{he2024demystifying} demystify MoE compression through a
-unified framework, and Li et al.~\citep{li2024merge} exploit routing
+al.~\citep{he2024demystifying} present a holistic study of MoE
+compression techniques, and Li et al.~\citep{li2024merge} exploit routing
 policies to merge experts before compressing. Efficient expert
 pruning for sparse MoE LMs~\citep{liu2024efficient} reports speedups
 on larger architectures; upcycling pre-trained dense LMs into
 MoEs~\citep{he2025upcycling} addresses the opposite problem of
 turning dense models sparse. MaskLLM~\citep{fang2024maskllm} shows
 that learnable semi-structured sparsity with Gumbel-softmax sampling
-can scale to billion-parameter language models, and mask-conditional
-compression for ViTs~\citep{zhou2025mcnc} applies related ideas to
-non-MoE vision transformers. Prior representation-collapse
+can scale to billion-parameter language models. Prior representation-collapse
 analyses~\citep{chi2022representation} and expert-pruning
 works~\citep{kim2023mixture} focus on expert-level decisions. Our
 contribution is orthogonal to all of these: we characterise
