@@ -1,5 +1,7 @@
 # KaleidoNet
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21224908.svg)](https://doi.org/10.5281/zenodo.21224908)
+
 **Stable Hard Pruning in Elastic MoE Vision Transformers via Cubic Sparsity Scheduling**
 
 KaleidoNet explores **differentiable budget-controlled pruning** in Mixture-of-Experts (MoE) Vision Transformers. The core contribution is a **cubic sparsity schedule with gradient masking** that enables stable, selective hard pruning of MoE expert widths — replacing the standard Lagrangian FLOPs penalty, which we show fails at per-neuron granularity.
